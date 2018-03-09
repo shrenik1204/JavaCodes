@@ -5,12 +5,10 @@ import SignalProc.SignalProcConstants;
 import SignalProc.SignalProcUtils;
 import SignalProc.UcAlgo;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
-public class Run_Algorithm {
+public class Run_Algorithm_test {
 
 	public static void main(String[] args) {
 
@@ -54,7 +52,7 @@ public class Run_Algorithm {
 		ArrayList<Integer> UCLoc = new ArrayList<>();
 		UcAlgo aUcAlgo = new UcAlgo();
 		int it = 0;
-		Filename.ExecutionLogs.append("Iteration, Start Location, MA , QRSM Detection , QRSF Selection Type, Last Fetal QRS, No of QRSF Selected, No of FHR computed, Last RR mean Fetal \n");
+//		Filename.ExecutionLogs.append("Iteration, Start Location, MA , QRSM Detection , QRSF Selection Type, Last Fetal QRS, No of QRSF Selected, No of FHR computed, Last RR mean Fetal \n");
 		while (aInput.length - (SignalProcConstants.QRS_SHIFT*it+MA_shift) >= SignalProcConstants.NO_OF_SAMPLES)
 		{
 			double[][] input1 = new double[15000][4];
@@ -74,9 +72,10 @@ public class Run_Algorithm {
 				Object[] Final;
 				try {
 					long T1 = System.currentTimeMillis();
+					Thread.currentThread().setName(ApplicationUtils.algoProcessStartCount+ " Algo Main ");
 
 					Final = aAlgo.algoStart(input1, it);
-
+					Thread.currentThread().setName(ApplicationUtils.algoProcessStartCount+ " UC Algo");
 					double[] aUc = aUcAlgo.ucAlgoDwt(input2);
 
 					for (int i = 0; i < aUc.length; i++) {
@@ -121,43 +120,43 @@ public class Run_Algorithm {
 		SignalProcUtils.hrMaternal.remove(0);
 
 		////////////Write to file //////////////////////
-		for (int i = 0; i<SignalProcUtils.qrsFetalLocation.size(); i++) {
-			Filename.FHR_FQRS.append(SignalProcUtils.qrsFetalLocation.get(i));
-			Filename.FHR_FQRS.append(",");
-			Filename.FHR_FQRS.append(SignalProcUtils.hrFetal.get(i));
-			Filename.FHR_FQRS.append("\n");
-		}
+//		for (int i = 0; i<SignalProcUtils.qrsFetalLocation.size(); i++) {
+//			Filename.FHR_FQRS.append(SignalProcUtils.qrsFetalLocation.get(i));
+//			Filename.FHR_FQRS.append(",");
+//			Filename.FHR_FQRS.append(SignalProcUtils.hrFetal.get(i));
+//			Filename.FHR_FQRS.append("\n");
+//		}
 
 
-		write2file(Filename.FHR_FQRS, Filename.aFilePathFHR_FQRS);
-		write2file(Filename.QRSF_Selected, Filename.aFilePathFQRS);
-        write2file(Filename.CHF_Ind, Filename.aFilePathChfInd);
-        write2file(Filename.RRMeanFetal, Filename.aFilePathRRMeanFetal);
-        write2file(Filename.FqrsSelectionType, Filename.aFilePathFqrsSelectionType);
-        write2file(Filename.FHR, Filename.aFilePathFHR);
-        write2file(Filename.ExecutionLogs, Filename.aFilePathExecutionLogs);
+//		write2file(Filename.FHR_FQRS, Filename.aFilePathFHR_FQRS);
+//		write2file(Filename.QRSF_Selected, Filename.aFilePathFQRS);
+//        write2file(Filename.CHF_Ind, Filename.aFilePathChfInd);
+//        write2file(Filename.RRMeanFetal, Filename.aFilePathRRMeanFetal);
+//        write2file(Filename.FqrsSelectionType, Filename.aFilePathFqrsSelectionType);
+//        write2file(Filename.FHR, Filename.aFilePathFHR);
+//        write2file(Filename.ExecutionLogs, Filename.aFilePathExecutionLogs);
 		////////////Write to file //////////////////////
 
 ////////////Write to file //////////////////////
-	for (int i = 0; i<SignalProcUtils.qrsMaternalLocation.size(); i++) {
-		Filename.QRSM_Selected.append(SignalProcUtils.qrsMaternalLocation.get(i));
-		Filename.QRSM_Selected.append(",");
-		Filename.QRSM_Selected.append(SignalProcUtils.hrMaternal.get(i));
-		Filename.QRSM_Selected.append("\n");
-	}
-
-	write2file(Filename.QRSM_Selected, Filename.aFilePathMQRS);
+//	for (int i = 0; i<SignalProcUtils.qrsMaternalLocation.size(); i++) {
+//		Filename.QRSM_Selected.append(SignalProcUtils.qrsMaternalLocation.get(i));
+//		Filename.QRSM_Selected.append(",");
+//		Filename.QRSM_Selected.append(SignalProcUtils.hrMaternal.get(i));
+//		Filename.QRSM_Selected.append("\n");
+//	}
+//
+//	write2file(Filename.QRSM_Selected, Filename.aFilePathMQRS);
 	////////////Write to file //////////////////////
 
 ////////////Write to file //////////////////////
-		for (int i = 0; i<UC.size(); i++) {
-			Filename.UC.append(UCLoc.get(i));
-			Filename.UC.append(",");
-			Filename.UC.append(UC.get(i));
-			Filename.UC.append("\n");
-		}
-
-		write2file(Filename.UC, Filename.aFilePathUC);
+//		for (int i = 0; i<UC.size(); i++) {
+//			Filename.UC.append(UCLoc.get(i));
+//			Filename.UC.append(",");
+//			Filename.UC.append(UC.get(i));
+//			Filename.UC.append("\n");
+//		}
+//
+//		write2file(Filename.UC, Filename.aFilePathUC);
 		////////////Write to file //////////////////////
 
 
@@ -172,85 +171,85 @@ public class Run_Algorithm {
 
 	}
 
-	private static void fileWrite1(String iFilePath, LinkedList<Float> iHR,
-			LinkedList<Integer> iQRS) {
-		// TODO Auto-generated method stub
-		try {
-			BufferedWriter br = new BufferedWriter(new FileWriter(iFilePath));
-			StringBuilder sb = new StringBuilder();
-			for (int i = 0; i < iHR.size(); i++) {
-			 sb.append(iHR.get(i));
-			 sb.append(",");
-			 sb.append(iQRS.get(i));
-			 sb.append("\n");
-			}
-//			sb.append("\n");
-			
-
-			br.write(sb.toString());
-			br.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-	}
+//	private static void fileWrite1(String iFilePath, LinkedList<Float> iHR,
+//			LinkedList<Integer> iQRS) {
+//		// TODO Auto-generated method stub
+//		try {
+//			BufferedWriter br = new BufferedWriter(new FileWriter(iFilePath));
+//			StringBuilder sb = new StringBuilder();
+//			for (int i = 0; i < iHR.size(); i++) {
+//			 sb.append(iHR.get(i));
+//			 sb.append(",");
+//			 sb.append(iQRS.get(i));
+//			 sb.append("\n");
+//			}
+////			sb.append("\n");
+//
+//
+//			br.write(sb.toString());
+//			br.close();
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//
+//	}
 	
-	public static void write2file(StringBuilder sb, String iFilename) {
-		try {
-			BufferedWriter br = new BufferedWriter(new FileWriter(iFilename));
-			br.write(sb.toString());
-			br.close();
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+//	public static void write2file(StringBuilder sb, String iFilename) {
+//		try {
+//			BufferedWriter br = new BufferedWriter(new FileWriter(iFilename));
+//			br.write(sb.toString());
+//			br.close();
+//		}
+//		catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//	}
 
 
-	private static void fileWrite(String iFilePath, LinkedList<Integer> iHR,
-			LinkedList<Integer> iQRS) {
-		// TODO Auto-generated method stub
-		try {
-			BufferedWriter br = new BufferedWriter(new FileWriter(iFilePath));
-			StringBuilder sb = new StringBuilder();
-			for (int i = 0; i < iHR.size(); i++) {
-			 sb.append(iHR.get(i));
-			 sb.append(",");
-			 sb.append(iQRS.get(i));
-			 sb.append("\n");
-			}
-//			sb.append("\n");
-			
+//	private static void fileWrite(String iFilePath, LinkedList<Integer> iHR,
+//			LinkedList<Integer> iQRS) {
+//		// TODO Auto-generated method stub
+//		try {
+//			BufferedWriter br = new BufferedWriter(new FileWriter(iFilePath));
+//			StringBuilder sb = new StringBuilder();
+//			for (int i = 0; i < iHR.size(); i++) {
+//			 sb.append(iHR.get(i));
+//			 sb.append(",");
+//			 sb.append(iQRS.get(i));
+//			 sb.append("\n");
+//			}
+////			sb.append("\n");
+//
+//
+//			br.write(sb.toString());
+//			br.close();
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//
+//
+//	}
 
-			br.write(sb.toString());
-			br.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-		
-	}
-
-	private static void fileWrite2(String iFilePath, int[] iQRS) {
-		// TODO Auto-generated method stub
-		try {
-			BufferedWriter br = new BufferedWriter(new FileWriter(iFilePath));
-			StringBuilder sb = new StringBuilder();
-			for (int i = 0; i < iQRS.length; i++) {
-			 sb.append(iQRS[i]);
-			 
-			 sb.append("\n");
-			}
-//			sb.append("\n");
-			
-
-			br.write(sb.toString());
-			br.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-		
-	}
+//	private static void fileWrite2(String iFilePath, int[] iQRS) {
+//		// TODO Auto-generated method stub
+//		try {
+//			BufferedWriter br = new BufferedWriter(new FileWriter(iFilePath));
+//			StringBuilder sb = new StringBuilder();
+//			for (int i = 0; i < iQRS.length; i++) {
+//			 sb.append(iQRS[i]);
+//
+//			 sb.append("\n");
+//			}
+////			sb.append("\n");
+//
+//
+//			br.write(sb.toString());
+//			br.close();
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//
+//
+//	}
 
 }

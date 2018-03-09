@@ -123,6 +123,8 @@ public class QrsSelectionRobust {
 ////
                     Filename.FqrsSelectionType.append("Confirm Flag\n");
 					Filename.ExecutionLogs.append("Confirm Flag,");
+					Filename.ExecutionLogs.append(iQRSLast+",");
+
 
 					return new Object[] { convertListtoArray(aQrsFinal), aInterpolatedLength, 0 };
 				} else {
@@ -155,14 +157,17 @@ public class QrsSelectionRobust {
 					 */
                     Filename.FqrsSelectionType.append("CFN : Concat\n");
 					Filename.ExecutionLogs.append("CFN : Concat,");
+					Filename.ExecutionLogs.append(iQRSLast+",");
 
 					return new Object[] { convertListtoArray(aQrsFinal), aInterpolatedLength, 1 };
 				}
 			}
 			else {
 				Filename.ExecutionLogs.append("Independent,");
+				Filename.ExecutionLogs.append(iQRSLast+",");
 
 				Filename.FqrsSelectionType.append("Independent \n");
+
 //
 //				FileLoggerHelper.getInstance().sendLogData(String.format(ApplicationUtils.getCurrentTime() + " : Independent FQRS detection"), FileLoggerType.EXECUTION, FLApplication.mFileTimeStamp);
 				return new Object[] { convertListtoArray(aQrsFinal), aInterpolatedLength, 0 };
@@ -197,6 +202,7 @@ public class QrsSelectionRobust {
                  * ADD fqrsMissIndex indentification
                  */
 				Filename.ExecutionLogs.append("Concat,");
+				Filename.ExecutionLogs.append(iQRSLast+",");
 
 				Filename.FqrsSelectionType.append("Concat \n");
                 return new Object[]{convertListtoArray(aQrsFinal), aInterpolatedLength, 1};

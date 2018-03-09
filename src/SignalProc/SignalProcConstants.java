@@ -589,10 +589,14 @@ public class SignalProcConstants {
 	/**********************************************
 	 * SignalProcConstants used in QRS SELECTION
 	 ***********************************************/
-	/**
+	/** CHANGE BY ARAVIND 5th March 2018
 	 * Variance change for 10 bpm in milliseconds.
 	 */
-	public static final double QRS_RR_VAR = 10.0/60000; // 10 beats change
+	public static final double QRS_RR_VAR_M = 10.0/60000; // 10 beats change
+	/** CHANGE BY ARAVIND 5th March 2018
+	 * Variance change for 15 bpm in milliseconds.
+	 */
+	public static final double QRS_RR_VAR = 15.0/60000; // 15 beats change
 	/**
 	 * No of RR mean to find HR.
 	 */

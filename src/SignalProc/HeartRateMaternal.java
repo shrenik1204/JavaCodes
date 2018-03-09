@@ -36,7 +36,7 @@ public class HeartRateMaternal {
             int aRRDiff = 0;
             double aRRLowTh = 0;
             double aRRHighTh = 0;
-            double aDelta = SignalProcConstants.QRS_RR_VAR;
+            double aDelta = SignalProcConstants.QRS_RR_VAR_M;
 
             // Forward Iteration for MHR
             for (int i = aStartLoc +(int) SignalProcConstants.QRS_NO_RR_MEAN + 1; i < (aLengthQrs ); i++) {
