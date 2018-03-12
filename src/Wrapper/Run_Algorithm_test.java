@@ -10,116 +10,151 @@ import java.util.LinkedList;
 
 public class Run_Algorithm_test {
 
-	public static void main(String[] args) {
+    private static Object[] output;
 
-		DataTextFileReader aReadFile = new DataTextFileReader();
-		String aInputFilePath = ""+"/Users/kishoresubramanian/Sattva_Aravind/Tests_Aravind/sattva-03-07-22-23-50/algo-new1input-sattva-03-07-22-23-50.txt";
+    private static int it = 0;
 
-		int aInputPathLength = aInputFilePath.length();
-		Filename nFilw = new Filename(aInputFilePath.substring(aInputPathLength-18, aInputPathLength-4));
+    private static boolean algoFinished;
 
-		String aFilePath = ""+"/Users/kishoresubramanian/Desktop/Sattva work/FHR_Results/";
+    public static void main(String[] args) {
+        DataTextFileReader aReadFile = new DataTextFileReader();
+        String aInputFilePath = ""+"/Users/kishoresubramanian/Sattva_Aravind/Tests_Aravind/sattva-03-07-22-23-50/algo-new1input-sattva-03-07-22-23-50.txt";
 
-		String aFilePath_QRSM = aFilePath + "mhr-"+aInputFilePath.substring(aInputPathLength-18, aInputPathLength-4)+".txt";
-		String aFilePath_QRSF = aFilePath + "fhr-"+aInputFilePath.substring(aInputPathLength-18, aInputPathLength-4)+".txt";
-		String aFilePathUC = aFilePath + "uc-"+aInputFilePath.substring(aInputPathLength-18, aInputPathLength-4)+".txt";
-		String aFilePath_QRSM_plot = aFilePath + "mhr-plot-"+aInputFilePath.substring(aInputPathLength-18, aInputPathLength-4)+".txt";
-		String aFilePath_QRSF_plot = aFilePath + "fhr-plot-"+aInputFilePath.substring(aInputPathLength-18, aInputPathLength-4)+".txt";
+        int aInputPathLength = aInputFilePath.length();
+        Filename nFilw = new Filename(aInputFilePath.substring(aInputPathLength-18, aInputPathLength-4));
+
+        String aFilePath = ""+"/Users/kishoresubramanian/Desktop/Sattva work/FHR_Results/";
+
+        String aFilePath_QRSM = aFilePath + "mhr-"+aInputFilePath.substring(aInputPathLength-18, aInputPathLength-4)+".txt";
+        String aFilePath_QRSF = aFilePath + "fhr-"+aInputFilePath.substring(aInputPathLength-18, aInputPathLength-4)+".txt";
+        String aFilePathUC = aFilePath + "uc-"+aInputFilePath.substring(aInputPathLength-18, aInputPathLength-4)+".txt";
+        String aFilePath_QRSM_plot = aFilePath + "mhr-plot-"+aInputFilePath.substring(aInputPathLength-18, aInputPathLength-4)+".txt";
+        String aFilePath_QRSF_plot = aFilePath + "fhr-plot-"+aInputFilePath.substring(aInputPathLength-18, aInputPathLength-4)+".txt";
 
 
-		/**
-		 * For old 1-bit sample count
-		 */
+        /**
+         * For old 1-bit sample count
+         */
 //		double[][] aInput  = aReadFile.readFile(aInputFilePath, 0);
 
-		/**
-		 * Forcubic interpolate and 2 bit sample count.
-		 */
+        /**
+         * Forcubic interpolate and 2 bit sample count.
+         */
 //		String iFilePath = "/Users/kishoresubramanian/Desktop/sattva-11-23-17-58-24/new1input-sattva-11-23-17-58-24.txt";
 
-		CubicInterpolate15 aCubic = new CubicInterpolate15();
-		double[][] aInput = aCubic.convert(aInputFilePath);
-		AlgorithmMain aAlgo = new AlgorithmMain();
+        CubicInterpolate15 aCubic = new CubicInterpolate15();
+        double[][] aInput = aCubic.convert(aInputFilePath);
+        AlgorithmMain aAlgo = new AlgorithmMain();
 
 
-		LinkedList<Integer> FHR_plot = new LinkedList<>();
-		LinkedList<Integer> HRLocations = new LinkedList<>();
-		LinkedList<Integer> MHR_plot = new LinkedList<>();
+        LinkedList<Integer> FHR_plot = new LinkedList<>();
+        LinkedList<Integer> HRLocations = new LinkedList<>();
+        LinkedList<Integer> MHR_plot = new LinkedList<>();
 
         int MA_shift = 0;
-		int aNit = aInput.length/10000 - 1;
-		ArrayList<Double> UC = new ArrayList<>();
-		ArrayList<Integer> UCLoc = new ArrayList<>();
-		UcAlgo aUcAlgo = new UcAlgo();
-		int it = 0;
+        int aNit = aInput.length/10000 - 1;
+        ArrayList<Double> UC = new ArrayList<>();
+        ArrayList<Integer> UCLoc = new ArrayList<>();
+        UcAlgo aUcAlgo = new UcAlgo();
+
 //		Filename.ExecutionLogs.append("Iteration, Start Location, MA , QRSM Detection , QRSF Selection Type, Last Fetal QRS, No of QRSF Selected, No of FHR computed, Last RR mean Fetal \n");
-		while (aInput.length - (SignalProcConstants.QRS_SHIFT*it+MA_shift) >= SignalProcConstants.NO_OF_SAMPLES)
-		{
-			double[][] input1 = new double[15000][4];
-			double[] input2 = new double[15000];
+        while (aInput.length - (SignalProcConstants.QRS_SHIFT*it+MA_shift) >= SignalProcConstants.NO_OF_SAMPLES)
+        {
+            double[][] input1 = new double[15000][4];
+            double[] input2 = new double[15000];
 
-				for (int i = 0; i<15000; i++)
-				{
-					for (int j = 0; j<4; j++)
-					{
-						input1[i][j] = aInput[i+ SignalProcConstants.QRS_SHIFT*it+MA_shift][j];
-						if (j == 0) {
-							input2[i] = aInput[i+ SignalProcConstants.QRS_SHIFT*it+MA_shift][j];
-						}
-					}
-				}
-
-				Object[] Final;
-				try {
-					long T1 = System.currentTimeMillis();
-					Thread.currentThread().setName(ApplicationUtils.algoProcessStartCount+ " Algo Main ");
-
-					Final = aAlgo.algoStart(input1, it);
-					Thread.currentThread().setName(ApplicationUtils.algoProcessStartCount+ " UC Algo");
-					double[] aUc = aUcAlgo.ucAlgoDwt(input2);
-
-					for (int i = 0; i < aUc.length; i++) {
-						UC.add(aUc[i]);
-						UCLoc.add(2000 + SignalProcConstants.DIFFERENCE_SAMPLES*i + SignalProcConstants.QRS_SHIFT*SignalProcUtils.currentIteration+SignalProcUtils.dataLossCounter);
-					}
-					if (SignalProcUtils.MA_FLAG){
-					    it--;
-					    MA_shift += SignalProcUtils.MA_Shift;
-					    SignalProcUtils.dataLossCounter += SignalProcUtils.MA_Shift;
-
-						SignalProcUtils.lastQRSFetal = 0;
-						SignalProcUtils.lastRRMeanFetal = 0;
-
+            for (int i = 0; i<15000; i++)
+            {
+                for (int j = 0; j<4; j++)
+                {
+                    input1[i][j] = aInput[i+ SignalProcConstants.QRS_SHIFT*it+MA_shift][j];
+                    if (j == 0) {
+                        input2[i] = aInput[i+ SignalProcConstants.QRS_SHIFT*it+MA_shift][j];
                     }
-                    else {
-                        int[] Loc = (int[]) Final[0];
-                        int[] HRM = (int[]) Final[1];
-                        int[] HRF = (int[]) Final[2];
+                }
+            }
+
+            long T1 = System.currentTimeMillis();
+
+
+
+            Thread algoThread = new Thread(() -> {
+                Thread.currentThread().setName(ApplicationUtils.algoProcessStartCount+ " Algo Main");
+
+                try {
+                    output = aAlgo.algoStart(input1, it);
+
+                    algoFinished = true;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
+
+            algoThread.start();
+
+            Thread ucThread = new Thread(() -> {
+                Thread.currentThread().setName(ApplicationUtils.algoProcessStartCount+ " UC Algo");
+
+                try {
+                    double[] aUc = aUcAlgo.ucAlgoDwt(input2);
+
+                    for (int i = 0; i < aUc.length; i++) {
+                        UC.add(aUc[i]);
+                        UCLoc.add(2000 + SignalProcConstants.DIFFERENCE_SAMPLES*i + SignalProcConstants.QRS_SHIFT*SignalProcUtils.currentIteration+SignalProcUtils.dataLossCounter);
                     }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
+
+            ucThread.start();
+
+            while (!algoFinished) {
+                //Wait for the execution to be completed
+                try {
+                    Thread.sleep(10);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            if (SignalProcUtils.MA_FLAG){
+                it--;
+                MA_shift += SignalProcUtils.MA_Shift;
+                SignalProcUtils.dataLossCounter += SignalProcUtils.MA_Shift;
+
+                SignalProcUtils.lastQRSFetal = 0;
+                SignalProcUtils.lastRRMeanFetal = 0;
+
+            } else {
+                int[] Loc = (int[]) output[0];
+                int[] HRM = (int[]) output[1];
+                int[] HRF = (int[]) output[2];
+            }
 //					for (int z =0; z<20; z++){
 //						FHR_plot.add(HRF[z]);
 //						HRLocations.add(Loc[z]);
 //						MHR_plot.add(HRM[z]);
 //					}
-					long T2 = System.currentTimeMillis();
-					System.out.println("Time for Algo to complete:"+it +" iteration  : "+ (T2 - T1) + " ms");
+            long T2 = System.currentTimeMillis();
 
+            System.out.println("Time for Algo to complete:"+it +" iteration  : "+ (T2 - T1) + " ms");
 
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-				System.out.println("***Completed At : "+(new java.text.SimpleDateFormat("H:mm:ss:SSS")).format(java.util.Calendar.getInstance().getTime()));
+            System.out.println("***Completed At : "+(new java.text.SimpleDateFormat("H:mm:ss:SSS")).format(java.util.Calendar.getInstance().getTime()));
 
-				System.gc();
-				it++;
-		}
+            System.gc();
+
+            it++;
+
+            algoFinished = false;
+        }
 //
-		SignalProcUtils.qrsFetalLocation.remove(0);
-		SignalProcUtils.hrFetal.remove(0);
-		SignalProcUtils.qrsMaternalLocation.remove(0);
-		SignalProcUtils.hrMaternal.remove(0);
+        SignalProcUtils.qrsFetalLocation.remove(0);
+        SignalProcUtils.hrFetal.remove(0);
+        SignalProcUtils.qrsMaternalLocation.remove(0);
+        SignalProcUtils.hrMaternal.remove(0);
 
-		////////////Write to file //////////////////////
+        ////////////Write to file //////////////////////
 //		for (int i = 0; i<SignalProcUtils.qrsFetalLocation.size(); i++) {
 //			Filename.FHR_FQRS.append(SignalProcUtils.qrsFetalLocation.get(i));
 //			Filename.FHR_FQRS.append(",");
@@ -135,7 +170,7 @@ public class Run_Algorithm_test {
 //        write2file(Filename.FqrsSelectionType, Filename.aFilePathFqrsSelectionType);
 //        write2file(Filename.FHR, Filename.aFilePathFHR);
 //        write2file(Filename.ExecutionLogs, Filename.aFilePathExecutionLogs);
-		////////////Write to file //////////////////////
+        ////////////Write to file //////////////////////
 
 ////////////Write to file //////////////////////
 //	for (int i = 0; i<SignalProcUtils.qrsMaternalLocation.size(); i++) {
@@ -146,7 +181,7 @@ public class Run_Algorithm_test {
 //	}
 //
 //	write2file(Filename.QRSM_Selected, Filename.aFilePathMQRS);
-	////////////Write to file //////////////////////
+        ////////////Write to file //////////////////////
 
 ////////////Write to file //////////////////////
 //		for (int i = 0; i<UC.size(); i++) {
@@ -157,7 +192,7 @@ public class Run_Algorithm_test {
 //		}
 //
 //		write2file(Filename.UC, Filename.aFilePathUC);
-		////////////Write to file //////////////////////
+        ////////////Write to file //////////////////////
 
 
 
@@ -169,7 +204,7 @@ public class Run_Algorithm_test {
 
 
 
-	}
+    }
 
 //	private static void fileWrite1(String iFilePath, LinkedList<Float> iHR,
 //			LinkedList<Integer> iQRS) {
@@ -193,7 +228,7 @@ public class Run_Algorithm_test {
 //		}
 //
 //	}
-	
+
 //	public static void write2file(StringBuilder sb, String iFilename) {
 //		try {
 //			BufferedWriter br = new BufferedWriter(new FileWriter(iFilename));

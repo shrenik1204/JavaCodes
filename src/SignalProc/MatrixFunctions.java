@@ -3980,6 +3980,19 @@ public class MatrixFunctions {
 
 	}
 
+	// Added by Aravind Prasad 9th March 2018
+	// Continuous Data Quality Check function
+	// Checks for baseline noise in between the selected FQRS locations
+//	public Object[] CDQC_fetal(double[][] residue,Object[] QrsfSelected){
+//		for (int i = 0; i < 5000; i++) {
+//			for (int j = 0; j < 4; j++) {
+//
+//			}
+//		}
+//
+//    	return stdNoise;
+//	}
+
 
 	
 }// close class

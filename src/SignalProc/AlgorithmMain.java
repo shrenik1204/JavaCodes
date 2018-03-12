@@ -304,6 +304,10 @@ public class AlgorithmMain {
                     SignalProcUtils.lastQRSFetal, SignalProcUtils.lastRRMeanFetal, SignalProcUtils.noDetectionFlagFetal);
             aQRSF = (int[]) aQrsfSelected[0];
 
+            // Added by Aravind Prasad 9th March 2018
+//            Object[] aStdNoise = mMatrixFunctions.CDQC_fetal(aFetalSig,aQrsfSelected);
+
+
 
 //            Timber.i("AlgorithmMain : Time for FQRS detection : "+(System.currentTimeMillis()-aET)+" ms");
 //            FileLoggerHelper.getInstance().sendLogData(ApplicationUtils.getCurrentTime() + " : Algorithm Main : Time for fQRS : "+(System.currentTimeMillis()-aET)+" msec.", FileLoggerType.EXECUTION, FLApplication.mFileTimeStamp);
