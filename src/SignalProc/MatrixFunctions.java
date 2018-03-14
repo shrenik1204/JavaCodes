@@ -3,6 +3,7 @@ package SignalProc;
 
 import Wrapper.Filename;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 
@@ -3983,15 +3984,198 @@ public class MatrixFunctions {
 	// Added by Aravind Prasad 9th March 2018
 	// Continuous Data Quality Check function
 	// Checks for baseline noise in between the selected FQRS locations
-//	public Object[] CDQC_fetal(double[][] residue,Object[] QrsfSelected){
-//		for (int i = 0; i < 5000; i++) {
-//			for (int j = 0; j < 4; j++) {
-//
-//			}
-//		}
-//
-//    	return stdNoise;
-//	}
+	public double[] CDQC_fetal(double[][] residue,int[] QrsfSelected,int iter){
+		if(iter == 0){
+			double[][] aresidue1 = new double[5000][4];
+			double[][] aresidue2 = new double[5000][4];
+			double[][] aresidue3 = new double[5000][4];
+			ArrayList<Integer> QRSFinal1 = new ArrayList<>();
+			ArrayList<Integer> QRSFinal2 = new ArrayList<>();
+			ArrayList<Integer> QRSFinal3 = new ArrayList<>();
+
+			double[] stdnoise1;
+			double[] stdnoise2;
+			double[] stdnoise3;
+			double[] stdnoisemean = new double[4];
+			double[] stdNoisearr;
+			for (int j = 0; j < 5000; j++) {
+				for (int i = 0; i < 4; i++) {
+					aresidue1[j][i] = residue[j][i];
+				}
+			}
+			for (int j = 5000; j < 10000; j++) {
+				for (int i = 0; i < 4; i++) {
+					aresidue2[j - 5000][i] = residue[j][i];
+				}
+			}
+			for (int j = 10000; j < 15000; j++) {
+				for (int i = 0; i < 4; i++) {
+					aresidue3[j - 10000][i] = residue[j][i];
+				}
+			}
+			int aLength = QrsfSelected.length;
+			for (int i = 0; i < aLength; i++) {
+				if((QrsfSelected[i] >=0) && (QrsfSelected[i]<5000)){
+					QRSFinal1.add(QrsfSelected[i]);
+				}
+				if((QrsfSelected[i] >=5000) && (QrsfSelected[i]<10000)){
+					QRSFinal2.add(QrsfSelected[i]-5000);
+
+				}
+				if((QrsfSelected[i] >=10000) && (QrsfSelected[i]<15000)){
+					QRSFinal3.add(QrsfSelected[i]-10000);
+
+				}
+			}
+			stdnoise1 = stdNoise_fiveSec(aresidue1,QRSFinal1);
+			stdnoise2 = stdNoise_fiveSec(aresidue2,QRSFinal2);
+			stdnoise3 = stdNoise_fiveSec(aresidue3,QRSFinal3);
+			for (int j = 0; j < 4; j++) {
+				stdnoisemean[j] = (stdnoise1[j]+stdnoise2[j]+stdnoise3[j])/3;
+			}
+
+			return stdnoisemean;
+
+		}
+		else{
+			double[][] aresidue2 = new double[5000][4];
+			double[][] aresidue3 = new double[5000][4];
+			ArrayList<Integer> QRSFinal2 = new ArrayList<>();
+			ArrayList<Integer> QRSFinal3 = new ArrayList<>();
+
+			double[] stdnoise2;
+			double[] stdnoise3;
+			double[] stdnoisemean = new double[4];
+			double[] stdNoisearr;
+			for (int j = 5000; j < 10000; j++) {
+				for (int i = 0; i < 4; i++) {
+					aresidue2[j - 5000][i] = residue[j][i];
+				}
+			}
+			for (int j = 10000; j < 15000; j++) {
+				for (int i = 0; i < 4; i++) {
+					aresidue3[j - 10000][i] = residue[j][i];
+				}
+			}
+			int aLength = QrsfSelected.length;
+			for (int i = 0; i < aLength; i++) {
+
+				if((QrsfSelected[i] >=5000) && (QrsfSelected[i]<10000)){
+					QRSFinal2.add(QrsfSelected[i]-5000);
+
+				}
+				if((QrsfSelected[i] >=10000) && (QrsfSelected[i]<15000)){
+					QRSFinal3.add(QrsfSelected[i]-10000);
+
+				}
+			}
+			stdnoise2 = stdNoise_fiveSec(aresidue2,QRSFinal2);
+			stdnoise3 = stdNoise_fiveSec(aresidue3,QRSFinal3);
+			for (int j = 0; j < 4; j++) {
+				stdnoisemean[j] = (stdnoise2[j]+stdnoise3[j])/2;
+			}
+			return stdnoisemean;
+		}
+
+
+	}
+	public double[] stdNoise_fiveSec(double[][] ecg_Residue,ArrayList<Integer> QRSf){
+
+		ArrayList<Double> noiseChannel1 = new ArrayList<>();
+		ArrayList<Double> noiseChannel2 = new ArrayList<>();
+		ArrayList<Double> noiseChannel3 = new ArrayList<>();
+		ArrayList<Double> noiseChannel4 = new ArrayList<>();
+		Integer[] qrsf = QRSf.toArray(new Integer[QRSf.size()]);
+		int lengthFilter = ecg_Residue.length;
+		int minValue = qrsf.length;
+
+		Double[] channel1 = new Double[lengthFilter];
+		Double[] channel2 = new Double[lengthFilter];
+		Double[] channel3 = new Double[lengthFilter];
+		Double[] channel4 = new Double[lengthFilter];
+
+		for (int i = 0; i < lengthFilter; i++) {
+			channel1[i] = ecg_Residue[i][0];
+			channel2[i] = ecg_Residue[i][1];
+			channel3[i] = ecg_Residue[i][2];
+			channel4[i] = ecg_Residue[i][3];
+		}
+
+		if(qrsf.length == 0){
+			noiseChannel1 = new ArrayList<Double>(Arrays.asList(channel1));
+			noiseChannel2 = new ArrayList<Double>(Arrays.asList(channel2));
+			noiseChannel3 = new ArrayList<Double>(Arrays.asList(channel3));
+			noiseChannel4 = new ArrayList<Double>(Arrays.asList(channel4));
+		}
+		else {
+			for (int i = 0; i < minValue - 1; i++) {
+				for (int j = qrsf[i]+10; j < qrsf[i+1]-10; j++) {
+					noiseChannel1.add(channel1[j]);
+					noiseChannel2.add(channel2[j]);
+					noiseChannel3.add(channel3[j]);
+					noiseChannel4.add(channel4[j]);
+				}
+			}
+		}
+		double sumChannel1 = 0;
+		double sumChannel2 = 0;
+		double sumChannel3 = 0;
+		double sumChannel4 = 0;
+
+		double varChannel1 = 0;
+		double varChannel2 = 0;
+		double varChannel3 = 0;
+		double varChannel4 = 0;
+
+		//    CHANNEL 1
+		for(int i = 0; i < noiseChannel1.size(); i++){
+			sumChannel1 += noiseChannel1.get(i); // this is the calculation for summing up all the values
+		}
+		double meanChannel1 = sumChannel1 / noiseChannel1.size(); // finding mean of the channels
+
+		for (int i = 0; i < noiseChannel1.size(); i++) {
+			varChannel1 += Math.pow((noiseChannel1.get(i) - meanChannel1),2) / noiseChannel1.size(); // varience of the channels
+		}
+		double standardDeviationChannel1 = Math.sqrt(varChannel1);  // standard deviation calculation
+
+		//    CHANNEL 2
+		for(int i = 0; i < noiseChannel2.size(); i++){
+			sumChannel2 += noiseChannel2.get(i); // this is the calculation for summing up all the values
+		}
+		double meanChannel2 = sumChannel2 / noiseChannel2.size();
+
+		for (int i = 0; i < noiseChannel2.size(); i++) {
+			varChannel2 += Math.pow((noiseChannel2.get(i) - meanChannel2),2) / noiseChannel2.size();
+		}
+		double standardDeviationChannel2 = Math.sqrt(varChannel2);
+
+		//    CHANNEL 3
+		for(int i = 0; i < noiseChannel3.size(); i++){
+			sumChannel3 += noiseChannel3.get(i); // this is the calculation for summing up all the values
+		}
+		double meanChannel3 = sumChannel3 / noiseChannel3.size();
+
+		for (int i = 0; i < noiseChannel3.size(); i++) {
+			varChannel3 += Math.pow((noiseChannel3.get(i) - meanChannel3),2) / noiseChannel3.size();
+		}
+		double standardDeviationChannel3 = Math.sqrt(varChannel3);
+
+		//    CHANNEL 4
+		for(int i = 0; i < noiseChannel4.size(); i++){
+			sumChannel4 += noiseChannel4.get(i); // this is the calculation for summing up all the values
+		}
+		double meanChannel4 = sumChannel4 / noiseChannel4.size();
+
+		for (int i = 0; i < noiseChannel4.size(); i++) {
+			varChannel4 += Math.pow((noiseChannel4.get(i) - meanChannel4),2) / noiseChannel4.size();
+		}
+		double standardDeviationChannel4 = Math.sqrt(varChannel4);
+
+		//double stdmean = (standardDeviationChannel1+standardDeviationChannel2+standardDeviationChannel3+standardDeviationChannel4)/4;
+		double[] stdnosie = {standardDeviationChannel1,standardDeviationChannel2,standardDeviationChannel3,standardDeviationChannel4};
+
+		return stdnosie;
+	}
 
 
 	

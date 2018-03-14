@@ -23,6 +23,8 @@ public class Filename {
 	public static String aFilePathFQRS;
 	public static String aFilePathFHR_FQRS;
 
+	public static String aFilePathStddeviation;
+
 	public static String aFilePathUC;
 	
 	
@@ -56,6 +58,7 @@ public class Filename {
 	public static StringBuilder ICA2 = new StringBuilder();
 	public static StringBuilder CHF = new StringBuilder();
 	public static StringBuilder QRSF_Selected = new StringBuilder();
+	public static StringBuilder Stddeviation = new StringBuilder();
 	public static StringBuilder UC = new StringBuilder();
 	public static StringBuilder CHF_Ind = new StringBuilder();
 	public static StringBuilder RRMeanFetal = new StringBuilder();
@@ -81,6 +84,8 @@ public class Filename {
 		aFilePathFHR = afn.getPath() +File.separator+aInputFilePath+"-fhr"+".csv";
 		aFilePathFQRS = afn.getPath() +File.separator+ aInputFilePath+"-fqrs"+".csv";
 		aFilePathFHR_FQRS = afn.getPath() +File.separator+ aInputFilePath+"-fhr_fqrs"+".csv";
+
+		aFilePathStddeviation = afn.getPath() +File.separator+aInputFilePath+"-stddeviation"+".csv";
 
 		aFilePathUC = afn.getPath() +File.separator+ aInputFilePath+"-uc"+".csv";
 		

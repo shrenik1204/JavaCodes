@@ -15,7 +15,7 @@ public class Run_Algorithm {
 	public static void main(String[] args) {
 
 		DataTextFileReader aReadFile = new DataTextFileReader();
-		String aInputFilePath = ""+"/Users/kishoresubramanian/Sattva_Aravind/Tests_Aravind/sattva-03-07-22-23-50/algo-new1input-sattva-03-07-22-23-50.txt";
+		String aInputFilePath = ""+"/Users/kishoresubramanian/Sattva_Aravind/AUF_Pune_2018/Bharati Hospital /B37/sattva-02-20-10-08-40/algo-new1input-sattva-02-20-10-08-40.txt";
 
 		int aInputPathLength = aInputFilePath.length();
 		Filename nFilw = new Filename(aInputFilePath.substring(aInputPathLength-18, aInputPathLength-4));
@@ -146,8 +146,11 @@ public class Run_Algorithm {
 		Filename.QRSM_Selected.append("\n");
 	}
 
-	write2file(Filename.QRSM_Selected, Filename.aFilePathMQRS);
-	////////////Write to file //////////////////////
+		write2file(Filename.QRSM_Selected, Filename.aFilePathMQRS);
+	////////////Write to file /////////////////////
+
+		write2file(Filename.Stddeviation, Filename.aFilePathStddeviation);
+
 
 ////////////Write to file //////////////////////
 		for (int i = 0; i<UC.size(); i++) {
@@ -159,6 +162,7 @@ public class Run_Algorithm {
 
 		write2file(Filename.UC, Filename.aFilePathUC);
 		////////////Write to file //////////////////////
+
 
 
 

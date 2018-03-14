@@ -305,7 +305,11 @@ public class AlgorithmMain {
             aQRSF = (int[]) aQrsfSelected[0];
 
             // Added by Aravind Prasad 9th March 2018
-//            Object[] aStdNoise = mMatrixFunctions.CDQC_fetal(aFetalSig,aQrsfSelected);
+            double[] aStdNoise = mMatrixFunctions.CDQC_fetal(aFetalSig,aQRSF,iCurrentIteration);
+            for (int i = 0; i < aStdNoise.length; i++) {
+                Filename.Stddeviation.append(aStdNoise[i]+",");
+            }
+            Filename.Stddeviation.append('\n');
 
 
 
@@ -346,6 +350,7 @@ public class AlgorithmMain {
                         Filename.QRSF_Selected.append( (aQRSF[j] + SignalProcUtils.qrsCurrentShift)+",");
                 }
                 Filename.QRSF_Selected.append("\n");
+
 
                 HeartRateFetal aFHR = new HeartRateFetal();
                 aFHR.heartRate(aQRSF);
