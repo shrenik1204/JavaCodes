@@ -48,8 +48,8 @@ public class SignalProcConstants {
 	 * Length of the signal to analyse : 15sec.
 	 */
 	public static final int NO_OF_SAMPLES = 15000;
-	public static final int BUFFER_SIZE = 200 + NO_OF_SAMPLES;
-	public static final int MAX_DATA_LOSS = 200;
+	public static final int BUFFER_SIZE = 25 + NO_OF_SAMPLES;
+	public static final int MAX_DATA_LOSS = 25;
 	/**
 	 * Number of channels of data.
 	 */
@@ -737,8 +737,10 @@ public class SignalProcConstants {
 	/**
 	 * UC Window for integrator
 	 */
-	public static final int UC_WINDOW = 60;
+	// Change Aravind from 60 to 80
+	public static final int UC_WINDOW = 80;
 
+	public static final int UC_BATCH_DATA_SIZE = 120;
 
 	/**
 	 * MA CONSTANTS

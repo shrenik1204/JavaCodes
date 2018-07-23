@@ -793,96 +793,96 @@ public class MatrixFunctions {
      *     <li> If {@literal iZ.length + 1 != iA.length}</li>
      * </ul>
 	 */
-	public void filtfilt_Sos(double[] iInput, double[][] iSOS,  double[] iGain, double[][] iZ, int iOrder) throws Exception{
-		
-		int aLengthSos = iSOS.length;
-		if (aLengthSos > 0) {
+public void filtfilt_Sos(double[] iInput, double[][] iSOS,  double[] iGain, double[][] iZ, int iOrder) throws Exception{
 
-			int aCols = iSOS[0].length;
-			if (aCols == 6) {
+	int aLengthSos = iSOS.length;
+	if (aLengthSos > 0) {
 
-				int aLengthGain = iGain.length;
-				// Copy SOS co-efficients to local variable.
-				double[][] aSOS = new double[aLengthSos][aCols];
-				for (int i=0; i<aLengthSos; i++) {
-					for (int j =0; j<aCols; j++) {
-						aSOS[i][j] = iSOS[i][j];
+		int aCols = iSOS[0].length;
+		if (aCols == 6) {
+
+			int aLengthGain = iGain.length;
+			// Copy SOS co-efficients to local variable.
+			double[][] aSOS = new double[aLengthSos][aCols];
+			for (int i=0; i<aLengthSos; i++) {
+				for (int j =0; j<aCols; j++) {
+					aSOS[i][j] = iSOS[i][j];
+				}
+			}
+
+			// Multiply Gain to corresponding Section of SOS.
+			// The extra Gain to the last SOS section if present.
+			if ( aLengthGain > (aLengthSos+1)) {
+				throw new Exception("Invalid dimension gain values.");
+			}
+			else if (aLengthGain == (aLengthSos+1)) {
+				for (int i = 0; i<3; i++) {
+					aSOS[aLengthSos-1][i] = aSOS[aLengthSos-1][i] * iGain[aLengthSos];
+				}
+				aLengthGain--;
+			}
+
+			for (int j = 0; j<aLengthGain; j++) {
+				for (int i = 0; i<3; i++) {
+					aSOS[j][i] = iSOS[j][i] * iGain[j];
+				}
+			}
+
+			// Perform filtfilt for each SOS.
+			int aNfact = 3 * iOrder;
+			int aLengthInput = iInput.length;
+			int aLengthExtension = aLengthInput + 2*aNfact;
+			double[] aMirrorInput = new double[aLengthExtension];
+			double[] aA = new double[3];
+			double[] aB = new double[3];
+			double[] aZ = new double[2];
+			if (aLengthInput > 0 && aLengthExtension > 0) {
+				for (int i = 0; i<aLengthSos; i++) {
+					// extract each filter co-efficients
+					for (int j = 0; j<3; j++) {
+						aA[j] = aSOS[i][j+3];
+						aB[j] = aSOS[i][j];
+					}
+					long aTime = System.currentTimeMillis();
+					mirrorInput(iInput, aMirrorInput);
+					aTime = System.currentTimeMillis();
+					for (int j =0; j<2; j++) {
+						aZ[j] = iZ[j][i] * aMirrorInput[0];
+					}
+
+					aMirrorInput = filterN(aMirrorInput, aB, aA, aZ);
+
+					aTime = System.currentTimeMillis();
+					reverse(aMirrorInput);
+					aTime = System.currentTimeMillis();
+
+					for (int j =0; j<2; j++) {
+						aZ[j] = iZ[j][i] * aMirrorInput[0];
+					}
+
+					aMirrorInput = filterN(aMirrorInput, aB, aA, aZ);
+					aTime = System.currentTimeMillis();
+
+					reverse(aMirrorInput);
+					aTime = System.currentTimeMillis();
+
+					for (int j =0; j<aLengthInput; j++) {
+						iInput[j] = aMirrorInput[j+aNfact];
 					}
 				}
 
-				// Multiply Gain to corresponding Section of SOS.
-                // The extra Gain to the last SOS section if present.
-				if ( aLengthGain > (aLengthSos+1)) {
-					throw new Exception("Invalid dimension gain values.");
-				}
-				else if (aLengthGain == (aLengthSos+1)) {
-					for (int i = 0; i<3; i++) {
-						aSOS[aLengthSos-1][i] = aSOS[aLengthSos-1][i] * iGain[aLengthSos];
-					}
-					aLengthGain--;
-				}
-
-				for (int j = 0; j<aLengthGain; j++) {
-					for (int i = 0; i<3; i++) {
-						aSOS[j][i] = iSOS[j][i] * iGain[j];
-					}
-				}
-
-				// Perform filtfilt for each SOS.
-				int aNfact = 3 * iOrder;
-				int aLengthInput = iInput.length;
-				int aLengthExtension = aLengthInput + 2*aNfact;
-				double[] aMirrorInput = new double[aLengthExtension];
-				double[] aA = new double[3];
-				double[] aB = new double[3];
-				double[] aZ = new double[2];
-				if (aLengthInput > 0 && aLengthExtension > 0) {
-					for (int i = 0; i<aLengthSos; i++) {
-					    // extract each filter co-efficients
-						for (int j = 0; j<3; j++) {
-							aA[j] = aSOS[i][j+3];
-							aB[j] = aSOS[i][j];
-						}
-						long aTime = System.currentTimeMillis();
-						mirrorInput(iInput, aMirrorInput);
-                        aTime = System.currentTimeMillis();
-                        for (int j =0; j<2; j++) {
-							aZ[j] = iZ[j][i] * aMirrorInput[0];
-						}
-
-                        aMirrorInput = filterN(aMirrorInput, aB, aA, aZ);
-
-                        aTime = System.currentTimeMillis();
-                        reverse(aMirrorInput);
-                        aTime = System.currentTimeMillis();
-
-                        for (int j =0; j<2; j++) {
-							aZ[j] = iZ[j][i] * aMirrorInput[0];
-						}
-
-                        aMirrorInput = filterN(aMirrorInput, aB, aA, aZ);
-                        aTime = System.currentTimeMillis();
-
-						reverse(aMirrorInput);
-                        aTime = System.currentTimeMillis();
-
-						for (int j =0; j<aLengthInput; j++) {
-							iInput[j] = aMirrorInput[j+aNfact];
-						}
-					}
-					
-				}
-				else {
-					throw new Exception("Input has to be non-empty : filtfilt_Sos.");
-				}
 			}
 			else {
-				throw new Exception("Input SOS matrix is invalid : filtfilt_Sos.");
+				throw new Exception("Input has to be non-empty : filtfilt_Sos.");
 			}
-		} else {
-			throw new Exception("Input SOS matrix has to be non-empty : filtfilt_Sos.");
 		}
+		else {
+			throw new Exception("Input SOS matrix is invalid : filtfilt_Sos.");
+		}
+	} else {
+		throw new Exception("Input SOS matrix has to be non-empty : filtfilt_Sos.");
 	}
+}
 
     /**
      * <p> Forward and Backward filtering : Zero-phase filtering.</p>
@@ -1839,6 +1839,322 @@ public class MatrixFunctions {
 			
 				return new Object[] { qrs, startIndex,qrs1 };
 			}
+		} else {
+			throw new Exception("Threshold has to be positive : channelSelection");
+		}
+	}
+
+	public Object[] channelSelection_Mqrs(double[] iQRS1, double[] iQRS2, double[] iQRS3, double[] iQRS4, int iVarTh, int iRRlowTh,
+									 int iRRhighTh) throws Exception {
+		/**
+		 * Channel selection part
+		 */
+
+		int aLen1 = iQRS1.length;
+		int aLen2 = iQRS2.length;
+		int aLen3 = iQRS3.length;
+		int aLen4 = iQRS4.length;
+
+		if (iVarTh > 0 && iRRhighTh > 0 && iRRlowTh > 0) {
+			double aInd1 = 0;
+			double aInd2 = 0;
+			double aInd3 = 0;
+			double aInd4 = 0;
+			// to get the start index in each channel
+			int aStartInd1 = -1;
+			int aStartInd2 = -1;
+			int aStartInd3 = -1;
+			int aStartInd4 = -1;
+			// RR mean for each channel
+			double aRRmean1 = 0;
+			double aRRmean2 = 0;
+			double aRRmean3 = 0;
+			double aRRmean4 = 0;
+
+			if (aLen1 > 3) {
+				int aNIt = aLen1 - 3;
+				double aVar1[] = new double[aNIt];
+				double t1, t2, t3, aMean, aRRTemp, aVarMin;
+				aVarMin = 1000;
+				double counter = 0;
+				for (int i = 0; i < aNIt; i++) {
+					t1 = iQRS1[i + 1] - iQRS1[i];
+					t2 = iQRS1[i + 2] - iQRS1[i + 1];
+					t3 = iQRS1[i + 3] - iQRS1[i + 2];
+
+					aMean = (t1 + t2 + t3) / 3;
+
+					aVar1[i] = Math.sqrt(
+							((t1 - aMean) * (t1 - aMean) + (t2 - aMean) * (t2 - aMean) + (t3 - aMean) * (t3 - aMean))
+									/ 2);
+					if (aVar1[i] < iVarTh) {
+						aRRTemp = iQRS1[i + 1] - iQRS1[i];
+						if (aRRTemp > iRRlowTh && aRRTemp < iRRhighTh) {
+							aRRmean1 = aRRmean1 + aRRTemp;
+							counter = counter + 1;
+							if (aVar1[i] < aVarMin) {
+								aVarMin = aVar1[i];
+								aStartInd1 = i;
+							}
+						}
+					}
+				}
+				aRRmean1 = aRRmean1 / counter;
+				aInd1 = counter / aNIt;
+			}
+
+			if (aLen2 > 3) {
+				int aNIt = aLen2 - 3;
+				double aVar2[] = new double[aNIt];
+				double t1, t2, t3, aMean, aRRTemp, aVarMin;
+				double counter = 0;
+				aVarMin = 1000;
+				for (int i = 0; i < aNIt; i++) {
+					t1 = iQRS2[i + 1] - iQRS2[i];
+					t2 = iQRS2[i + 2] - iQRS2[i + 1];
+					t3 = iQRS2[i + 3] - iQRS2[i + 2];
+
+					aMean = (t1 + t2 + t3) / 3;
+
+					aVar2[i] = Math.sqrt(
+							((t1 - aMean) * (t1 - aMean) + (t2 - aMean) * (t2 - aMean) + (t3 - aMean) * (t3 - aMean))
+									/ 2);
+					if (aVar2[i] < iVarTh) {
+						aRRTemp = iQRS2[i + 1] - iQRS2[i];
+						if (aRRTemp > iRRlowTh && aRRTemp < iRRhighTh) {
+							aRRmean2 = aRRmean2 + aRRTemp;
+							counter = counter + 1;
+							if (aVar2[i] < aVarMin) {
+								aVarMin = aVar2[i];
+								aStartInd2 = i;
+							}
+						}
+					}
+				}
+				aRRmean2 = aRRmean2 / counter;
+
+				aInd2 = counter / aNIt;
+			}
+
+			if (aLen3 > 3) {
+				int aNIt = aLen3 - 3;
+				double aVar3[] = new double[aNIt];
+				double t1, t2, t3, aMean, aRRTemp, aVarMin;
+				double counter = 0;
+				aVarMin = 1000;
+				for (int i = 0; i < aNIt; i++) {
+					t1 = iQRS3[i + 1] - iQRS3[i];
+					t2 = iQRS3[i + 2] - iQRS3[i + 1];
+					t3 = iQRS3[i + 3] - iQRS3[i + 2];
+
+					aMean = (t1 + t2 + t3) / 3;
+
+					aVar3[i] = Math.sqrt(
+							((t1 - aMean) * (t1 - aMean) + (t2 - aMean) * (t2 - aMean) + (t3 - aMean) * (t3 - aMean))
+									/ 2);
+					if (aVar3[i] < iVarTh) {
+						aRRTemp = iQRS3[i + 1] - iQRS3[i];
+						if (aRRTemp > iRRlowTh && aRRTemp < iRRhighTh) {
+							aRRmean3 = aRRmean3 + 1;
+							counter = counter + 1;
+							if (aVar3[i] < aVarMin) {
+								aVarMin = aVar3[i];
+								aStartInd3 = i;
+							}
+						}
+					}
+				}
+				aRRmean3 = aRRmean3 / counter;
+				aInd3 = counter / aNIt;
+			}
+
+			if (aLen4 > 3) {
+				int aNIt = aLen4 - 3;
+				double aVar4[] = new double[aNIt];
+				double t1, t2, t3, aMean, aRRTemp, aVarMin;
+				double counter = 0;
+				aVarMin = 1000;
+				for (int i = 0; i < aNIt; i++) {
+					t1 = iQRS4[i + 1] - iQRS4[i];
+					t2 = iQRS4[i + 2] - iQRS4[i + 1];
+					t3 = iQRS4[i + 3] - iQRS4[i + 2];
+
+					aMean = (t1 + t2 + t3) / 3;
+
+					aVar4[i] = Math.sqrt(
+							((t1 - aMean) * (t1 - aMean) + (t2 - aMean) * (t2 - aMean) + (t3 - aMean) * (t3 - aMean))
+									/ 2);
+					if (aVar4[i] < iVarTh) {
+						aRRTemp = iQRS4[i + 1] - iQRS4[i];
+						if (aRRTemp > iRRlowTh && aRRTemp < iRRhighTh) {
+							aRRmean4 = aRRmean4 + 1;
+							counter = counter + 1;
+							if (aVar4[i] < aVarMin) {
+								aVarMin = aVar4[i];
+								aStartInd4 = i;
+							}
+						}
+					}
+				}
+				aRRmean4 = aRRmean4 / counter;
+				aInd4 = counter / aNIt;
+			}
+			// FInd the maximum value of 'ind'
+			// Have to add mean RR value also to this computation to get better
+			// estimate of 'ch'
+			Filename.CHF_Ind.append(SignalProcUtils.currentIteration+",");
+			Filename.CHF_Ind.append(aInd1+",");
+			Filename.CHF_Ind.append(aInd2+",");
+			Filename.CHF_Ind.append(aInd3+",");
+			Filename.CHF_Ind.append(aInd4+",");
+
+			Filename.CHF_Ind.append((aLen1-3)*aInd1+",");
+			Filename.CHF_Ind.append((aLen2-3)*aInd2+",");
+			Filename.CHF_Ind.append((aLen3-3)*aInd3+",");
+			Filename.CHF_Ind.append((aLen4-3)*aInd4+",");
+			Filename.CHF_Ind.append("\n ");
+//			if (aInd1 <= SignalProcConstants.CHANNEL_PERCENTAGE && aInd2 <= SignalProcConstants.CHANNEL_PERCENTAGE && aInd3 <= SignalProcConstants.CHANNEL_PERCENTAGE && aInd4 <= SignalProcConstants.CHANNEL_PERCENTAGE) {
+//				double qrs[] = new double[aLen1 + aLen2 + aLen3 + aLen4];
+//				for (int i = 0; i < aLen1; i++) {
+//					qrs[i] = iQRS1[i];
+//				}
+//				int shift = aLen1;
+//				for (int i = 0; i < aLen2; i++) {
+//					qrs[i + shift] = iQRS2[i];
+//				}
+//				shift = shift + aLen2;
+//				for (int i = 0; i < aLen3; i++) {
+//					qrs[i + shift] = iQRS3[i];
+//				}
+//				shift = shift + aLen3;
+//				for (int i = 0; i < aLen4; i++) {
+//					qrs[i + shift] = iQRS4[i];
+//				}
+//				Arrays.sort(qrs);
+//				return new Object[] { qrs,  -1, qrs };
+//			} else {
+				double ind = aInd1;
+				int length_Final = aLen1;
+				int ch = 1;
+				double RRmean = 0;
+				for (int i = 0; i < aLen1 - 1; i++) {
+					RRmean = RRmean + iQRS1[i + 1] - iQRS1[i];
+				}
+				RRmean = RRmean / (aLen1 - 1);
+				if (aInd2 == ind) {
+					double RRmean2 = 0;
+					for (int i = 0; i < aLen2 - 1; i++) {
+						RRmean2 = RRmean2 + iQRS2[i + 1] - iQRS2[i];
+					}
+					RRmean2 = RRmean2 / (aLen2 - 1);
+					if (RRmean < RRmean2) {
+						ind = aInd2;
+						ch = 2;
+						length_Final = aLen2;
+						RRmean = RRmean2;
+					}
+				} else if (aInd2 > ind) {
+					ind = aInd2;
+					ch = 2;
+					length_Final = aLen2;
+					double RRmean2 = 0;
+					for (int i = 0; i < aLen2 - 1; i++) {
+						RRmean2 = RRmean2 + iQRS2[i + 1] - iQRS2[i];
+					}
+					RRmean = RRmean2 / (aLen2 - 1);
+				}
+				if (aInd3 == ind) {
+					double RRmean3 = 0;
+					for (int i = 0; i < aLen3 - 1; i++) {
+						RRmean3 = RRmean3 + iQRS3[i + 1] - iQRS3[i];
+					}
+					RRmean3 = RRmean3 / (aLen3 - 1);
+					if (RRmean < RRmean3) {
+						ind = aInd3;
+						ch = 3;
+						length_Final = aLen3;
+						RRmean = RRmean3;
+					}
+				} else if (aInd3 > ind) {
+					ind = aInd3;
+					ch = 3;
+					length_Final = aLen3;
+					double RRmean3 = 0;
+					for (int i = 0; i < aLen3 - 1; i++) {
+						RRmean3 = RRmean3 + iQRS3[i + 1] - iQRS3[i];
+					}
+					RRmean = RRmean3 / (aLen3 - 1);
+				}
+				if (aInd4 > ind) {
+					double RRmean4 = 0;
+					for (int i = 0; i < aLen4 - 1; i++) {
+						RRmean4 = RRmean4 + iQRS4[i + 1] - iQRS4[i];
+					}
+					RRmean4 = RRmean4 / (aLen4 - 1);
+					if (RRmean < RRmean4) {
+						ind = aInd4;
+						ch = 4;
+						length_Final = aLen4;
+						RRmean = RRmean4;
+					}
+				} else if (aInd4 > ind) {
+					ind = aInd4;
+					ch = 4;
+					length_Final = aLen4;
+					double RRmean4 = 0;
+					for (int i = 0; i < aLen4 - 1; i++) {
+						RRmean4 = RRmean4 + iQRS4[i + 1] - iQRS4[i];
+					}
+					RRmean = RRmean4 / (aLen4 - 1);
+				}
+				/**
+				 * Get the start Index and qrs values to find the final QRS.
+				 */
+				double[] qrs = new double[length_Final];
+				int startIndex = -1;
+				if (ch == 1) {
+					startIndex = aStartInd1;
+					for (int i = 0; i < length_Final; i++) {
+						qrs[i] = iQRS1[i];
+					}
+				} else if (ch == 2) {
+					startIndex = aStartInd2;
+					for (int i = 0; i < length_Final; i++) {
+						qrs[i] = iQRS2[i];
+					}
+				} else if (ch == 3) {
+					startIndex = aStartInd3;
+					for (int i = 0; i < length_Final; i++) {
+						qrs[i] = iQRS3[i];
+					}
+				} else if (ch == 4) {
+					startIndex = aStartInd4;
+					for (int i = 0; i < length_Final; i++) {
+						qrs[i] = iQRS4[i];
+					}
+				}
+
+
+//				double qrs1[] = new double[aLen1 + aLen2 + aLen3 + aLen4];
+//				for (int i = 0; i < aLen1; i++) {
+//					qrs1[i] = iQRS1[i];
+//				}
+//				int shift = aLen1;
+//				for (int i = 0; i < aLen2; i++) {
+//					qrs1[i + shift] = iQRS2[i];
+//				}
+//				shift = shift + aLen2;
+//				for (int i = 0; i < aLen3; i++) {
+//					qrs1[i + shift] = iQRS3[i];
+//				}
+//				shift = shift + aLen3;
+//				for (int i = 0; i < aLen4; i++) {
+//					qrs1[i + shift] = iQRS4[i];
+//				}
+//				Arrays.sort(qrs1);
+
+				return new Object[] { qrs, startIndex,ch };
+//			}
 		} else {
 			throw new Exception("Threshold has to be positive : channelSelection");
 		}
@@ -2896,7 +3212,7 @@ public class MatrixFunctions {
 			y = a * 1.4142135623730951;
 		}
 
-		return (y*y);
+		return (Math.pow(y,2));
 
 	}
 

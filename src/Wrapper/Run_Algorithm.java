@@ -3,7 +3,7 @@ package Wrapper;
 import SignalProc.AlgorithmMain;
 import SignalProc.SignalProcConstants;
 import SignalProc.SignalProcUtils;
-import SignalProc.UcAlgo;
+import SignalProc.UcAlgo_new;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -15,12 +15,12 @@ public class Run_Algorithm {
 	public static void main(String[] args) {
 
 		DataTextFileReader aReadFile = new DataTextFileReader();
-		String aInputFilePath = ""+"/Users/kishoresubramanian/Sattva_Aravind/AUF_Pune_2018/Bharati Hospital /B37/sattva-02-20-10-08-40/algo-new1input-sattva-02-20-10-08-40.txt";
+		String aInputFilePath = ""+"/Users/kishoresubramanian/Desktop/Demo Tests/sattva-2018-Jul-05-16-45-27/algo-new1input-sattva-2018-Jul-05-16-45-27.txt";
 
 		int aInputPathLength = aInputFilePath.length();
 		Filename nFilw = new Filename(aInputFilePath.substring(aInputPathLength-18, aInputPathLength-4));
 
-		String aFilePath = ""+"/Users/kishoresubramanian/Desktop/Sattva work/FHR_Results/";
+		String aFilePath = ""+"/Users/kishoresubramanian/Desktop/Sattva work/Java Results Demo/";
 
 		String aFilePath_QRSM = aFilePath + "mhr-"+aInputFilePath.substring(aInputPathLength-18, aInputPathLength-4)+".txt";
 		String aFilePath_QRSF = aFilePath + "fhr-"+aInputFilePath.substring(aInputPathLength-18, aInputPathLength-4)+".txt";
@@ -47,12 +47,16 @@ public class Run_Algorithm {
 		LinkedList<Integer> FHR_plot = new LinkedList<>();
 		LinkedList<Integer> HRLocations = new LinkedList<>();
 		LinkedList<Integer> MHR_plot = new LinkedList<>();
-
         int MA_shift = 0;
 		int aNit = aInput.length/10000 - 1;
 		ArrayList<Double> UC = new ArrayList<>();
 		ArrayList<Integer> UCLoc = new ArrayList<>();
-		UcAlgo aUcAlgo = new UcAlgo();
+//		UcAlgo aUcAlgo = new UcAlgo();
+		// Change by Aravind
+		UcAlgo_new aUcAlgo = new UcAlgo_new();
+
+
+
 		int it = 0;
 		Filename.ExecutionLogs.append("Iteration, Start Location, MA , QRSM Detection , QRSF Selection Type, Last Fetal QRS, No of QRSF Selected, No of FHR computed, Last RR mean Fetal \n");
 		while (aInput.length - (SignalProcConstants.QRS_SHIFT*it+MA_shift) >= SignalProcConstants.NO_OF_SAMPLES)
@@ -65,7 +69,7 @@ public class Run_Algorithm {
 					for (int j = 0; j<4; j++)
 					{
 						input1[i][j] = aInput[i+ SignalProcConstants.QRS_SHIFT*it+MA_shift][j];
-						if (j == 0) {
+						if (j == 1) {
 							input2[i] = aInput[i+ SignalProcConstants.QRS_SHIFT*it+MA_shift][j];
 						}
 					}
@@ -77,7 +81,10 @@ public class Run_Algorithm {
 
 					Final = aAlgo.algoStart(input1, it);
 
-					double[] aUc = aUcAlgo.ucAlgoDwt(input2);
+//					double[] aUc = aUcAlgo.ucAlgoDwt(input2);
+					//Change by Aravind
+					double[] aUc = UcAlgo_new.ucAlgoDwt(input2);
+
 
 					for (int i = 0; i < aUc.length; i++) {
 						UC.add(aUc[i]);

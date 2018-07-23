@@ -53,6 +53,12 @@ public class UcAlgo
 		for (int i = 0; i < SignalProcConstants.NO_OF_SAMPLES; i++) {
 			aInput[i] = iInput[i];
 		}
+		double[] aUC_Energy = new double[SignalProcConstants.NO_OF_PRINT_VALUES];
+
+		for (int i = 0; i < SignalProcConstants.NO_OF_PRINT_VALUES; i++) {
+
+			aUC_Energy[i] = 1;
+		}
 		/**
 		 * Input is 15000 array
 		 */
@@ -78,7 +84,8 @@ public class UcAlgo
 			double[] aDecimatedInput = new double[aDecimatedLength];
 			
 			for (int i =0; i<aDecimatedLength; i++) {
-				aDecimatedInput[i] = aInput[i*aDecimateFactor];
+				//Change Aravind
+				aDecimatedInput[i] = Math.abs(aInput[i*aDecimateFactor]);
 			}
 			
 			//  StepSize and Shift
@@ -92,10 +99,9 @@ public class UcAlgo
 			double aMedianEnergy = 0;
 			int aFindMedian = 0;
 			int k = 0;
-			double[] aUC_Energy = new double[SignalProcConstants.NO_OF_PRINT_VALUES];
-			
-			int aScale = 8;
-			
+
+			double aScale = 0.05;
+
 			for (int i = 0; i< SignalProcConstants.NO_OF_PRINT_VALUES; i++ ) {
 				
 				for (int j = 0; j<aStepSize; j++) {
@@ -132,12 +138,13 @@ public class UcAlgo
 					for (int j = 1105; j<=1331; j++) {
 						aMedianEnergy = aMedianEnergy + aPsdSignalExtract[j];
 					}
-					aMedianEnergy = aMedianEnergy / (227) / aScale;	
+					aMedianEnergy = aMedianEnergy / (227) / aScale;
 				}
 				else {
 					aMedianEnergy = 0;
 				}
-				if (SignalProcUtils.ucCounter < 60) {
+				// Change Aravind
+				if (SignalProcUtils.ucCounter < SignalProcConstants.UC_WINDOW) {
 					SignalProcUtils.ucEnergyTemp.add(aMedianEnergy);
 					SignalProcUtils.ucCounter++;
 					double sum = 0;

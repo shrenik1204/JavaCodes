@@ -5,7 +5,7 @@ import java.io.File;
 public class Filename {
 
 	private static Filename filename;
-	static String aFilePath = ""+"/Users/kishoresubramanian/Desktop/Sattva work/FHR_Results/";
+	static String aFilePath = ""+"/Users/kishoresubramanian/Desktop/Sattva work/Java Results Demo/";
 	
 	static private String aInputFilePath = "";
 	

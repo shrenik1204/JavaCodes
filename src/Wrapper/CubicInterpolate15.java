@@ -248,7 +248,6 @@ public class CubicInterpolate15 {
             }
             cubicInterpolateDynamic(aDataPoints,aDataPointLoc, aMissedLoc, aMissedSamples.get(0), 0);
 
-
             // For channel 2
             aDataPoints = new double[aDataPointLoc.size()];
             for (int j = 0; j < aDataPointLoc.size(); j++) {
@@ -269,23 +268,8 @@ public class CubicInterpolate15 {
                 aDataPoints[j] = mDoubleArray[aDataPointLoc.get(j)][3];
             }
             cubicInterpolateDynamic(aDataPoints,aDataPointLoc, aMissedLoc, aMissedSamples.get(0), 3);
-
-
-
-
-
-
-
-
-
-
-
-
-
         }
         return mDoubleArray;
-
-
     }
 
     private void cubicInterpolateDynamic(double[] iDataPoints, ArrayList<Integer> iDataLocation,
@@ -394,6 +378,10 @@ public class CubicInterpolate15 {
     }
 
     private void feedInputArray(String iInputString, int iInputArrayCounter) {
+        if (iInputString.contains("HK0022C5FF8C")) {
+            int i = 0;
+        }
+
         try {
             for (int i = 0; i < SignalProcConstants.NO_OF_CHANNELS; i++) {
                 mDoubleArray[iInputArrayCounter][i] = stringToDouble(iInputString.substring(6 * i + 2, 6 * i + (2+6) ));

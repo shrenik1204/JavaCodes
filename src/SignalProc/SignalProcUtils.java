@@ -30,6 +30,8 @@ public class SignalProcUtils {
      */
     public static int interpolationCount;
 
+    public static int samplesToRemove = 0;
+
     /**
      * TO check 3 iterations of null data.
      */
@@ -53,6 +55,9 @@ public class SignalProcUtils {
      * Start location of the particular iteration
      */
     public static int qrsCurrentShift = 0;
+
+
+    public static int iter = 0;
 
 
 
@@ -200,8 +205,14 @@ public class SignalProcUtils {
      * UC Plot counter
      */
     public static int ucCounter = 0;
+    public static double ucScale = 0;
+    public static double ucAvgEnergy = 0;
 
     public static LinkedList<Double> ucEnergyTemp = new LinkedList<>();
+    public static Double[] aUC_Energy_iter = new Double[120];
+    public static Double[] aUC_Energy_iter_test = new Double[120];
+    public static ArrayList<Double> aUC_Energy_plot = new ArrayList<>();
+
 
     private static double[] mLeadOffSine;
     private static double[] mLeadOffCosine;
@@ -272,8 +283,11 @@ public class SignalProcUtils {
 
 
         ucCounter = 0;
+        ucScale = 0;
+        ucAvgEnergy = 0;
         ucPreviousEnergy = 0;
         ucEnergyTemp.clear();
+        aUC_Energy_plot.clear();
 
         lastSampleIndex = -1;
         currentSampleIndex = -1;
