@@ -78,14 +78,14 @@ public class SignalProcConstants {
 	/**
 	 * Maximum error detection
 	 */
-	
+
 	public static final int SAMPLE_LENGTH = 26;
 	public static final int ASCII_START = 34;
 	public static final int ASCII_END = 125;
 	public static final int ASCII_DIFF = ASCII_END - ASCII_START + 1;
 	public static final int MAX_MISS_DETECTION = ASCII_DIFF * ASCII_DIFF;
 	public static final int LEAD_OFF_ASCII_RANGE = 23;
-	
+
 	/*****************************************
 	 * SignalProcConstants for FQRS, MQRS length Threshold
 	 *****************************************/
@@ -236,7 +236,7 @@ public class SignalProcConstants {
 	 * 50Hz Notch filter co-efficients.
 	 */
 	public static final double[] FILTER_ZNOTCH_50 = {0.036346115834507468, 0.036346115834507468 + -1.7319479184152442E-14 };
-	
+
 	/**
 	 * 100Hz Notch filter co-efficients.
 	 */
@@ -252,7 +252,7 @@ public class SignalProcConstants {
 	 * 100Hz Notch filter co-efficients.
 	 */
 	public static final double[] FILTER_ZNOTCH_100 = {0.036346115834500828 , 0.036346115834500828 + -4.5172199314436057E-15};
-	
+
 	/**
 	 * 150Hz Notch filter co-efficients.
 	 */
@@ -267,7 +267,7 @@ public class SignalProcConstants {
 	 * 150Hz Notch filter co-efficients.
 	 */
 	public static final double[] FILTER_ZNOTCH_150 = {0.036346115834499253 , 0.036346115834499253 + -1.4849232954361469E-15};
-	
+
 	/**
 	 * 200Hz Notch filter co-efficients.
 	 */
@@ -283,7 +283,7 @@ public class SignalProcConstants {
 	 * 200Hz Notch filter co-efficients.
 	 */
 	public static final double[] FILTER_ZNOTCH_200 = {0.036346115834498711 , 0.036346115834498711 + -4.3715031594615539E-16};
-	
+
 	/**
 	 * 250Hz Notch filter co-efficients.
 	 */
@@ -298,7 +298,7 @@ public class SignalProcConstants {
 	 * 250Hz Notch filter co-efficients.
 	 */
 	public static final double[] FILTER_ZNOTCH_250 = {0.036346115834498482 , 0.036346115834498482};
-	
+
 	/**
 	 * 300Hz Notch filter co-efficients.
 	 */
@@ -324,7 +324,7 @@ public class SignalProcConstants {
 	/**
 	 * 31.25 Hz Notch co-efficients
 	 */
-	public static final double[] FILTER_ANOTCH_3125 = {1,                                        
+	public static final double[] FILTER_ANOTCH_3125 = {1,
 			-1.96000393774273651281703223503427579999 ,
 			 0.998402684975981502546460433222819119692};
 
@@ -463,8 +463,8 @@ public class SignalProcConstants {
      */
     public static final double[] FILTER_ZNOTCH_46875 = {0.798657512009228E-3,
             0.798657512009280E-3};
-    
-    
+
+
     /**********************************************
 	 * SignalProcConstants used in QRS DETECTION
 	 ***********************************************/
@@ -492,7 +492,7 @@ public class SignalProcConstants {
      * MQRS window for integrator.
      */
     public static final int MQRS_WINDOW = 50;
-    
+
     /**
 	 * Derivative filter.
 	 */
@@ -506,7 +506,7 @@ public class SignalProcConstants {
 	 * FQRS detection : Integrator window.
 	 */
 	public static final int FQRS_WINDOW = 25;
-	
+
 
 	// Fetal QRS detection values
 	/**
@@ -675,7 +675,7 @@ public class SignalProcConstants {
 	 * Find RR mean of last 5 qrs to determine number of samples to extend.
 	 */
 	public static final int CANCEL_NO_SAMPLES_END = 5;
-	
+
 
 	/**
 	 * Filter coefficients UC High - pass
@@ -684,7 +684,7 @@ public class SignalProcConstants {
 	/**
 	 * Filter coefficients UC High - pass
 	 */
-	public static final double[][] UC_HIGH_SOS = 
+	public static final double[][] UC_HIGH_SOS =
 			{{1,  -2,  1,  1,  -1.999406878148268340567028644727542996407,  0.999410430157413154361734086705837398767},
 			{1,  -2,  1,  1,  -1.998286410501096455050173972267657518387,  0.998289960519695429574937861616490408778},
 			{1,  -2,  1,  1,  -1.997334271812534867152066908602137118578,  0.997337820139629349647236722375964745879},
@@ -693,16 +693,16 @@ public class SignalProcConstants {
 	/**
 	 * Filter coefficients UC High - pass
 	 */
-	public static final double[] UC_HIGH_GAIN = 
-			{0.999704327076420318221039451600518077612,                                                         
-			0.999144092755197998911853574099950492382,                                                         
-			0.998668022988041026444250292115611955523,                                                         
-			0.998322422502723405557389924069866538048,                                                         
+	public static final double[] UC_HIGH_GAIN =
+			{0.999704327076420318221039451600518077612,
+			0.999144092755197998911853574099950492382,
+			0.998668022988041026444250292115611955523,
+			0.998322422502723405557389924069866538048,
 			0.99814082549104277131135631861980073154};
 	/**
 	 * Filter coefficients UC High - pass
 	 */
-	public static final double[][] UC_HIGH_Z = 
+	public static final double[][] UC_HIGH_Z =
 			{{-0.999704327051177,	-0.999144092731476,	-0.998668023003056,	-0.998322422514772,	-0.998140825531731},
 			{0.999704327051192,	0.999144092731517,	0.998668023003016,	0.998322422514731,	0.998140825531580}};
 	/**
@@ -712,7 +712,7 @@ public class SignalProcConstants {
 	/**
 	 * Filter coefficients UC Low - pass
 	 */
-	public static final double[][] UC_LOW_SOS = 
+	public static final double[][] UC_LOW_SOS =
 			{{1,  2,  1,  1,  -1.993765994842548350263200518384110182524,  0.994120245556551984655868636764353141189},
 			{1,  2,  1,  1,  -1.982678896530242873552651872159913182259,  0.983031177297671421300151450850535184145},
 			{1,  2,  1,  1,  -1.973344249781298964663278638909105211496,  0.973694871976315212691588385496288537979},
@@ -721,11 +721,11 @@ public class SignalProcConstants {
 	/**
 	 * Filter coefficients UC Low - pass
 	 */
-	public static final double[] UC_LOW_GAIN = 
-			{0.000088562678500918572827016461701532535 ,                                                       
-			0.000088070191857109438797295009049292958 ,                                                       
-			0.00008765554875401466810008049845848177  ,                                                       
-			0.000087356733385618410571947511922274998 ,                                                       
+	public static final double[] UC_LOW_GAIN =
+			{0.000088562678500918572827016461701532535 ,
+			0.000088070191857109438797295009049292958 ,
+			0.00008765554875401466810008049845848177  ,
+			0.000087356733385618410571947511922274998 ,
 			0.000087200452474582668756404590926223364};
 	/**
 	 * Filter coefficients UC Low - pass
