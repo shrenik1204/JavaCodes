@@ -8,19 +8,19 @@ package SignalProc;
 
 import Wrapper.Filename;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
 //import timber.log.Timber;
 
 public class AlgorithmMain {
 
-    /**
-     * Object initialization of  {@link MatrixFunctions}
-     */
-    MatrixFunctions mMatrixFunctions = new MatrixFunctions();
-
-    public Object[] algoStart(double[][] iInput, int iCurrentIteration) throws Exception {
-
+    public static Object[] algoStart(double[][] iInput, int iCurrentIteration) throws Exception {
+        if(SignalProcUtils.UArecheck_global){
+            SignalProcUtils.UArecheck = true;
+        }
+        MatrixFunctions mMatrixFunctions = new MatrixFunctions();
 
         long aST = System.currentTimeMillis();
         int[] aFinalQRSM;
@@ -196,35 +196,35 @@ public class AlgorithmMain {
 //                }
 
 
-                if ( SignalProcUtils.qrsmLocTemp.getFirst() > SignalProcConstants.QRS_START_VALUE) {
-                    aFinalQRSM = new int[aSizeMaternalHR+1];
-                    aFinalHRM = new float[aSizeMaternalHR+1];
+            if ( SignalProcUtils.qrsmLocTemp.getFirst() > SignalProcConstants.QRS_START_VALUE) {
+                aFinalQRSM = new int[aSizeMaternalHR+1];
+                aFinalHRM = new float[aSizeMaternalHR+1];
 
-                    aFinalHRM[0] = 0;
-                    aFinalQRSM[0] = SignalProcConstants.QRS_START_VALUE + SignalProcUtils.qrsCurrentShift;
-                    for (int i = 0; i < aSizeMaternalHR; i++) {
-                        aFinalHRM[i+1] = SignalProcUtils.hrmTemp.get(i);
-                        aFinalQRSM[i+1] = SignalProcUtils.qrsmLocTemp.get(i) + SignalProcUtils.qrsCurrentShift;
-                        if (SignalProcUtils.qrsmLocTemp.get(i) < SignalProcConstants.QRS_END_VALUE && SignalProcUtils.qrsmLocTemp.get(i) >= SignalProcConstants.QRS_START_VALUE ){
-                            SignalProcUtils.qrsMaternalLocation.add(SignalProcUtils.qrsmLocTemp.get(i) + SignalProcUtils.qrsCurrentShift);
-                            SignalProcUtils.hrMaternal.add(SignalProcUtils.hrmTemp.get(i));
-                        }
+                aFinalHRM[0] = 0;
+                aFinalQRSM[0] = SignalProcConstants.QRS_START_VALUE + SignalProcUtils.qrsCurrentShift;
+                for (int i = 0; i < aSizeMaternalHR; i++) {
+                    aFinalHRM[i+1] = SignalProcUtils.hrmTemp.get(i);
+                    aFinalQRSM[i+1] = SignalProcUtils.qrsmLocTemp.get(i) + SignalProcUtils.qrsCurrentShift;
+                    if (SignalProcUtils.qrsmLocTemp.get(i) < SignalProcConstants.QRS_END_VALUE && SignalProcUtils.qrsmLocTemp.get(i) >= SignalProcConstants.QRS_START_VALUE ){
+                        SignalProcUtils.qrsMaternalLocation.add(SignalProcUtils.qrsmLocTemp.get(i) + SignalProcUtils.qrsCurrentShift);
+                        SignalProcUtils.hrMaternal.add(SignalProcUtils.hrmTemp.get(i));
                     }
                 }
-                else {
-                    aFinalQRSM = new int[aSizeMaternalHR];
-                    aFinalHRM = new float[aSizeMaternalHR];
-                    for (int i = 0; i < aSizeMaternalHR; i++) {
-                        aFinalHRM[i] = SignalProcUtils.hrmTemp.get(i);
-                        aFinalQRSM[i] = SignalProcUtils.qrsmLocTemp.get(i) + SignalProcUtils.qrsCurrentShift;
-                        if (SignalProcUtils.qrsmLocTemp.get(i) < SignalProcConstants.QRS_END_VALUE && SignalProcUtils.qrsmLocTemp.get(i) >= SignalProcConstants.QRS_START_VALUE){
-                            SignalProcUtils.qrsMaternalLocation.add(SignalProcUtils.qrsmLocTemp.get(i) + SignalProcUtils.qrsCurrentShift);
-                            SignalProcUtils.hrMaternal.add(SignalProcUtils.hrmTemp.get(i));
-                        }
+            }
+            else {
+                aFinalQRSM = new int[aSizeMaternalHR];
+                aFinalHRM = new float[aSizeMaternalHR];
+                for (int i = 0; i < aSizeMaternalHR; i++) {
+                    aFinalHRM[i] = SignalProcUtils.hrmTemp.get(i);
+                    aFinalQRSM[i] = SignalProcUtils.qrsmLocTemp.get(i) + SignalProcUtils.qrsCurrentShift;
+                    if (SignalProcUtils.qrsmLocTemp.get(i) < SignalProcConstants.QRS_END_VALUE && SignalProcUtils.qrsmLocTemp.get(i) >= SignalProcConstants.QRS_START_VALUE){
+                        SignalProcUtils.qrsMaternalLocation.add(SignalProcUtils.qrsmLocTemp.get(i) + SignalProcUtils.qrsCurrentShift);
+                        SignalProcUtils.hrMaternal.add(SignalProcUtils.hrmTemp.get(i));
                     }
-
-
                 }
+
+
+            }
 //                for (int i = 0; i<SignalProcUtils.qrsmLocTemp.size() ; i++){
 //                    aFinalHRM[i+1] = SignalProcUtils.hrmTemp.get(i);
 //                    aFinalQRSM[i+1] = SignalProcUtils.qrsmLocTemp.get(i);
@@ -245,11 +245,11 @@ public class AlgorithmMain {
 //                }
 
 
-                SignalProcUtils.lastMaternalPlotIndex = SignalProcUtils.qrsMaternalLocation.size();
+            SignalProcUtils.lastMaternalPlotIndex = SignalProcUtils.qrsMaternalLocation.size();
 
-                aHRmPrint = mMatrixFunctions.convertHR2MilliSec(aFinalQrsmHrPlot, aFinalHRM, aFinalQRSM);
-                SignalProcUtils.lastQRSMIteration = iCurrentIteration;
-                SignalProcUtils.mhrComputed = true;
+            aHRmPrint = mMatrixFunctions.convertHR2MilliSec(aFinalQrsmHrPlot, aFinalHRM, aFinalQRSM);
+            SignalProcUtils.lastQRSMIteration = iCurrentIteration;
+            SignalProcUtils.mhrComputed = true;
 
 //            } else {
 //                SignalProcUtils.mhrComputed = false;
@@ -347,7 +347,7 @@ public class AlgorithmMain {
 //                }
                 Filename.QRSF_Selected.append("\n");
                 for (int j = 0; j < aQRSF.length; j++) {
-                        Filename.QRSF_Selected.append( (aQRSF[j] + SignalProcUtils.qrsCurrentShift)+",");
+                    Filename.QRSF_Selected.append( (aQRSF[j] + SignalProcUtils.qrsCurrentShift)+",");
                 }
                 Filename.QRSF_Selected.append("\n");
 
@@ -364,38 +364,40 @@ public class AlgorithmMain {
 //                FileLoggerHelper.getInstance().sendLogData(String.format(ApplicationUtils.getCurrentTime() + " : Length of FQRS selected, length of FHR detected : %d, %d", aQRSF.length, aSizeFetalHR), FileLoggerType.EXECUTION, FLApplication.mFileTimeStamp);
 
 //                if ( aSizeFetalHR > SignalProcConstants.FQRS_MIN_SIZE - 4) {
+                if(iCurrentIteration == 0){
+                    SignalProcUtils.qrsCurrentShift = 0;
+                }
+                if ( SignalProcUtils.qrsfLocTemp.getFirst() > SignalProcConstants.QRS_START_VALUE) {
+                    aFinalQRSF = new int[aSizeFetalHR+1];
+                    aFinalHRF = new float[aSizeFetalHR+1];
 
-                    if ( SignalProcUtils.qrsfLocTemp.getFirst() > SignalProcConstants.QRS_START_VALUE) {
-                        aFinalQRSF = new int[aSizeFetalHR+1];
-                        aFinalHRF = new float[aSizeFetalHR+1];
-
-                        aFinalHRF[0] = 0;
-                        aFinalQRSF[0] = SignalProcConstants.QRS_START_VALUE + SignalProcUtils.qrsCurrentShift;
-                        for (i = 0; i < aSizeFetalHR; i++) {
-                            aFinalHRF[i+1] = SignalProcUtils.hrfTemp.get(i);
-                            aFinalQRSF[i+1] = SignalProcUtils.qrsfLocTemp.get(i) + SignalProcUtils.qrsCurrentShift;
-                            if (SignalProcUtils.qrsfLocTemp.get(i) < SignalProcConstants.QRS_END_VALUE && SignalProcUtils.qrsfLocTemp.get(i) >= SignalProcConstants.QRS_START_VALUE){
-                                SignalProcUtils.qrsFetalLocation.add(SignalProcUtils.qrsfLocTemp.get(i) + SignalProcUtils.qrsCurrentShift);
-                                SignalProcUtils.hrFetal.add(SignalProcUtils.hrfTemp.get(i));
-                                SignalProcUtils.lastQRSFetal = SignalProcUtils.qrsfLocTemp.get(i) - SignalProcConstants.QRS_SHIFT;
-                            }
+                    aFinalHRF[0] = 0;
+                    aFinalQRSF[0] = SignalProcConstants.QRS_START_VALUE + SignalProcUtils.qrsCurrentShift;
+                    for (i = 0; i < aSizeFetalHR; i++) {
+                        aFinalHRF[i+1] = SignalProcUtils.hrfTemp.get(i);
+                        aFinalQRSF[i+1] = SignalProcUtils.qrsfLocTemp.get(i) + SignalProcUtils.qrsCurrentShift;
+                        if (SignalProcUtils.qrsfLocTemp.get(i) < SignalProcConstants.QRS_END_VALUE && SignalProcUtils.qrsfLocTemp.get(i) >= SignalProcConstants.QRS_START_VALUE){
+                            SignalProcUtils.qrsFetalLocation.add(SignalProcUtils.qrsfLocTemp.get(i) + SignalProcUtils.qrsCurrentShift);
+                            SignalProcUtils.hrFetal.add(SignalProcUtils.hrfTemp.get(i));
+                            SignalProcUtils.lastQRSFetal = SignalProcUtils.qrsfLocTemp.get(i) - SignalProcConstants.QRS_SHIFT;
                         }
                     }
-                    else {
-                        aFinalQRSF = new int[aSizeFetalHR];
-                        aFinalHRF = new float[aSizeFetalHR];
-                        for (i = 0; i < aSizeFetalHR; i++) {
-                            aFinalHRF[i] = SignalProcUtils.hrfTemp.get(i);
-                            aFinalQRSF[i] = SignalProcUtils.qrsfLocTemp.get(i) + SignalProcUtils.qrsCurrentShift;
-                            if (SignalProcUtils.qrsfLocTemp.get(i) < SignalProcConstants.QRS_END_VALUE && SignalProcUtils.qrsfLocTemp.get(i) >= SignalProcConstants.QRS_START_VALUE){
-                                SignalProcUtils.qrsFetalLocation.add(SignalProcUtils.qrsfLocTemp.get(i) + SignalProcUtils.qrsCurrentShift);
-                                SignalProcUtils.hrFetal.add(SignalProcUtils.hrfTemp.get(i));
-                                SignalProcUtils.lastQRSFetal = SignalProcUtils.qrsfLocTemp.get(i) - SignalProcConstants.QRS_SHIFT;
-                            }
+                }
+                else {
+                    aFinalQRSF = new int[aSizeFetalHR];
+                    aFinalHRF = new float[aSizeFetalHR];
+                    for (i = 0; i < aSizeFetalHR; i++) {
+                        aFinalHRF[i] = SignalProcUtils.hrfTemp.get(i);
+                        aFinalQRSF[i] = SignalProcUtils.qrsfLocTemp.get(i) + SignalProcUtils.qrsCurrentShift;
+                        if (SignalProcUtils.qrsfLocTemp.get(i) < SignalProcConstants.QRS_END_VALUE && SignalProcUtils.qrsfLocTemp.get(i) >= SignalProcConstants.QRS_START_VALUE){
+                            SignalProcUtils.qrsFetalLocation.add(SignalProcUtils.qrsfLocTemp.get(i) + SignalProcUtils.qrsCurrentShift);
+                            SignalProcUtils.hrFetal.add(SignalProcUtils.hrfTemp.get(i));
+                            SignalProcUtils.lastQRSFetal = SignalProcUtils.qrsfLocTemp.get(i) - SignalProcConstants.QRS_SHIFT;
                         }
-
-
                     }
+
+
+                }
 
 //                    for (i = 0; i<SignalProcUtils.qrsfLocTemp.size() ; i++){
 //                        aFinalHRF[i+1] = SignalProcUtils.hrfTemp.get(i);
@@ -417,10 +419,10 @@ public class AlgorithmMain {
 //                    }
 
 
-                    SignalProcUtils.lastFetalPlotIndex = SignalProcUtils.qrsFetalLocation.size();
+                SignalProcUtils.lastFetalPlotIndex = SignalProcUtils.qrsFetalLocation.size();
 
-                    aHRfPrint = mMatrixFunctions.convertHR2MilliSec(aFinalQrsfHrPlot, aFinalHRF, aFinalQRSF);
-                    SignalProcUtils.lastQRSFIteration = iCurrentIteration;
+                aHRfPrint = mMatrixFunctions.convertHR2MilliSec(aFinalQrsfHrPlot, aFinalHRF, aFinalQRSF);
+                SignalProcUtils.lastQRSFIteration = iCurrentIteration;
 //                }
 //                else {
 //
@@ -443,26 +445,38 @@ public class AlgorithmMain {
         }
         String aHrPrint = "";
 
+        List<Integer> aLocation = new ArrayList<>(SignalProcConstants.NO_OF_PRINT_VALUES);
+        List<Integer> aLocation_batch = new ArrayList<>();
+        for (int i = 0; i < SignalProcConstants.NO_OF_PRINT_VALUES; i++) {
+            aLocation.add(1);
+        }
+
+
         for (int i = 0; i < SignalProcConstants.NO_OF_PRINT_VALUES; i++) {
             aHrPrint = aHrPrint + aHRfPrint[i];
             aHrPrint = aHrPrint + aHRmPrint[i];
         }
 
-        int[] aLocation = new int[SignalProcConstants.NO_OF_PRINT_VALUES];
+//        int[] aLocation = new int[SignalProcConstants.NO_OF_PRINT_VALUES];
 
         for (int i = 0; i < SignalProcConstants.NO_OF_PRINT_VALUES; i++) {
-            aLocation[i] = 2000 + SignalProcConstants.DIFFERENCE_SAMPLES * i + SignalProcConstants.QRS_SHIFT * SignalProcUtils.currentIteration + SignalProcUtils.dataLossCounter;
-            Filename.FHR.append(aLocation[i]+",");
+            if(SignalProcUtils.currentIteration == 0){
+                SignalProcUtils.dataLossCounter = 0;
+            }
+            aLocation.set(i, 2000 + SignalProcConstants.DIFFERENCE_SAMPLES * i + SignalProcConstants.QRS_SHIFT * SignalProcUtils.currentIteration + SignalProcUtils.dataLossCounter);
+            SignalProcUtils.aLocation_UA_Batch.add(aLocation.get(i));
+
+            Filename.FHR.append(aLocation.get(i)+",");
             Filename.FHR.append(aFinalQrsfHrPlot[i]+"\n");
 
         }
-
+        aLocation_batch.addAll(SignalProcUtils.aLocation_UA_Batch);
         System.out.println("AlgorithmMain : Time for Algorithm : " + (System.currentTimeMillis() - aST) + " ms");
 //        Timber.i("AlgorithmMain : Time for Algorithm : "+(System.currentTimeMillis()-aST)+" ms");
         Filename.ExecutionLogs.append(SignalProcUtils.lastRRMeanFetal+"\n");
 
         Filename.RRMeanFetal.append(SignalProcUtils.lastRRMeanFetal+",\n");
-        return new Object[]{aLocation, aFinalQrsmHrPlot, aFinalQrsfHrPlot};
+        return new Object[]{aLocation_batch, aFinalQrsmHrPlot, aFinalQrsfHrPlot};
     }
 
 }

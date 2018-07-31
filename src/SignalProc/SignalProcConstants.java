@@ -680,11 +680,11 @@ public class SignalProcConstants {
 	/**
 	 * Filter coefficients UC High - pass
 	 */
-	public static final int UC_HIGH_ORDER = 10;
+	public static final int UA_HIGH_ORDER = 10;
 	/**
 	 * Filter coefficients UC High - pass
 	 */
-	public static final double[][] UC_HIGH_SOS =
+	public static final double[][] UA_HIGH_SOS =
 			{{1,  -2,  1,  1,  -1.999406878148268340567028644727542996407,  0.999410430157413154361734086705837398767},
 			{1,  -2,  1,  1,  -1.998286410501096455050173972267657518387,  0.998289960519695429574937861616490408778},
 			{1,  -2,  1,  1,  -1.997334271812534867152066908602137118578,  0.997337820139629349647236722375964745879},
@@ -693,7 +693,7 @@ public class SignalProcConstants {
 	/**
 	 * Filter coefficients UC High - pass
 	 */
-	public static final double[] UC_HIGH_GAIN =
+	public static final double[] UA_HIGH_GAIN =
 			{0.999704327076420318221039451600518077612,
 			0.999144092755197998911853574099950492382,
 			0.998668022988041026444250292115611955523,
@@ -702,17 +702,17 @@ public class SignalProcConstants {
 	/**
 	 * Filter coefficients UC High - pass
 	 */
-	public static final double[][] UC_HIGH_Z =
+	public static final double[][] UA_HIGH_Z =
 			{{-0.999704327051177,	-0.999144092731476,	-0.998668023003056,	-0.998322422514772,	-0.998140825531731},
 			{0.999704327051192,	0.999144092731517,	0.998668023003016,	0.998322422514731,	0.998140825531580}};
 	/**
 	 * Filter coefficients UC Low - pass
 	 */
-	public static final int UC_LOW_ORDER = 10;
+	public static final int UA_LOW_ORDER = 10;
 	/**
 	 * Filter coefficients UC Low - pass
 	 */
-	public static final double[][] UC_LOW_SOS =
+	public static final double[][] UA_LOW_SOS =
 			{{1,  2,  1,  1,  -1.993765994842548350263200518384110182524,  0.994120245556551984655868636764353141189},
 			{1,  2,  1,  1,  -1.982678896530242873552651872159913182259,  0.983031177297671421300151450850535184145},
 			{1,  2,  1,  1,  -1.973344249781298964663278638909105211496,  0.973694871976315212691588385496288537979},
@@ -721,7 +721,7 @@ public class SignalProcConstants {
 	/**
 	 * Filter coefficients UC Low - pass
 	 */
-	public static final double[] UC_LOW_GAIN =
+	public static final double[] UA_LOW_GAIN =
 			{0.000088562678500918572827016461701532535 ,
 			0.000088070191857109438797295009049292958 ,
 			0.00008765554875401466810008049845848177  ,
@@ -730,7 +730,7 @@ public class SignalProcConstants {
 	/**
 	 * Filter coefficients UC Low - pass
 	 */
-	public static final double[][] UC_LOW_Z =
+	public static final double[][] UA_LOW_Z =
 			{{0.999911437321527,	0.999911929807679,	0.999912344450694,	0.999912643266594,	0.999912799547704},
 			{-0.994031682878078,	-0.982943107105358,	-0.973607216427024,	-0.966879243403252,	-0.963360502853709}};
 
@@ -738,9 +738,9 @@ public class SignalProcConstants {
 	 * UC Window for integrator
 	 */
 	// Change Aravind from 60 to 80
-	public static final int UC_WINDOW = 80;
+	public static final int UA_WINDOW = 80;
 
-	public static final int UC_BATCH_DATA_SIZE = 120;
+	public static final int UA_BATCH_DATA_SIZE = 120;
 
 	/**
 	 * MA CONSTANTS

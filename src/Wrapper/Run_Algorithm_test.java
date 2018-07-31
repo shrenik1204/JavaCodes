@@ -3,10 +3,11 @@ package Wrapper;
 import SignalProc.AlgorithmMain;
 import SignalProc.SignalProcConstants;
 import SignalProc.SignalProcUtils;
-import SignalProc.UcAlgo;
+import SignalProc.UterineActivity;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
 public class Run_Algorithm_test {
 
@@ -55,7 +56,7 @@ public class Run_Algorithm_test {
         int aNit = aInput.length/10000 - 1;
         ArrayList<Double> UC = new ArrayList<>();
         ArrayList<Integer> UCLoc = new ArrayList<>();
-        UcAlgo aUcAlgo = new UcAlgo();
+//        UcAlgo aUcAlgo = new UcAlgo();
 
 //		Filename.ExecutionLogs.append("Iteration, Start Location, MA , QRSM Detection , QRSF Selection Type, Last Fetal QRS, No of QRSF Selected, No of FHR computed, Last RR mean Fetal \n");
         while (aInput.length - (SignalProcConstants.QRS_SHIFT*it+MA_shift) >= SignalProcConstants.NO_OF_SAMPLES)
@@ -82,7 +83,7 @@ public class Run_Algorithm_test {
                 Thread.currentThread().setName(ApplicationUtils.algoProcessStartCount+ " Algo Main");
 
                 try {
-                    output = aAlgo.algoStart(input1, it);
+                    output = AlgorithmMain.algoStart(input1, it);
 
                     algoFinished = true;
                 } catch (Exception e) {
@@ -96,10 +97,10 @@ public class Run_Algorithm_test {
                 Thread.currentThread().setName(ApplicationUtils.algoProcessStartCount+ " UC Algo");
 
                 try {
-                    double[] aUc = aUcAlgo.ucAlgoDwt(input2);
+                    List<Double> aUc = UterineActivity.uaAlgoDwt(input2);
 
-                    for (int i = 0; i < aUc.length; i++) {
-                        UC.add(aUc[i]);
+                    for (int i = 0; i < aUc.size(); i++) {
+                        UC.add(aUc.get(i));
                         UCLoc.add(2000 + SignalProcConstants.DIFFERENCE_SAMPLES*i + SignalProcConstants.QRS_SHIFT*SignalProcUtils.currentIteration+SignalProcUtils.dataLossCounter);
                     }
                 } catch (Exception e) {

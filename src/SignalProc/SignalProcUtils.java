@@ -200,18 +200,28 @@ public class SignalProcUtils {
     /**
      * UC Previous Energy - remove
      */
-    public static double ucPreviousEnergy = 0;
+    public static double uaPreviousEnergy = 0;
     /**
      * UC Plot counter
      */
-    public static int ucCounter = 0;
-    public static double ucScale = 0;
-    public static double ucAvgEnergy = 0;
+    public static int uaCounter = 0;
+    public static double uaScale = 0;
+    public static double uaAvgEnergy = 0;
+    public static boolean UArecheck = false;
+    public static boolean UArecheck_global = false;
 
-    public static LinkedList<Double> ucEnergyTemp = new LinkedList<>();
-    public static Double[] aUC_Energy_iter = new Double[120];
-    public static Double[] aUC_Energy_iter_test = new Double[120];
-    public static ArrayList<Double> aUC_Energy_plot = new ArrayList<>();
+
+    public static LinkedList<Double> uaEnergyTemp = new LinkedList<>();
+//    public static Double[] aUC_Energy_iter = new Double[120];
+//    public static Double[] aUC_Energy_iter_test = new Double[120];
+    public static ArrayList<Double> aUA_Energy_plot = new ArrayList<>();
+    public static List<Double> aUA_Energy_iter = new ArrayList<>();
+    public static List<Double> aUA_Energy_iter_test = new ArrayList<>();
+    public static List<Integer> aLocation_UA_Batch = new ArrayList<>();
+
+    public static ArrayList<Double> UA = new ArrayList<>();
+    public static ArrayList<Integer> UALoc = new ArrayList<>();
+
 
 
     private static double[] mLeadOffSine;
@@ -282,12 +292,20 @@ public class SignalProcUtils {
         interpolatedLengthFetal = 0;
 
 
-        ucCounter = 0;
-        ucScale = 0;
-        ucAvgEnergy = 0;
-        ucPreviousEnergy = 0;
-        ucEnergyTemp.clear();
-        aUC_Energy_plot.clear();
+        uaCounter = 0;
+        uaScale = 0;
+        uaAvgEnergy = 0;
+        uaPreviousEnergy = 0;
+        uaEnergyTemp.clear();
+        aUA_Energy_plot.clear();
+        aLocation_UA_Batch.clear();
+        aUA_Energy_iter.clear();// = new double[SignalProcConstants.UA_BATCH_DATA_SIZE];
+        aUA_Energy_iter_test.clear();// = new double[SignalProcConstants.UA_BATCH_DATA_SIZE];
+        UArecheck = false;
+        UArecheck_global = false;
+        UA.clear();
+        UALoc.clear();
+
 
         lastSampleIndex = -1;
         currentSampleIndex = -1;

@@ -2330,7 +2330,7 @@ public void filtfilt_Sos(double[] iInput, double[][] iSOS,  double[] iGain, doub
 	} // end Function to convert to milliSec and Hex values.
 
 	
-	public double[] fastfouriertransform_UC(double[] X ) throws Exception {
+	public double[] fastfouriertransform_UA(double[] X ) throws Exception {
 
 		if (X.length == 50) {
 		int i;
