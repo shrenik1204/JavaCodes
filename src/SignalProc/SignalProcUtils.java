@@ -11,6 +11,10 @@ public class SignalProcUtils {
     public static double[] mDoubleArrayUC = new double[SignalProcConstants.BUFFER_SIZE];
     public static int HANDLE_DATA_SIZE = 15000;
 
+    public static int locationIteration = 0;
+
+    public static int offsetCount = 0;
+
     /**
      * Motion Artifact end location
      */
@@ -28,7 +32,7 @@ public class SignalProcUtils {
     /**
      * Interpolate Counter - remove
      */
-    public static int interpolationCount;
+    public static int interpolationCount = 0;
 
     public static int samplesToRemove = 0;
 
@@ -58,6 +62,10 @@ public class SignalProcUtils {
 
 
     public static int iter = 0;
+
+    public static int concatCount = 0;
+
+    public static int independentCount = 0;
 
 
 
@@ -140,6 +148,14 @@ public class SignalProcUtils {
      * RR mean using the last 4 fetal QRS peaks detected in previous iteration.
      */
     public static double lastRRMeanFetal = 0;
+    /**
+     * RR mean of last Independent or confirm flag iteration.
+     */
+    public static double lastvalidRRMeanFetal = 0;
+    /**
+     *  Flag for independent or confirm flag detection
+     */
+    public static boolean independantdet_flag = false;
     /**
      * Last fetal QRS location detected in previous iteration.
      */
@@ -235,8 +251,8 @@ public class SignalProcUtils {
     public static LinkedList<Double> ma_amplitude3 = new LinkedList<>();
     public static LinkedList<Double> ma_amplitude4 = new LinkedList<>();
 
-    public static double[][] ma_amplitudeFlag = new double[9][5];
-    public static double[][] ma_psdFlag = new double[9][5];
+    public static double[][] ma_amplitudeFlag = new double[12][5];
+    public static double[][] ma_psdFlag = new double[12][5];
     public static double[] ma_overlap = new double[10];
 
 
@@ -279,6 +295,9 @@ public class SignalProcUtils {
         lastFetalPlotIndex = 1;
         lastMaternalPlotIndex = 1;
 
+        MA_Shift = 0;
+        MA_FLAG = false;
+
         lastIteration = -1;
 
         lastQRSMIteration = -1;
@@ -288,9 +307,14 @@ public class SignalProcUtils {
         lastQRSFIteration = -1;
         noDetectionFlagFetal = 0;
         lastRRMeanFetal = 0;
+        lastvalidRRMeanFetal = 0;
+        independantdet_flag = false;
+
         lastQRSFetal = 0;
         interpolatedLengthFetal = 0;
+        interpolationCount = 0;
 
+        dataLossCounter = 0;
 
         uaCounter = 0;
         uaScale = 0;
@@ -305,7 +329,9 @@ public class SignalProcUtils {
         UArecheck_global = false;
         UA.clear();
         UALoc.clear();
-
+        iter = 0;
+        concatCount = 0;
+        independentCount = 0;
 
         lastSampleIndex = -1;
         currentSampleIndex = -1;

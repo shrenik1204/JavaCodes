@@ -46,8 +46,8 @@ public class FilterLowHiNotch {
      */
     public double[][] filterParallel(double[][] iInput) throws Exception {
         int aLength = iInput.length;
-        SignalProcUtils.ma_amplitudeFlag = new double[9][5];
-        SignalProcUtils.ma_psdFlag = new double[9][5];
+        SignalProcUtils.ma_amplitudeFlag = new double[12][5];
+        SignalProcUtils.ma_psdFlag = new double[12][5];
 
         if (iInput.length > 0) {
             if (iInput[0].length == SignalProcConstants.NO_OF_CHANNELS) {

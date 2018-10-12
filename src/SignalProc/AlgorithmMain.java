@@ -56,6 +56,8 @@ public class AlgorithmMain {
 
         SignalProcUtils.currentIteration = iCurrentIteration;
         Filename.ExecutionLogs.append(iCurrentIteration+",");
+        Filename.MAlogs.append(iCurrentIteration+",");
+        Filename.PSDlogs.append(iCurrentIteration+",");
         SignalProcUtils.qrsCurrentShift = SignalProcConstants.QRS_SHIFT * SignalProcUtils.currentIteration + SignalProcUtils.dataLossCounter;
         Filename.ExecutionLogs.append(SignalProcUtils.qrsCurrentShift+",");
 
@@ -64,6 +66,10 @@ public class AlgorithmMain {
             SignalProcUtils.hrFetal.add(0f);
             SignalProcUtils.qrsMaternalLocation.add(0);
             SignalProcUtils.hrMaternal.add(0f);
+        }
+
+        if(SignalProcUtils.currentIteration == 17){
+            SignalProcUtils.currentIteration = 17;
         }
 
         LinkedList<Integer> aQrsF = new LinkedList<Integer>();
@@ -124,7 +130,7 @@ public class AlgorithmMain {
             Filename.CHF_Ind.append(SignalProcUtils.currentIteration+", , , , , , , , , ,\n ");
             Filename.RRMeanFetal.append(",\n");
             Filename.FqrsSelectionType.append(" MA \n");
-            Filename.ExecutionLogs.append(SignalProcUtils.MA_Shift+",,,,,\n");
+            Filename.ExecutionLogs.append(SignalProcUtils.MA_Shift+",,,,,,,,\n");
             return null;
         }
         else {
@@ -463,18 +469,39 @@ public class AlgorithmMain {
             if(SignalProcUtils.currentIteration == 0){
                 SignalProcUtils.dataLossCounter = 0;
             }
-            aLocation.set(i, 2000 + SignalProcConstants.DIFFERENCE_SAMPLES * i + SignalProcConstants.QRS_SHIFT * SignalProcUtils.currentIteration + SignalProcUtils.dataLossCounter);
+//            if(SignalProcUtils.currentIteration == 1 && SignalProcUtils.independentCount == 2) {
+//                SignalProcUtils.offsetCount = 1;
+//            }else if(SignalProcUtils.currentIteration == 2 && SignalProcUtils.independentCount == 2) {
+//                SignalProcUtils.offsetCount = 2;
+//            }else if(SignalProcUtils.currentIteration == 3 && SignalProcUtils.independentCount == 2) {
+//                SignalProcUtils.offsetCount = 3;
+//            }
+//            if(SignalProcUtils.offsetCount > 0){
+                aLocation.set(i, 2000 + SignalProcConstants.DIFFERENCE_SAMPLES * i + SignalProcConstants.QRS_SHIFT * (SignalProcUtils.currentIteration) + SignalProcUtils.dataLossCounter);
+//            }
+
             SignalProcUtils.aLocation_UA_Batch.add(aLocation.get(i));
+
+
+            Filename.MHR.append(aLocation.get(i)+",");
+            Filename.MHR.append(aFinalQrsmHrPlot[i]+"\n");
 
             Filename.FHR.append(aLocation.get(i)+",");
             Filename.FHR.append(aFinalQrsfHrPlot[i]+"\n");
 
         }
+        if(SignalProcUtils.currentIteration == 0){
+            aLocation.clear();
+            SignalProcUtils.aLocation_UA_Batch.clear();
+        }
         aLocation_batch.addAll(SignalProcUtils.aLocation_UA_Batch);
         System.out.println("AlgorithmMain : Time for Algorithm : " + (System.currentTimeMillis() - aST) + " ms");
 //        Timber.i("AlgorithmMain : Time for Algorithm : "+(System.currentTimeMillis()-aST)+" ms");
-        Filename.ExecutionLogs.append(SignalProcUtils.lastRRMeanFetal+"\n");
-
+        Filename.ExecutionLogs.append(SignalProcUtils.lastRRMeanFetal+",");
+        Filename.ExecutionLogs.append(SignalProcUtils.lastvalidRRMeanFetal+"\n");
+        if(SignalProcUtils.independentCount >= 2){
+            SignalProcUtils.lastvalidRRMeanFetal = SignalProcUtils.lastRRMeanFetal;
+        }
         Filename.RRMeanFetal.append(SignalProcUtils.lastRRMeanFetal+",\n");
         return new Object[]{aLocation_batch, aFinalQrsmHrPlot, aFinalQrsfHrPlot};
     }

@@ -485,6 +485,34 @@ public class SignalProcConstants {
 	 */
 	public static final double MQRS_THRESHOLD_SCALE = 10;
 	/**
+	 * MQRS detection : high-pass filter co-efficients.
+	 */
+	public static final double[] MQRS_AHIGH = { 1.000000000000000,  -0.994986042646556 };
+	/**
+	 * MQRS detection : high-pass filter co-efficients.
+	 */
+	public static final double MQRS_BHIGH0 = 0.997493021323278;
+	/**
+	 * MQRS detection : high-pass filter co-efficients.
+	 */
+	public static final double MQRS_BHIGH_SUM = -1.994986042646556;
+	/**
+	 * MQRS detection : high-pass filter co-efficients.
+	 */
+	public static final double MQRS_ZHIGH[] = {-0.997493021323276};
+	/**
+	 * MQRS detection : low-pass filter co-efficients.
+	 */
+	public static final double[] MQRS_ALOW = { 1.000000000000000,  -0.981325890492688 };
+	/**
+	 * MQRS detection : low-pass filter co-efficients.
+	 */
+	public static final double[] MQRS_BLOW = { 0.009337054753656,   0.009337054753656 };
+	/**
+	 * MQRS detection : low-pass filter co-efficients.
+	 */
+	public static final double MQRS_ZLOW[] = {0.990662945246346};
+	/**
 	 * Threshold to remove outliers.
 	 */
 	public static final int MQRS_THRESHOLD_LENGTH = 13500;//(1 - 10/100)* 15000;
@@ -568,7 +596,7 @@ public class SignalProcConstants {
 	/**
 	 * RR upper threshold for maternal QRS.
 	 */
-	public static final int MQRS_RR_HIGH_TH = 2000;
+	public static final int MQRS_RR_HIGH_TH = 1200;
 
 	/**
 	 * Variance used in fetal QRS selection.
@@ -577,11 +605,11 @@ public class SignalProcConstants {
 	/**
 	 * RR upper threshold for fetal QRS.
 	 */
-	public static final int FQRS_RR_LOW_TH = 300;
+	public static final int FQRS_RR_LOW_TH = 285;
 	/**
 	 * RR upper threshold for fetal QRS.
 	 */
-	public static final int FQRS_RR_HIGH_TH = 600;
+	public static final int FQRS_RR_HIGH_TH = 700;
 
 
 	public static final double CHANNEL_PERCENTAGE = 5.0/100;
@@ -592,12 +620,18 @@ public class SignalProcConstants {
 	/** CHANGE BY ARAVIND 5th March 2018
 	 * Variance change for 10 bpm in milliseconds.
 	 */
-	public static final double QRS_RR_VAR_M = 10.0/60000; // 10 beats change
+	public static final double QRS_RR_VAR_M = 20.0/60000; // 10 beats change
 	/** CHANGE BY ARAVIND 5th March 2018
 	 * Variance change for 15 bpm in milliseconds.
 	 */
-	public static final double QRS_RR_VAR = 15.0/60000; // 15 beats change
-	/**
+	public static final double QRS_RR_VAR = 17.0/60000; // 17 beats change
+
+	public static final double QRS_RR_VAR_Concat = 8.0/60000; // 10 beats change
+
+//    public static final double QRS_RR_VAR_Continuous = 18.0/60000; // 18 beats change
+
+
+    /**
 	 * No of RR mean to find HR.
 	 */
 	public static final double QRS_NO_RR_MEAN = 4.0;

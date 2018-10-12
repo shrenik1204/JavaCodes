@@ -12,6 +12,12 @@ public class HeartRateMaternal {
 
 	    MatrixFunctions aMatrixFunctions = new MatrixFunctions();
 
+        int[] adiffarray = new int[iQRS.length];
+
+        for (int i = 0; i < iQRS.length-1; i++) {
+            adiffarray[i] = iQRS[i+1]-iQRS[i];
+        }
+
 		SignalProcUtils.qrsmLocTemp = new LinkedList<>();
 		SignalProcUtils.hrmTemp = new LinkedList<>();
 
@@ -23,6 +29,8 @@ public class HeartRateMaternal {
         if (aStartLoc > -1) {
             int aLengthRR = -1;
             double aRRMean = 0;
+            double afRRMean = 0;
+
 
             for (int i = aStartLoc; i < (aStartLoc + (int) SignalProcConstants.QRS_NO_RR_MEAN); i++) {
                 aRRDiffArr.add(iQRS[i+1] - iQRS[i]);
@@ -30,6 +38,7 @@ public class HeartRateMaternal {
                 aRRMean = aRRMean + aRRDiffArr.getLast();
             }
             aRRMean = aRRMean / SignalProcConstants.QRS_NO_RR_MEAN ;
+            afRRMean = aRRMean;
             SignalProcUtils.qrsmLocTemp.add(iQRS[aStartLoc +(int) SignalProcConstants.QRS_NO_RR_MEAN ]);
             SignalProcUtils.hrmTemp.add((float) (60 * SignalProcConstants.FS / aRRMean));
 
@@ -65,21 +74,28 @@ public class HeartRateMaternal {
 
             // Backward Iteration for MHR
             aRRMean = 0;
-            if (aStartLoc > (int) SignalProcConstants.QRS_NO_RR_MEAN) {
+            if (aStartLoc > 1) {
                 // add first value
-                aRRDiffArr.addFirst( (iQRS[aStartLoc] - iQRS[aStartLoc - 1]));
+                aRRDiffArr.addFirst((iQRS[aStartLoc] - iQRS[aStartLoc - 1]));
                 aRRMean += aRRDiffArr.getFirst();
                 for (int i = 1; i < (int) SignalProcConstants.QRS_NO_RR_MEAN; i++) {
                     aRRMean += aRRDiffArr.get(i);
                 }
-                aRRMean = aRRMean / SignalProcConstants.QRS_NO_RR_MEAN ;
+                aRRMean = aRRMean / SignalProcConstants.QRS_NO_RR_MEAN;
                 SignalProcUtils.qrsmLocTemp.addFirst(iQRS[aStartLoc + (int) SignalProcConstants.QRS_NO_RR_MEAN - 1]);
                 SignalProcUtils.hrmTemp.addFirst((float) (60 * SignalProcConstants.FS / aRRMean));
-
             }
+//            else{
+//                aRRDiffArr.addFirst((iQRS[aStartLoc] - iQRS[aStartLoc - 1]));
+//                aRRMean += aRRDiffArr.getFirst();
+//                for (int i = 1; i < (int) SignalProcConstants.QRS_NO_RR_MEAN; i++) {
+//                    aRRMean += aRRDiffArr.get(i);
+//                }
+//            }
 
 
-            for (int i = aStartLoc - 1; i >= 1; i--) {
+
+            for (int i = aStartLoc ; i >= 1; i--) {
 
 
                 aRRDiff = iQRS[i] - iQRS[i - 1];
@@ -97,6 +113,9 @@ public class HeartRateMaternal {
                     SignalProcUtils.hrmTemp.addFirst((float) (60 * SignalProcConstants.FS / aRRMean));
 
                 }
+                if (SignalProcUtils.qrsmLocTemp.get(1) >= SignalProcConstants.QRS_END_VALUE && SignalProcUtils.qrsmLocTemp.getFirst() < SignalProcConstants.QRS_END_VALUE) {
+                    SignalProcUtils.lastRRMeanMaternal = aRRMean;
+                }
 
             }
 
@@ -111,6 +130,10 @@ public class HeartRateMaternal {
 
                 SignalProcUtils.qrsmLocTemp.addFirst(iQRS[i]);
                 SignalProcUtils.hrmTemp.addFirst((float) (60 * SignalProcConstants.FS / aRRMean));
+
+                if (SignalProcUtils.qrsmLocTemp.get(1) >= SignalProcConstants.QRS_END_VALUE && SignalProcUtils.qrsmLocTemp.getFirst() < SignalProcConstants.QRS_END_VALUE) {
+                    SignalProcUtils.lastRRMeanMaternal = aRRMean;
+                }
 
             }
 
@@ -144,6 +167,13 @@ public class HeartRateMaternal {
                     SignalProcUtils.qrsmLocTemp.addFirst(aQrsTemp);
                     SignalProcUtils.hrmTemp.addFirst(aHrTemp);
                 }
+            }
+            if (SignalProcUtils.lastRRMeanMaternal == 0) {
+                aRRMean = 0;
+                for (int i = aRRDiffArr.size() - 1; i >= (aRRDiffArr.size () -  (int) SignalProcConstants.QRS_NO_RR_MEAN); i--) {
+                    aRRMean += aRRDiffArr.get(i);
+                }
+                SignalProcUtils.lastRRMeanMaternal = aRRMean / (int) SignalProcConstants.QRS_NO_RR_MEAN ;
             }
 
         }

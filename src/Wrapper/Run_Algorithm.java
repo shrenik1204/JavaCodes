@@ -15,7 +15,7 @@ import java.util.List;
 public class Run_Algorithm {
 
 	public static void main(String[] args) {
-	    File folderpath = new File("/Users/kishoresubramanian/Sattva_Aravind/JavaTestingDatasets");
+	    File folderpath = new File("/Users/kishoresubramanian/Sattva_Aravind/Fehmicare/Testing datasets/Algofiles for testing");
         File[] listOfFiles = folderpath.listFiles();
         for (int z = 0; z < listOfFiles.length; z++) {
             SignalProcUtils.reset();
@@ -68,7 +68,7 @@ public class Run_Algorithm {
 //		ArrayList<Integer> UALoc = new ArrayList<>();
 
             int it = 0;
-            Filename.ExecutionLogs.append("Iteration, Start Location, MA , QRSM Detection , QRSF Selection Type, Last Fetal QRS, No of QRSF Selected, No of FHR computed, Last RR mean Fetal \n");
+            Filename.ExecutionLogs.append("Iteration, Start Location, MA , QRSM Detection , QRSF Selection Type, Last Fetal QRS, No of QRSF Selected, No of FHR computed, Last RR mean Fetal, Last Valid RRMean Fetal \n");
             while (aInput.length - (SignalProcConstants.QRS_SHIFT * it + MA_shift) >= SignalProcConstants.NO_OF_SAMPLES) {
                 double[][] input1 = new double[15000][4];
                 double[] input2 = new double[15000];

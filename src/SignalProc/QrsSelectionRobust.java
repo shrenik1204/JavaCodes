@@ -116,9 +116,15 @@ public class QrsSelectionRobust {
 			 * Check for first QRS within range of last RRmean n last Qrs
 			 */
 			if ( iNoDetectionFlag == 0 && iRRMeanLast !=0 ){
-				int aConfirmFlag = aQrsSelectionFunctions.firstQrsCheck(aQrsFinal, iQRSLast, iRRMeanLast);
+				boolean aConfirmFlag = aQrsSelectionFunctions.firstQrsCheck(aQrsFinal, iQRSLast, iRRMeanLast, false);
 
-				if (aConfirmFlag == 1) {
+				if (aConfirmFlag) {
+                    SignalProcUtils.independentCount++;
+                    if(SignalProcUtils.independentCount == 3){
+                        SignalProcUtils.concatCount = 0;
+                    }
+//					SignalProcUtils.lastvalidRRMeanFetal = iRRMeanLast;
+                    SignalProcUtils.independantdet_flag = true;
 //					FileLoggerHelper.getInstance().sendLogData(String.format(ApplicationUtils.getCurrentTime() + " : aConfirmFlag : %d", aConfirmFlag), FileLoggerType.EXECUTION, FLApplication.mFileTimeStamp);
 ////
                     Filename.FqrsSelectionType.append("Confirm Flag\n");
@@ -128,42 +134,81 @@ public class QrsSelectionRobust {
 
 					return new Object[] { convertListtoArray(aQrsFinal), aInterpolatedLength, 0 };
 				} else {
+				    /* NEW IMPLEMENTATION BY ARAVIND   */
+//                    aQrsSelectionFunctions.qrsIndependent(aQrsFinal);
 
+                    boolean recheckFlag = aQrsSelectionFunctions.firstQrsCheck(aQrsFinal, iQRSLast, iRRMeanLast, true);
+
+
+				     /*NEW IMPLEMENTATION BY ARAVIND END*/
+                    if(!recheckFlag) {
+
+                        SignalProcUtils.concatCount++;
+                        SignalProcUtils.independentCount = 0;
+                        if (SignalProcUtils.concatCount == 6) {
+//                        FileLoggerHelper.getInstance().sendLogData(ApplicationUtils.getCurrentTime() + " : QrsSelectionRobust : Six Continuous/Intermittent Concat Output", FileLoggerType.EXECUTION, FLApplication.mFileTimeStamp);
+//						throw new Exception(FLApplication.getInstance().getString(R.string.connection_issue));
+                        }
 ////
+                        SignalProcUtils.independantdet_flag = false;
 
-					Object[] aQrsConcatOut = aQrsSelectionFunctions.qrsConcatenated(iQrsConcat, iQRSLast, iRRMeanLast);
+                        Object[] aQrsConcatOut = aQrsSelectionFunctions.qrsConcatenated(iQrsConcat, iQRSLast, iRRMeanLast, iQrsM);
 
-					aQrsFinal = aQrsSelectionFunctions.interpolate((LinkedList<Integer>) aQrsConcatOut[0],
-							(LinkedList<Integer>) aQrsConcatOut[1], iQrsM);
+                        aQrsFinal = aQrsSelectionFunctions.interpolate((LinkedList<Integer>) aQrsConcatOut[0],
+                                (LinkedList<Integer>) aQrsConcatOut[1], iQrsM);
 
-					aInterpolatedLength = 0;
-					if (aQrsFinal.getLast() <= SignalProcConstants.QRS_END_VALUE && aQrsFinal.size() >= 2) {
+                        aInterpolatedLength = 0;
+                        if (aQrsFinal.getLast() <= SignalProcConstants.QRS_END_VALUE && aQrsFinal.size() >= 2) {
 
-						aInterpolatedLength = aInterpolatedLength + SignalProcConstants.QRS_END_VALUE - aQrsFinal.getLast();
-						if (aInterpolatedLength < SignalProcConstants.QRS_LENGTH_MAX_INTERPOLATE) {
-							int aLenQRS = aQrsFinal.size();
-							int aDiffLast = aQrsFinal.get(aLenQRS - 1) - aQrsFinal.get(aLenQRS - 2);
+                            aInterpolatedLength = aInterpolatedLength + SignalProcConstants.QRS_END_VALUE - aQrsFinal.getLast();
+                            if (aInterpolatedLength < SignalProcConstants.QRS_LENGTH_MAX_INTERPOLATE) {
+                                int aLenQRS = aQrsFinal.size();
+                                int aDiffLast = aQrsFinal.get(aLenQRS - 1) - aQrsFinal.get(aLenQRS - 2);
 
-							while (aQrsFinal.getLast() <= SignalProcConstants.QRS_END_VALUE) {
-								aQrsFinal.add(aQrsFinal.getLast() + aDiffLast);
-							}
-						}
-					}
+                                while (aQrsFinal.getLast() <= SignalProcConstants.QRS_END_VALUE) {
+                                    aQrsFinal.add(aQrsFinal.getLast() + aDiffLast);
+                                }
+                            }
+                        }
+                        Filename.FqrsSelectionType.append("CFN : Concat\n");
+                        Filename.ExecutionLogs.append("CFN : Concat,");
+                        Filename.ExecutionLogs.append(iQRSLast+",");
 
+
+                        return new Object[] { convertListtoArray(aQrsFinal), aInterpolatedLength, 1 };
+                    } else{
+//                        while (aQrsFinal.get(i) < 2000) {
+//                            aQrsFinal.remove(i);
+//                            if (aQrsFinal.size() <= 0) {
+//                                break;
+//                            }
+//                        }
+                        SignalProcUtils.independantdet_flag = false;
+
+                        Filename.FqrsSelectionType.append("CFN : Independent\n");
+                        Filename.ExecutionLogs.append("CFN : Independent,");
+                        Filename.ExecutionLogs.append(iQRSLast+",");
+
+
+                        return new Object[] { convertListtoArray(aQrsFinal), aInterpolatedLength, 0 };
+                    }
 //					FileLoggerHelper.getInstance().sendLogData(String.format(ApplicationUtils.getCurrentTime() + " : Concatenated FQRS detection"), FileLoggerType.EXECUTION, FLApplication.mFileTimeStamp);
 
 					/**
 					 * ADD fqrsMissIndex indentification
 					 */
-                    Filename.FqrsSelectionType.append("CFN : Concat\n");
-					Filename.ExecutionLogs.append("CFN : Concat,");
-					Filename.ExecutionLogs.append(iQRSLast+",");
 
-					return new Object[] { convertListtoArray(aQrsFinal), aInterpolatedLength, 1 };
 				}
 			}
 			else {
-				Filename.ExecutionLogs.append("Independent,");
+                SignalProcUtils.independentCount++;
+                if(SignalProcUtils.independentCount == 3){
+                    SignalProcUtils.concatCount = 0;
+                }
+//				SignalProcUtils.lastvalidRRMeanFetal = iRRMeanLast;
+                SignalProcUtils.independantdet_flag = true;
+
+                Filename.ExecutionLogs.append("Independent,");
 				Filename.ExecutionLogs.append(iQRSLast+",");
 
 				Filename.FqrsSelectionType.append("Independent \n");
@@ -175,9 +220,16 @@ public class QrsSelectionRobust {
 		} else {
 //			FileLoggerHelper.getInstance().sendLogData(String.format(ApplicationUtils.getCurrentTime() + " : No FQRS detection"), FileLoggerType.EXECUTION, FLApplication.mFileTimeStamp);
 
-            if (iRRMeanLast != 0) {
+            if (SignalProcUtils.lastvalidRRMeanFetal != 0) {
+                SignalProcUtils.concatCount++;
+                SignalProcUtils.independentCount = 0;
+                if(SignalProcUtils.concatCount == 6){
+//                    FileLoggerHelper.getInstance().sendLogData(ApplicationUtils.getCurrentTime() + " : QrsSelectionRobust : Six Continuous/Intermittent Concat Output", FileLoggerType.EXECUTION, FLApplication.mFileTimeStamp);
+//					throw new Exception(FLApplication.getInstance().getString(R.string.connection_issue));
+                }
+                SignalProcUtils.independantdet_flag = false;
 
-                Object[] aQrsConcatOut = aQrsSelectionFunctions.qrsConcatenated(iQrsConcat, iQRSLast, iRRMeanLast);
+                Object[] aQrsConcatOut = aQrsSelectionFunctions.qrsConcatenated(iQrsConcat, iQRSLast, iRRMeanLast, iQrsM);
 
                 LinkedList<Integer> aQrsFinal = aQrsSelectionFunctions.interpolate((LinkedList<Integer>) aQrsConcatOut[0],
                         (LinkedList<Integer>) aQrsConcatOut[1], iQrsM);

@@ -6,6 +6,7 @@ import Wrapper.Filename;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * <p> Generic functions used at various stages in Algorithm.</p>
@@ -74,6 +75,24 @@ public class MatrixFunctions {
 			return aMedian;
 		} else {
 			throw new Exception("Enter non empty Array : findMedian");
+		}
+
+	}
+
+	public double findMean(double[] iInput) throws Exception {
+
+		if (iInput.length > 0) {
+			Arrays.sort(iInput);
+			int aLen = iInput.length;
+			double sum = 0;
+			double aMean = 0;
+			for (int i = 0; i < aLen; i++) {
+				sum = sum + iInput[i];
+			}
+			aMean = sum/aLen;
+			return aMean;
+		} else {
+			throw new Exception("Enter non empty Array : findMean");
 		}
 
 	}
@@ -1331,29 +1350,41 @@ public void filtfilt_Sos(double[] iInput, double[][] iSOS,  double[] iGain, doub
         double aMedianVal = 0;
         double aMeanVal = 0;
         convolutionQRSDetection(iInput, SignalProcConstants.MQRS_DERIVATIVE, SignalProcConstants.MQRS_DERIVATIVE_SCALE);
-        double[] aEcgSq_sort = new double[SignalProcConstants.NO_OF_SAMPLES];
-        aEcgSq_sort = iInput.clone();
-        Arrays.sort(aEcgSq_sort);
 
-        double aMean = 0;
-        for (int i = 0; i < SignalProcConstants.MQRS_THRESHOLD_LENGTH; i++) {
-            aMean += aEcgSq_sort[i];
-        }
-        aMean = aMean/ SignalProcConstants.MQRS_THRESHOLD_LENGTH;
-        double aStdDevTh = 0;
-        for (int i = 0; i < SignalProcConstants.MQRS_THRESHOLD_LENGTH; i++) {
-            aStdDevTh += Math.pow((aEcgSq_sort[i] - aMean),2);
-        }
-        aStdDevTh = 2.5 * Math.sqrt(aStdDevTh/(SignalProcConstants.MQRS_THRESHOLD_LENGTH-1));
+		double bhigh[] = new double[2];
+		for (int i0 = 0; i0 < 2; i0++) {
+			bhigh[i0] = SignalProcConstants.MQRS_BHIGH0 + SignalProcConstants.MQRS_BHIGH_SUM * (double) i0;
+		}
 
-        for (int i = 0; i < SignalProcConstants.NO_OF_SAMPLES; i++) {
-            if (iInput[i] < aStdDevTh){
-                iInput[i] = 0;
-            }
-            else {
-                iInput[i] = iInput[i] - aStdDevTh;
-            }
-        }
+		filtfilt(iInput, SignalProcConstants.MQRS_AHIGH, bhigh, SignalProcConstants.MQRS_ZHIGH);
+
+		// Have to add 6th order filter
+
+		filtfilt(iInput,SignalProcConstants.MQRS_ALOW, SignalProcConstants.MQRS_BLOW, SignalProcConstants.MQRS_ZLOW);
+
+//        double[] aEcgSq_sort = new double[SignalProcConstants.NO_OF_SAMPLES];
+//        aEcgSq_sort = iInput.clone();
+//        Arrays.sort(aEcgSq_sort);
+//
+//        double aMean = 0;
+//        for (int i = 0; i < SignalProcConstants.MQRS_THRESHOLD_LENGTH; i++) {
+//            aMean += aEcgSq_sort[i];
+//        }
+//        aMean = aMean/ SignalProcConstants.MQRS_THRESHOLD_LENGTH;
+//        double aStdDevTh = 0;
+//        for (int i = 0; i < SignalProcConstants.MQRS_THRESHOLD_LENGTH; i++) {
+//            aStdDevTh += Math.pow((aEcgSq_sort[i] - aMean),2);
+//        }
+//        aStdDevTh = 2.5 * Math.sqrt(aStdDevTh/(SignalProcConstants.MQRS_THRESHOLD_LENGTH-1));
+//
+//        for (int i = 0; i < SignalProcConstants.NO_OF_SAMPLES; i++) {
+//            if (iInput[i] < aStdDevTh){
+//                iInput[i] = 0;
+//            }
+//            else {
+//                iInput[i] = iInput[i] - aStdDevTh;
+//            }
+//        }
 
         double[] aEcg_Integrator = new double[SignalProcConstants.NO_OF_SAMPLES];
         double aSum = 0;
@@ -1392,20 +1423,20 @@ public void filtfilt_Sos(double[] iInput, double[][] iSOS,  double[] iGain, doub
             }
         }
 
-        double[] aQrs = new double[aCount+2];
+        double[] aQrs = new double[aCount];
         int aTempShift = aPeakLoc.length - aCount;
         for (int i = 0; i<aCount; i++) {
-            aQrs[i+2] = aQrs1[i+aTempShift];
+            aQrs[i] = aQrs1[i+aTempShift];
         }
-        aQrs[0] = aMedianVal;
-        aQrs[1] = aMeanVal;
+//        aQrs[0] = aMedianVal;
+//        aQrs[1] = aMeanVal;
         return aQrs;
     }
 
 
 
 
-	public int[] fetalQRS(double[] iChannel) throws Exception {
+	public int[] fetalQRS(double[] iChannel, int[] iQrsM) throws Exception {
 		
 		int aLength = iChannel.length;
 		if (aLength >= SignalProcConstants.FQRS_WINDOW) {
@@ -1473,6 +1504,34 @@ public void filtfilt_Sos(double[] iInput, double[][] iSOS,  double[] iGain, doub
 			for (int i = 0; i < lenQrs; i++) {
 				qrs[i] = peakLoc[i + count] - delay;
 			}
+			List<Integer> iQRSlist = new ArrayList<>();
+			for (int i : qrs) {
+				iQRSlist.add(i);
+			}
+			int th = 10, lowTH, highTH;
+
+			for (int anIQrsM : iQrsM) {
+				for (int i = 0; i < iQRSlist.size(); i++) {
+					if(iQRSlist.get(i) - th < 0){
+						lowTH = 0;
+						highTH = iQRSlist.get(i) + th;
+					}else if(iQRSlist.get(i) + th > 15000){
+						lowTH = qrs[i] - th;
+						highTH = 15000;
+					}
+					else{
+						lowTH = iQRSlist.get(i) - th;
+						highTH = iQRSlist.get(i) + th;
+					}
+					if ((anIQrsM >= lowTH && anIQrsM <= highTH)) {
+						iQRSlist.remove(i);
+					}
+				}
+			}
+			qrs = new int[iQRSlist.size()];
+			for (int i = 0; i < qrs.length; i++) {
+				qrs[i] = iQRSlist.get(i);
+			}
 
 			return qrs;
 		}
@@ -1533,7 +1592,6 @@ public void filtfilt_Sos(double[] iInput, double[][] iSOS,  double[] iGain, doub
 		/**
 		 * Channel selection part
 		 */
-
 		int aLen1 = iQRS1.length;
 		int aLen2 = iQRS2.length;
 		int aLen3 = iQRS3.length;
@@ -1715,6 +1773,7 @@ public void filtfilt_Sos(double[] iInput, double[][] iSOS,  double[] iGain, doub
 					qrs[i + shift] = iQRS4[i];
 				}
 				Arrays.sort(qrs);
+				Filename.ExecutionLogs.append("none" + "," + "-1" + ",");
 				return new Object[] { qrs,  -1, qrs };
 			} else {
 				double ind = aInd1;
@@ -1769,7 +1828,7 @@ public void filtfilt_Sos(double[] iInput, double[][] iSOS,  double[] iGain, doub
 					}
 					RRmean = RRmean3 / (aLen3 - 1);
 				}
-				if (aInd4 > ind) {
+				if (aInd4 == ind) {
 					double RRmean4 = 0;
 					for (int i = 0; i < aLen4 - 1; i++) {
 						RRmean4 = RRmean4 + iQRS4[i + 1] - iQRS4[i];
@@ -1819,25 +1878,27 @@ public void filtfilt_Sos(double[] iInput, double[][] iSOS,  double[] iGain, doub
 				}
 
 
-				int qrs1[] = new int[aLen1 + aLen2 + aLen3 + aLen4];
+				int concatQrs[] = new int[aLen1 + aLen2 + aLen3 + aLen4];
 				for (int i = 0; i < aLen1; i++) {
-					qrs1[i] = iQRS1[i];
+					concatQrs[i] = iQRS1[i];
 				}
 				int shift = aLen1;
 				for (int i = 0; i < aLen2; i++) {
-					qrs1[i + shift] = iQRS2[i];
+					concatQrs[i + shift] = iQRS2[i];
 				}
 				shift = shift + aLen2;
 				for (int i = 0; i < aLen3; i++) {
-					qrs1[i + shift] = iQRS3[i];
+					concatQrs[i + shift] = iQRS3[i];
 				}
 				shift = shift + aLen3;
 				for (int i = 0; i < aLen4; i++) {
-					qrs1[i + shift] = iQRS4[i];
+					concatQrs[i + shift] = iQRS4[i];
 				}
-				Arrays.sort(qrs1);
-			
-				return new Object[] { qrs, startIndex,qrs1 };
+				Arrays.sort(concatQrs);
+
+				Filename.ExecutionLogs.append(ch + "," + startIndex + ",");
+
+				return new Object[] { qrs, startIndex,concatQrs };
 			}
 		} else {
 			throw new Exception("Threshold has to be positive : channelSelection");
@@ -1845,7 +1906,7 @@ public void filtfilt_Sos(double[] iInput, double[][] iSOS,  double[] iGain, doub
 	}
 
 	public Object[] channelSelection_Mqrs(double[] iQRS1, double[] iQRS2, double[] iQRS3, double[] iQRS4, int iVarTh, int iRRlowTh,
-									 int iRRhighTh) throws Exception {
+										  int iRRhighTh) throws Exception {
 		/**
 		 * Channel selection part
 		 */
@@ -1999,40 +2060,7 @@ public void filtfilt_Sos(double[] iInput, double[][] iSOS,  double[] iGain, doub
 				aRRmean4 = aRRmean4 / counter;
 				aInd4 = counter / aNIt;
 			}
-			// FInd the maximum value of 'ind'
-			// Have to add mean RR value also to this computation to get better
-			// estimate of 'ch'
-			Filename.CHF_Ind.append(SignalProcUtils.currentIteration+",");
-			Filename.CHF_Ind.append(aInd1+",");
-			Filename.CHF_Ind.append(aInd2+",");
-			Filename.CHF_Ind.append(aInd3+",");
-			Filename.CHF_Ind.append(aInd4+",");
 
-			Filename.CHF_Ind.append((aLen1-3)*aInd1+",");
-			Filename.CHF_Ind.append((aLen2-3)*aInd2+",");
-			Filename.CHF_Ind.append((aLen3-3)*aInd3+",");
-			Filename.CHF_Ind.append((aLen4-3)*aInd4+",");
-			Filename.CHF_Ind.append("\n ");
-//			if (aInd1 <= SignalProcConstants.CHANNEL_PERCENTAGE && aInd2 <= SignalProcConstants.CHANNEL_PERCENTAGE && aInd3 <= SignalProcConstants.CHANNEL_PERCENTAGE && aInd4 <= SignalProcConstants.CHANNEL_PERCENTAGE) {
-//				double qrs[] = new double[aLen1 + aLen2 + aLen3 + aLen4];
-//				for (int i = 0; i < aLen1; i++) {
-//					qrs[i] = iQRS1[i];
-//				}
-//				int shift = aLen1;
-//				for (int i = 0; i < aLen2; i++) {
-//					qrs[i + shift] = iQRS2[i];
-//				}
-//				shift = shift + aLen2;
-//				for (int i = 0; i < aLen3; i++) {
-//					qrs[i + shift] = iQRS3[i];
-//				}
-//				shift = shift + aLen3;
-//				for (int i = 0; i < aLen4; i++) {
-//					qrs[i + shift] = iQRS4[i];
-//				}
-//				Arrays.sort(qrs);
-//				return new Object[] { qrs,  -1, qrs };
-//			} else {
 				double ind = aInd1;
 				int length_Final = aLen1;
 				int ch = 1;
@@ -2085,7 +2113,7 @@ public void filtfilt_Sos(double[] iInput, double[][] iSOS,  double[] iGain, doub
 					}
 					RRmean = RRmean3 / (aLen3 - 1);
 				}
-				if (aInd4 > ind) {
+				if (aInd4 == ind) {
 					double RRmean4 = 0;
 					for (int i = 0; i < aLen4 - 1; i++) {
 						RRmean4 = RRmean4 + iQRS4[i + 1] - iQRS4[i];
@@ -2110,28 +2138,33 @@ public void filtfilt_Sos(double[] iInput, double[][] iSOS,  double[] iGain, doub
 				/**
 				 * Get the start Index and qrs values to find the final QRS.
 				 */
-				double[] qrs = new double[length_Final];
+				int[] qrs = new int[length_Final];
 				int startIndex = -1;
-				if (ch == 1) {
-					startIndex = aStartInd1;
-					for (int i = 0; i < length_Final; i++) {
-						qrs[i] = iQRS1[i];
-					}
-				} else if (ch == 2) {
-					startIndex = aStartInd2;
-					for (int i = 0; i < length_Final; i++) {
-						qrs[i] = iQRS2[i];
-					}
-				} else if (ch == 3) {
-					startIndex = aStartInd3;
-					for (int i = 0; i < length_Final; i++) {
-						qrs[i] = iQRS3[i];
-					}
-				} else if (ch == 4) {
-					startIndex = aStartInd4;
-					for (int i = 0; i < length_Final; i++) {
-						qrs[i] = iQRS4[i];
-					}
+				switch (ch) {
+					case 1:
+						startIndex = aStartInd1;
+						for (int i = 0; i < length_Final; i++) {
+							qrs[i] = (int) iQRS1[i];
+						}
+						break;
+					case 2:
+						startIndex = aStartInd2;
+						for (int i = 0; i < length_Final; i++) {
+							qrs[i] = (int) iQRS2[i];
+						}
+						break;
+					case 3:
+						startIndex = aStartInd3;
+						for (int i = 0; i < length_Final; i++) {
+							qrs[i] = (int) iQRS3[i];
+						}
+						break;
+					case 4:
+						startIndex = aStartInd4;
+						for (int i = 0; i < length_Final; i++) {
+							qrs[i] = (int) iQRS4[i];
+						}
+						break;
 				}
 
 
@@ -4077,7 +4110,7 @@ public void filtfilt_Sos(double[] iInput, double[][] iSOS,  double[] iGain, doub
         int aStart;
         int aCtr = 0;
 
-        for (int i = 6; i <= 14; i++) {
+        for (int i = 3; i <= 14; i++) {
 
             double aMaxVal = -1000000;
             double aMinVal = 1000000;
@@ -4094,7 +4127,7 @@ public void filtfilt_Sos(double[] iInput, double[][] iSOS,  double[] iGain, doub
             }
             aTempVal = aMaxVal - aMinVal;
             int aSize = iAmplitude.size();
-            double aMedian;
+            double aMedian = 0;
 
             // Insert double value into the array
             if (aSize == 0){
@@ -4135,25 +4168,27 @@ public void filtfilt_Sos(double[] iInput, double[][] iSOS,  double[] iGain, doub
                 double aSum1 = 0;
                 for (int j = 1; j < 11; j++) {
                     aSum1 += (aFFT_MA[j]);
+					Filename.PSDlogs.append((aFFT_MA[j])+"/");
                 }
                 double aSum2 = 0;
                 for (int j = 1; j < 1024; j++) {
                     aSum2 += (aFFT_MA[j]);
                 }
-
+				Filename.PSDlogs.append(",");
                 SignalProcUtils.ma_psdFlag[aCtr][iChannel+1] = aSum1 / aSum2;
-                aCtr++;
-
-            }
-
-
-
-
-
-
+                if(SignalProcUtils.ma_psdFlag[aCtr][iChannel+1] < 0.1){
+					Filename.MAlogs.append(SignalProcUtils.ma_amplitudeFlag[aCtr][iChannel+1] + ":median :" + (aMedian * 1.4) + ": psd :" + SignalProcUtils.ma_psdFlag[aCtr][iChannel+1] +",");
+				}else if(SignalProcUtils.ma_psdFlag[aCtr][iChannel+1] > 0.15){
+					Filename.MAlogs.append(SignalProcUtils.ma_amplitudeFlag[aCtr][iChannel+1] + ":median :" + (aMedian * 1.4) + ": psd :" + SignalProcUtils.ma_psdFlag[aCtr][iChannel+1] +",");
+				}else{
+					Filename.MAlogs.append(SignalProcUtils.ma_amplitudeFlag[aCtr][iChannel+1] + ":median :" + (aMedian * 1.4) + ": psd :" + SignalProcUtils.ma_psdFlag[aCtr][iChannel+1] +",");
+				}
+				aCtr++;
+			}else{
+				Filename.PSDlogs.append("null,");
+				Filename.MAlogs.append(aTempVal + ":median :" + (aMedian * 1.4) + ": psd :" + "null" +",");
+			}
         }
-
-
     }
 
     public double checkMA(int[] iOverlap, int iChannel, double iEndLocation) throws Exception{
@@ -4167,7 +4202,7 @@ public void filtfilt_Sos(double[] iInput, double[][] iSOS,  double[] iGain, doub
 
         int aCtr = 0;
 
-        for (int i = 1; i <= 8; i++) {
+        for (int i = 1; i <= 11; i++) {
             if ( (SignalProcUtils.ma_amplitudeFlag[i-1][iChannel+1] != 0) && (SignalProcUtils.ma_amplitudeFlag[i][iChannel+1] != 0)) {
                 aCtr++;
                 if (aCtr >= SignalProcConstants.MA_COUNT_TH) {
@@ -4232,7 +4267,7 @@ public void filtfilt_Sos(double[] iInput, double[][] iSOS,  double[] iGain, doub
     public double checkOverlapMA(int[] iOverlap, double iEndLocation) {
 	    int aIndOverlap = 0;
 
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 13; i++) {
             if (iOverlap[i] >= 2){
                 if (iEndLocation < 5000 + i*SignalProcConstants.MA_SHIFT){
                     iEndLocation = 5000 + i*SignalProcConstants.MA_SHIFT;
@@ -4242,7 +4277,7 @@ public void filtfilt_Sos(double[] iInput, double[][] iSOS,  double[] iGain, doub
         }
 
         if (aIndOverlap > 0 ){
-            for (int i = aIndOverlap+1; i < 10; i++) {
+            for (int i = aIndOverlap+1; i < 13; i++) {
                 if (iOverlap[i] == 1 && iOverlap[i-1] == 2){
                     if (iEndLocation < 5000 + i*SignalProcConstants.MA_SHIFT){
                         iEndLocation = 5000 + i*SignalProcConstants.MA_SHIFT;

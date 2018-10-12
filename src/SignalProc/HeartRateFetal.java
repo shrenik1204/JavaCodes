@@ -51,6 +51,15 @@ public class HeartRateFetal {
 	 */
 	public void heartRate(int[] iQRS) {
 
+        if(SignalProcUtils.currentIteration == 41){
+            SignalProcUtils.currentIteration = 41;
+        }
+        int[] adiffarray = new int[iQRS.length];
+
+        for (int i = 0; i < iQRS.length-1; i++) {
+            adiffarray[i] = iQRS[i+1]-iQRS[i];
+        }
+
 		SignalProcUtils.qrsfLocTemp = new LinkedList<>();
 		SignalProcUtils.hrfTemp = new LinkedList<>();
 
@@ -81,14 +90,15 @@ public class HeartRateFetal {
             double aRRLowTh = 0;
             double aRRHighTh = 0;
             double aDelta = SignalProcConstants.QRS_RR_VAR;
+            aRRLowTh = 1 / (1 / aRRMean + aDelta);
+            aRRHighTh = 1 / (1 / aRRMean - aDelta);
 
             // Forward Iteration for FHR
             for (int i = aStartLoc +(int) SignalProcConstants.QRS_NO_RR_MEAN + 1; i < (aLengthQrs); i++) {
 
 
                 aRRDiff = iQRS[i] - iQRS[i-1];
-                aRRLowTh = aRRMean * 0.9;
-                aRRHighTh = aRRMean * 1.1;
+
 
                 if (aRRDiff >= aRRLowTh && aRRDiff <= aRRHighTh) {
                     aRRDiffArr.add(aRRDiff);
@@ -113,18 +123,31 @@ public class HeartRateFetal {
             }
 
             // Backward Iteration for FHR
-            aRRMean = 0;
             if (aStartLoc > (int) SignalProcConstants.QRS_NO_RR_MEAN) {
-                // add first value
-                aRRDiffArr.addFirst( (iQRS[aStartLoc] - iQRS[aStartLoc - 1]));
-                aRRMean += aRRDiffArr.getFirst();
-                for (int i = 1; i < (int) SignalProcConstants.QRS_NO_RR_MEAN; i++) {
-                    aRRMean += aRRDiffArr.get(i);
+                // Change Aravind
+                for (int i = aStartLoc; i >= 1 ; i--) {
+                    aRRDiff = iQRS[aStartLoc] - iQRS[aStartLoc - 1];
+                    if(aRRDiff >= aRRLowTh && aRRDiff <= aRRHighTh){
+
+                        aRRMean = 0;
+                        aRRDiffArr.addFirst( (iQRS[aStartLoc] - iQRS[aStartLoc - 1]));
+                        aRRMean += aRRDiffArr.getFirst();
+                        for (int j = 1; j < (int) SignalProcConstants.QRS_NO_RR_MEAN; j++) {
+                            aRRMean += aRRDiffArr.get(j);
+                        }
+
+                        aRRMean = aRRMean / SignalProcConstants.QRS_NO_RR_MEAN;
+                        SignalProcUtils.qrsfLocTemp.addFirst(iQRS[aStartLoc + (int) SignalProcConstants.QRS_NO_RR_MEAN - 1]);
+                        SignalProcUtils.hrfTemp.addFirst((float) (60 * SignalProcConstants.FS / aRRMean));
+                        break;
+                    } else{
+                        aStartLoc = aStartLoc-1;
+                    }
                 }
 
-                aRRMean = aRRMean / SignalProcConstants.QRS_NO_RR_MEAN;
-                SignalProcUtils.qrsfLocTemp.addFirst(iQRS[aStartLoc + (int) SignalProcConstants.QRS_NO_RR_MEAN - 1]);
-                SignalProcUtils.hrfTemp.addFirst((float) (60 * SignalProcConstants.FS / aRRMean));
+
+                // add first value
+
             }
             int aNoOfRR = (int) SignalProcConstants.QRS_NO_RR_MEAN;
             for (int i = aStartLoc - 1; i >= 1; i--) {
@@ -133,6 +156,13 @@ public class HeartRateFetal {
                 aRRDiff = iQRS[i] - iQRS[i-1];
                 aRRLowTh = 1 / (1 / aRRMean + aDelta);
                 aRRHighTh = 1 / (1 / aRRMean - aDelta);
+
+                if(aRRLowTh < SignalProcConstants.FQRS_RR_LOW_TH){
+                    aRRLowTh = SignalProcConstants.FQRS_RR_LOW_TH;
+                }
+                if(aRRHighTh > SignalProcConstants.FQRS_RR_HIGH_TH){
+                    aRRHighTh = SignalProcConstants.FQRS_RR_HIGH_TH;
+                }
 
                 if (aRRDiff >= aRRLowTh && aRRDiff <= aRRHighTh) {
                     aRRDiffArr.addFirst(aRRDiff);

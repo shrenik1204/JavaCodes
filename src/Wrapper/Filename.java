@@ -5,9 +5,9 @@ import java.io.File;
 public class Filename {
 
 	private static Filename filename;
-	static String aFilePath = ""+"/Users/kishoresubramanian/Desktop/Sattva work/Java Results Demo test/";
-	static String aFilePath_FHR = ""+"/Users/kishoresubramanian/Desktop/Sattva work/Java Results Demo test/FHR/";
-	static String aFilePath_EXE = ""+"/Users/kishoresubramanian/Desktop/Sattva work/Java Results Demo test/EXE/";
+	static String aFilePath = ""+"/Users/kishoresubramanian/Sattva_Aravind/Manipal Javacodes/";
+	static String aFilePath_FHR = ""+"/Users/kishoresubramanian/Sattva_Aravind/Fehmicare/Testing datasets/fhrcsv/";
+	static String aFilePath_EXE = ""+"/Users/kishoresubramanian/Sattva_Aravind/Fehmicare/Testing datasets/execsv/";
 	static String aFilePath_UA = ""+"/Users/kishoresubramanian/Desktop/Sattva work/Java Results Demo test/UA/";
 
 	static private String aInputFilePath = "";
@@ -16,7 +16,10 @@ public class Filename {
 		 Filename.aInputFilePath = aInputFilePath;
 				 createFilePath();
 	}
-	
+
+	public static String aFilePathMALogs;
+	public static String aFilePathPSDLogs;
+
 	public static String aFilePathMHR;
 	public static String aFilePathMQRS;
 
@@ -51,12 +54,18 @@ public class Filename {
 
 	public static String aFilePathExecutionLogs;
 	public static StringBuilder ExecutionLogs = new StringBuilder();
-	
+
+	public static StringBuilder MAlogs = new StringBuilder();
+
+	public static StringBuilder PSDlogs = new StringBuilder();
+
+
 	public static StringBuilder QRSM_Detected = new StringBuilder();
 	public static StringBuilder ICA1 = new StringBuilder();
 	public static StringBuilder CHM = new StringBuilder();
 	public static StringBuilder QRSM_Selected = new StringBuilder();
-	
+	public static StringBuilder MHR = new StringBuilder();
+
 	public static StringBuilder RESIDUE = new StringBuilder();
 
 	public static StringBuilder QRSF_Detected = new StringBuilder();
@@ -89,6 +98,9 @@ public class Filename {
 		aFilePathFHR_new = afnfhr.getPath() +File.separator+aInputFilePath+"-fhr"+".csv";
 		aFilePathUA_new = afnua.getPath() +File.separator+ aInputFilePath+"-ua"+".csv";
 
+		aFilePathMALogs = afn.getPath() +File.separator + aInputFilePath + "-MA_Logs"+".csv";
+		aFilePathPSDLogs = afn.getPath() +File.separator + aInputFilePath + "-PSD_Logs"+".csv";
+
 		aFilePathExecutionLogs = afn.getPath() +File.separator + aInputFilePath + "-Execution"+".csv";
 		aFilePathMHR = afn.getPath() +File.separator+ aInputFilePath+"-mhr"+".csv";
 				
@@ -120,6 +132,8 @@ public class Filename {
 	}
 
 	public static void reset() {
+		aFilePathMALogs = null;
+		aFilePathPSDLogs = null;
 		aFilePathMHR = null;
 		aFilePathMQRS = null;
 
@@ -156,10 +170,14 @@ public class Filename {
 		aFilePathExecutionLogs = null;
 		ExecutionLogs = new StringBuilder();
 
+		MAlogs = new StringBuilder();
+		PSDlogs = new StringBuilder();
+
 		QRSM_Detected = new StringBuilder();
 		ICA1 = new StringBuilder();
 		CHM = new StringBuilder();
 		QRSM_Selected = new StringBuilder();
+		MHR = new StringBuilder();
 
 		RESIDUE = new StringBuilder();
 

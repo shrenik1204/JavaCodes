@@ -91,7 +91,7 @@ public class FQRSDetection {
                     }
 
                     try {
-                        mQRS1 = mMatrixFunctions.fetalQRS(mChannel1);
+                        mQRS1 = mMatrixFunctions.fetalQRS(mChannel1, iQrsM);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -105,7 +105,7 @@ public class FQRSDetection {
                     }
 
                     try {
-                        mQRS2 = mMatrixFunctions.fetalQRS(mChannel2);
+                        mQRS2 = mMatrixFunctions.fetalQRS(mChannel2, iQrsM);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -119,7 +119,7 @@ public class FQRSDetection {
                     }
 
                     try {
-                        mQRS3 = mMatrixFunctions.fetalQRS(mChannel3);
+                        mQRS3 = mMatrixFunctions.fetalQRS(mChannel3, iQrsM);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -133,7 +133,7 @@ public class FQRSDetection {
                     }
 
                     try {
-                        mQRS4 = mMatrixFunctions.fetalQRS(mChannel4);
+                        mQRS4 = mMatrixFunctions.fetalQRS(mChannel4, iQrsM);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

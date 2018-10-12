@@ -138,87 +138,90 @@ public class MQRSDetection {
 				}, true);
 
 				if (channelOneTask.get() && channelTwoTask.get() && channelThreeTask.get() && channelFourTask.get()) {
+					Object[] qrsSelectionInputs = mMatrixFunctions.channelSelection_Mqrs(mQRS1, mQRS2, mQRS3, mQRS4,
+							SignalProcConstants.MQRS_VARIANCE_THRESHOLD, SignalProcConstants.MQRS_RR_LOW_TH, SignalProcConstants.MQRS_RR_HIGH_TH);
 //					FileLoggerHelper.getInstance().sendLogData(String.format(ApplicationUtils.getCurrentTime() + " : Mean Value : %f, %f, %f, %f", mQRS1[1], mQRS2[1], mQRS3[1], mQRS4[1]), FileLoggerType.EXECUTION, FLApplication.mFileTimeStamp);
 //					FileLoggerHelper.getInstance().sendLogData(String.format(ApplicationUtils.getCurrentTime() + " : Median Value : %f, %f, %f, %f", mQRS1[0], mQRS2[0], mQRS3[0], mQRS4[0]), FileLoggerType.EXECUTION, FLApplication.mFileTimeStamp);
 
-					double aMaxMedian, aMaxMean;
-					aMaxMedian = mQRS1[0];
-					aMaxMean = mQRS1[1];
-					int aChMedian, aChMean;
-					aChMean = -1;
-					if (aMaxMean > 0) {
-						aChMean = 0;
-					}
-					aChMedian = 0;
-					if (aMaxMedian < mQRS2[0]) {
-						aMaxMedian = mQRS2[0];
-						aChMedian = 1;
-					}
-					if (aMaxMedian < mQRS3[0]) {
-						aMaxMedian = mQRS3[0];
-						aChMedian = 2;
-					}
-					if (aMaxMedian < mQRS4[0]) {
-						aMaxMedian = mQRS4[0];
-						aChMedian = 3;
-					}
-					if (aMaxMean < mQRS2[1] && mQRS2[1] > 0) {
-						aMaxMean = mQRS2[1];
-						aChMean = 1;
-					}
-					if (aMaxMean < mQRS3[1] && mQRS3[1] > 0) {
-						aMaxMean = mQRS3[1];
-						aChMean = 2;
-					}
-					if (aMaxMean < mQRS4[1] && mQRS4[1] > 0) {
-//						aMaxMean = mQRS4[1];
-						aChMean = 3;
-					}
-
-					int aCh;
-					if (aMaxMedian > 0.1) {
-						aCh = aChMedian;
-					} else if (aChMean > -1) {
-						aCh = aChMean;
-					} else {
-						aCh = -1;
-					}
-
-//                    FileLoggerHelper.getInstance().sendLogData(String.format(ApplicationUtils.getCurrentTime() + " : Channel selected : %d", aCh), FileLoggerType.EXECUTION, FLApplication.mFileTimeStamp);
-
+//					double aMaxMedian, aMaxMean;
+//					aMaxMedian = mQRS1[0];
+//					aMaxMean = mQRS1[1];
+//					int aChMedian, aChMean;
+//					aChMean = -1;
+//					if (aMaxMean > 0) {
+//						aChMean = 0;
+//					}
+//					aChMedian = 0;
+//					if (aMaxMedian < mQRS2[0]) {
+//						aMaxMedian = mQRS2[0];
+//						aChMedian = 1;
+//					}
+//					if (aMaxMedian < mQRS3[0]) {
+//						aMaxMedian = mQRS3[0];
+//						aChMedian = 2;
+//					}
+//					if (aMaxMedian < mQRS4[0]) {
+//						aMaxMedian = mQRS4[0];
+//						aChMedian = 3;
+//					}
+//					if (aMaxMean < mQRS2[1] && mQRS2[1] > 0) {
+//						aMaxMean = mQRS2[1];
+//						aChMean = 1;
+//					}
+//					if (aMaxMean < mQRS3[1] && mQRS3[1] > 0) {
+//						aMaxMean = mQRS3[1];
+//						aChMean = 2;
+//					}
+//					if (aMaxMean < mQRS4[1] && mQRS4[1] > 0) {
+////						aMaxMean = mQRS4[1];
+//						aChMean = 3;
+//					}
+//
+//					int aCh;
+//					if (aMaxMedian > 0.1) {
+//						aCh = aChMedian;
+//					} else if (aChMean > -1) {
+//						aCh = aChMean;
+//					} else {
+//						aCh = -1;
+//					}
+//
+////                    FileLoggerHelper.getInstance().sendLogData(String.format(ApplicationUtils.getCurrentTime() + " : Channel selected : %d", aCh), FileLoggerType.EXECUTION, FLApplication.mFileTimeStamp);
+//
 					int[] aQrsSelected;
 					int aQrsLength;
-					if (aCh > -1) {
-						if (aCh == 0) {
-							aQrsLength = mQRS1.length - 2;
-							aQrsSelected = new int[aQrsLength];
-							for (int i = 0; i < aQrsSelected.length; i++) {
-								aQrsSelected[i] = (int) mQRS1[i + 2];
-							}
-						} else if (aCh == 1) {
-							aQrsLength = mQRS2.length - 2;
-							aQrsSelected = new int[aQrsLength];
-							for (int i = 0; i < aQrsSelected.length; i++) {
-								aQrsSelected[i] = (int) mQRS2[i + 2];
-							}
-						} else if (aCh == 2) {
-							aQrsLength = mQRS3.length - 2;
-							aQrsSelected = new int[aQrsLength];
-							for (int i = 0; i < aQrsSelected.length; i++) {
-								aQrsSelected[i] = (int) mQRS3[i + 2];
-							}
-						} else {
-							aQrsLength = mQRS4.length - 2;
-							aQrsSelected = new int[aQrsLength];
-							for (int i = 0; i < aQrsSelected.length; i++) {
-								aQrsSelected[i] = (int) mQRS4[i + 2];
-							}
-						}
-					} else {
-						aQrsLength = 0;
-						aQrsSelected = new int[]{};
-					}
-
+//					if (aCh > -1) {
+//						if (aCh == 0) {
+//							aQrsLength = mQRS1.length - 2;
+//							aQrsSelected = new int[aQrsLength];
+//							for (int i = 0; i < aQrsSelected.length; i++) {
+//								aQrsSelected[i] = (int) mQRS1[i + 2];
+//							}
+//						} else if (aCh == 1) {
+//							aQrsLength = mQRS2.length - 2;
+//							aQrsSelected = new int[aQrsLength];
+//							for (int i = 0; i < aQrsSelected.length; i++) {
+//								aQrsSelected[i] = (int) mQRS2[i + 2];
+//							}
+//						} else if (aCh == 2) {
+//							aQrsLength = mQRS3.length - 2;
+//							aQrsSelected = new int[aQrsLength];
+//							for (int i = 0; i < aQrsSelected.length; i++) {
+//								aQrsSelected[i] = (int) mQRS3[i + 2];
+//							}
+//						} else {
+//							aQrsLength = mQRS4.length - 2;
+//							aQrsSelected = new int[aQrsLength];
+//							for (int i = 0; i < aQrsSelected.length; i++) {
+//								aQrsSelected[i] = (int) mQRS4[i + 2];
+//							}
+//						}
+//					} else {
+//						aQrsLength = 0;
+//						aQrsSelected = new int[]{};
+//					}
+					aQrsSelected = (int[]) qrsSelectionInputs[0];
+					aQrsLength = ((int[])qrsSelectionInputs[0]).length;
 					// Find RR mean and Std in the iteration and check if the Qrs spans the enter signal range.
 					if (aQrsLength > SignalProcConstants.MQRS_MIN_SIZE) {
 						int[] aRR = new int[aQrsLength - 1];
@@ -245,6 +248,7 @@ public class MQRSDetection {
 //                            FileLoggerHelper.getInstance().sendLogData(String.format(ApplicationUtils.getCurrentTime() + " : Average length : %f", aRRMean * aQrsLength), FileLoggerType.EXECUTION, FLApplication.mFileTimeStamp);
 
 //							aCh = -1;
+							qrsSelectionInputs[2] = -1;
 							aQrsSelected = new int[]{};
 						}
 					}
