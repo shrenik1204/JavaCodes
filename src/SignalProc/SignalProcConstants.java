@@ -612,7 +612,7 @@ public class SignalProcConstants {
 	public static final int FQRS_RR_HIGH_TH = 700;
 
 
-	public static final double CHANNEL_PERCENTAGE = 5.0/100;
+	public static final double CHANNEL_PERCENTAGE = 3.0/100;
 
 	/**********************************************
 	 * SignalProcConstants used in QRS SELECTION
@@ -624,7 +624,7 @@ public class SignalProcConstants {
 	/** CHANGE BY ARAVIND 5th March 2018
 	 * Variance change for 15 bpm in milliseconds.
 	 */
-	public static final double QRS_RR_VAR = 17.0/60000; // 17 beats change
+	public static final double QRS_RR_VAR = 21.0/60000; // 17 beats change
 
 	public static final double QRS_RR_VAR_Concat = 8.0/60000; // 10 beats change
 

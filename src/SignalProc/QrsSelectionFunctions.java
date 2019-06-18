@@ -598,14 +598,52 @@ public class QrsSelectionFunctions {
         return iQrsFinal;
     }
 
-    /**
-     * Check the first QRS location and first RR value with previous iteration.
-     *
-     * @param iQrsFinal   Final QRS selected.
-     * @param iQRSLast    Location of last QRS determined in previous iteration.
-     * @param iRRMeanLast Mean RR of last 4 QRS determined in previous iteration.
-     * @return Flag : 0 or 1.
-     */
+    public boolean QrsOverlapCheck(LinkedList<Integer> iQrsFinal) {
+
+
+        List<Integer> iQRSlist = new ArrayList<>();
+
+        for (int i = 0; i < iQrsFinal.size(); i++) {
+            while (iQrsFinal.get(i) < 5000) {
+                iQRSlist.add(iQrsFinal.get(i));
+                break;
+            }
+        }
+//        for (int i : iQrsFinal) {
+//            iQRSlist.add(i);
+//        }
+        int th = 40, lowTH, highTH, overlapCount = 0;
+
+        for (int lastQRSF : SignalProcUtils.lastQRSFetalArray) {
+            for (int i = 0; i < iQRSlist.size(); i++) {
+                if(iQRSlist.get(i) - th < 0){
+                    lowTH = 0;
+                    highTH = iQrsFinal.get(i) + th;
+                }else if(iQRSlist.get(i) + th > 15000){
+                    lowTH = iQrsFinal.get(i) - th;
+                    highTH = 15000;
+                }
+                else{
+                    lowTH = iQRSlist.get(i) - th;
+                    highTH = iQRSlist.get(i) + th;
+                }
+                if ((lastQRSF >= lowTH && lastQRSF <= highTH)) {
+                    iQRSlist.remove(i);
+                    overlapCount++;
+                }
+            }
+        }
+        return iQRSlist.size() <= 3 || overlapCount > 1;
+    }
+
+        /**
+         * Check the first QRS location and first RR value with previous iteration.
+         *
+         * @param iQrsFinal   Final QRS selected.
+         * @param iQRSLast    Location of last QRS determined in previous iteration.
+         * @param iRRMeanLast Mean RR of last 4 QRS determined in previous iteration.
+         * @return Flag : 0 or 1.
+         */
     public boolean firstQrsCheck(LinkedList<Integer> iQrsFinal, int iQRSLast, double iRRMeanLast, boolean iRecheck) {
 //        LinkedList<Integer> iQrsListnew = new LinkedList<>();
 //        if(iQrsFinal.size() > 0){

@@ -1,5 +1,6 @@
 package SignalProc;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 //import timber.log.Timber;
@@ -49,22 +50,35 @@ public class HeartRateFetal {
 	 * @param iQRS Fetal QRS selected in current iteration.
 //	 * @param iNoQrsRemoved No of fetal QRS removed that are less than {@link SignalProcConstants#QRS_START_VALUE start value} .
 	 */
-	public void heartRate(int[] iQRS) {
+	public void heartRate(int[] iQRS) throws Exception {
 
         if(SignalProcUtils.currentIteration == 41){
             SignalProcUtils.currentIteration = 41;
         }
+
+
+
+        ArrayList<Integer> qrsArray = new ArrayList<>();
+        for (int i = 0; i < iQRS.length; i++) {
+            qrsArray.add(iQRS[i]);
+        }
+
+        double mean = 0;
+        MatrixFunctions aMatrixFunctions = new MatrixFunctions();
+        double aRRLowTh = 0;
+        double aRRHighTh = 0;
+        double aDelta = SignalProcConstants.QRS_RR_VAR;
+
         int[] adiffarray = new int[iQRS.length];
 
         for (int i = 0; i < iQRS.length-1; i++) {
             adiffarray[i] = iQRS[i+1]-iQRS[i];
         }
 
-		SignalProcUtils.qrsfLocTemp = new LinkedList<>();
+        SignalProcUtils.qrsfLocTemp = new LinkedList<>();
 		SignalProcUtils.hrfTemp = new LinkedList<>();
 
 
-        MatrixFunctions aMatrixFunctions = new MatrixFunctions();
 
         int aLengthQrs = iQRS.length;
 
@@ -87,9 +101,9 @@ public class HeartRateFetal {
             SignalProcUtils.hrfTemp.add((float) (60 * SignalProcConstants.FS / aRRMean));
 
             int aRRDiff = 0;
-            double aRRLowTh = 0;
-            double aRRHighTh = 0;
-            double aDelta = SignalProcConstants.QRS_RR_VAR;
+//            double aRRLowTh = 0;
+//            double aRRHighTh = 0;
+//            double aDelta = SignalProcConstants.QRS_RR_VAR;
             aRRLowTh = 1 / (1 / aRRMean + aDelta);
             aRRHighTh = 1 / (1 / aRRMean - aDelta);
 

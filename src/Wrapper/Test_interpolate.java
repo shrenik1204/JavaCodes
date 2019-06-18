@@ -11,7 +11,7 @@ public class Test_interpolate {
 
     public static void main(String[] args) throws IOException {
 
-        String pyPath = "/Users/kishoresubramanian/Sattva_Aravind/Manipal Data/ManipalDay4 - 20th Sept/sattva-2018-Sep-20-12-16-45/algo-new1input-sattva-2018-Sep-20-12-16-45.txt";
+        String pyPath = "/Users/kishoresubramanian/Sattva_Aravind/DATA/Test_Vibhav/New pogopin patch/sattva-2019-Jun-14-16-21-36/new1input-sattva-2019-Jun-14-16-21-36.txt";
 //        String pyFilepath = "/Users/kishoresubramanian/Sattva_Aravind/PythonCode/FileChanger_2_Index.py";
 //        String[] pycommand = {"python", pyFilepath, pyPath};
 //        Runtime rt = Runtime.getRuntime();

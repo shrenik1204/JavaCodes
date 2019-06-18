@@ -68,8 +68,11 @@ public class AlgorithmMain {
             SignalProcUtils.hrMaternal.add(0f);
         }
 
-        if(SignalProcUtils.currentIteration == 17){
-            SignalProcUtils.currentIteration = 17;
+        if(SignalProcUtils.currentIteration == 22){
+            SignalProcUtils.currentIteration = 22;
+        }
+        if(SignalProcUtils.currentIteration == 68){
+            SignalProcUtils.currentIteration = 68;
         }
 
         LinkedList<Integer> aQrsF = new LinkedList<Integer>();
@@ -127,6 +130,7 @@ public class AlgorithmMain {
         double[][] aEcgFilter = aFilter.filterParallel(aInput);
 
         if (SignalProcUtils.MA_FLAG){
+            SignalProcUtils.lastQRSFetalArray.clear();
             Filename.CHF_Ind.append(SignalProcUtils.currentIteration+", , , , , , , , , ,\n ");
             Filename.RRMeanFetal.append(",\n");
             Filename.FqrsSelectionType.append(" MA \n");
@@ -157,7 +161,7 @@ public class AlgorithmMain {
          * Estimate Maternal QRS
          */
         MQRSDetection mqrsDetection = new MQRSDetection();
-        int[] aQRSM = mqrsDetection.mQRS(aEcgIca1);
+        int[] aQRSM = mqrsDetection.mQRS(aEcgIca1, aEcgFilter);
 
 //        Timber.i("AlgorithmMain : Time for MQRS detection : "+(System.currentTimeMillis()-aET)+" ms");
 //        FileLoggerHelper.getInstance().sendLogData(ApplicationUtils.getCurrentTime() + " : Algorithm Main : Time for mQRS : "+(System.currentTimeMillis()-aET)+" msec.", FileLoggerType.EXECUTION, FLApplication.mFileTimeStamp);

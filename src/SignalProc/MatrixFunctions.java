@@ -79,7 +79,7 @@ public class MatrixFunctions {
 
 	}
 
-	public double findMean(double[] iInput) throws Exception {
+	public double findMean(int[] iInput) throws Exception {
 
 		if (iInput.length > 0) {
 			Arrays.sort(iInput);
@@ -1345,7 +1345,7 @@ public void filtfilt_Sos(double[] iInput, double[][] iSOS,  double[] iGain, doub
      * </ul>
      * @throws Exception
      */
-	public double[] mqrsDetection(double[] iInput) throws Exception{
+	public double[] mqrsDetection(double[] iInput, double[] iFilterInput) throws Exception{
 
         double aMedianVal = 0;
         double aMeanVal = 0;
@@ -1876,6 +1876,120 @@ public void filtfilt_Sos(double[] iInput, double[][] iSOS,  double[] iGain, doub
 						qrs[i] = iQRS4[i];
 					}
 				}
+				// TODO: 21/11/18 This Code snippet can be used for something else
+
+//				int th = 20, lowTH, highTH;
+//				if(startIndex == -1 && SignalProcUtils.lastQRSFetalArray.size() > 4) {
+//					List<Integer> iQRSlist1 = new ArrayList<>();
+//					iQRSlist1.addAll(SignalProcUtils.lastQRSFetalArray);
+//					List<Integer> iQRSlist2 = new ArrayList<>();
+//					iQRSlist2.addAll(SignalProcUtils.lastQRSFetalArray);
+//					List<Integer> iQRSlist3 = new ArrayList<>();
+//					iQRSlist3.addAll(SignalProcUtils.lastQRSFetalArray);
+//					List<Integer> iQRSlist4 = new ArrayList<>();
+//					iQRSlist4.addAll(SignalProcUtils.lastQRSFetalArray);
+//					// Channel 1
+//					for (int lastQRSF : iQRS1) {
+//						for (int i = 0; i < iQRSlist1.size(); i++) {
+//							if (iQRSlist1.get(i) - th < 0) {
+//								lowTH = 0;
+//								highTH = iQRS1[i] + th;
+//							} else if (iQRSlist1.get(i) + th > 15000) {
+//								lowTH = iQRS1[i] - th;
+//								highTH = 15000;
+//							} else {
+//								lowTH = iQRSlist1.get(i) - th;
+//								highTH = iQRSlist1.get(i) + th;
+//							}
+//							if ((lastQRSF >= lowTH && lastQRSF <= highTH)) {
+//								iQRSlist1.remove(i);
+//							}
+//						}
+//					}
+//					// Channel 2
+//					for (int lastQRSF : iQRS2) {
+//						for (int i = 0; i < iQRSlist2.size(); i++) {
+//							if (iQRSlist2.get(i) - th < 0) {
+//								lowTH = 0;
+//								highTH = iQRS2[i] + th;
+//							} else if (iQRSlist2.get(i) + th > 15000) {
+//								lowTH = iQRS2[i] - th;
+//								highTH = 15000;
+//							} else {
+//								lowTH = iQRSlist2.get(i) - th;
+//								highTH = iQRSlist2.get(i) + th;
+//							}
+//							if ((lastQRSF >= lowTH && lastQRSF <= highTH)) {
+//								iQRSlist2.remove(i);
+//							}
+//						}
+//					}
+//					// Channel 3
+//					for (int lastQRSF : iQRS3) {
+//						for (int i = 0; i < iQRSlist3.size(); i++) {
+//							if (iQRSlist3.get(i) - th < 0) {
+//								lowTH = 0;
+//								highTH = iQRS3[i] + th;
+//							} else if (iQRSlist3.get(i) + th > 15000) {
+//								lowTH = iQRS3[i] - th;
+//								highTH = 15000;
+//							} else {
+//								lowTH = iQRSlist3.get(i) - th;
+//								highTH = iQRSlist3.get(i) + th;
+//							}
+//							if ((lastQRSF >= lowTH && lastQRSF <= highTH)) {
+//								iQRSlist3.remove(i);
+//							}
+//						}
+//					}
+//					// Channel 4
+//					for (int lastQRSF : iQRS4) {
+//						for (int i = 0; i < iQRSlist4.size(); i++) {
+//							if (iQRSlist4.get(i) - th < 0) {
+//								lowTH = 0;
+//								highTH = iQRS4[i] + th;
+//							} else if (iQRSlist4.get(i) + th > 15000) {
+//								lowTH = iQRS4[i] - th;
+//								highTH = 15000;
+//							} else {
+//								lowTH = iQRSlist4.get(i) - th;
+//								highTH = iQRSlist4.get(i) + th;
+//							}
+//							if ((lastQRSF >= lowTH && lastQRSF <= highTH)) {
+//								iQRSlist4.remove(i);
+//							}
+//						}
+//					}
+//
+//					if (iQRSlist1.size() < 3 || iQRSlist2.size() < 3 || iQRSlist3.size() < 3 || iQRSlist4.size() < 3) {
+//						if (iQRSlist1.size() < iQRSlist2.size() && iQRSlist1.size() < iQRSlist3.size() && iQRSlist1.size() < iQRSlist4.size()) {
+//							startIndex = aStartInd1;
+//							for (int i = 0; i < length_Final; i++) {
+//								qrs[i] = iQRS1[i];
+//							}
+//							ch = 1;
+//						}else if(iQRSlist2.size() < iQRSlist3.size() && iQRSlist2.size() < iQRSlist4.size()){
+//							startIndex = aStartInd2;
+//							for (int i = 0; i < length_Final; i++) {
+//								qrs[i] = iQRS2[i];
+//							}
+//							ch = 2;
+//						}else if(iQRSlist3.size() < iQRSlist4.size()){
+//							startIndex = aStartInd3;
+//							for (int i = 0; i < length_Final; i++) {
+//								qrs[i] = iQRS3[i];
+//							}
+//							ch = 3;
+//						}else{
+//							startIndex = aStartInd4;
+//							for (int i = 0; i < length_Final; i++) {
+//								qrs[i] = iQRS4[i];
+//							}
+//							ch = 4;
+//						}
+//
+//					}
+//				}
 
 
 				int concatQrs[] = new int[aLen1 + aLen2 + aLen3 + aLen4];
@@ -1906,10 +2020,27 @@ public void filtfilt_Sos(double[] iInput, double[][] iSOS,  double[] iGain, doub
 	}
 
 	public Object[] channelSelection_Mqrs(double[] iQRS1, double[] iQRS2, double[] iQRS3, double[] iQRS4, int iVarTh, int iRRlowTh,
-										  int iRRhighTh) throws Exception {
+										  int iRRhighTh, double iLastRRmean, double[][]iFilterInput) throws Exception {
 		/**
 		 * Channel selection part
 		 */
+		double[] adiffarray1 = new double[iQRS1.length];
+		double[] adiffarray2 = new double[iQRS2.length];
+		double[] adiffarray3 = new double[iQRS3.length];
+		double[] adiffarray4 = new double[iQRS4.length];
+
+		for (int i = 0; i < iQRS1.length-1; i++) {
+			adiffarray1[i] = iQRS1[i+1]-iQRS1[i];
+		}
+		for (int i = 0; i < iQRS2.length-1; i++) {
+			adiffarray2[i] = iQRS2[i+1]-iQRS2[i];
+		}
+		for (int i = 0; i < iQRS3.length-1; i++) {
+			adiffarray3[i] = iQRS3[i+1]-iQRS3[i];
+		}
+		for (int i = 0; i < iQRS4.length-1; i++) {
+			adiffarray4[i] = iQRS4[i+1]-iQRS4[i];
+		}
 
 		int aLen1 = iQRS1.length;
 		int aLen2 = iQRS2.length;
@@ -2284,7 +2415,7 @@ public void filtfilt_Sos(double[] iInput, double[][] iSOS,  double[] iGain, doub
 					if (aNextIndex >= aCurrentIndex && aCurrentIndex < SignalProcConstants.NO_OF_PRINT_VALUES ) { // (&& aNextIndex <= SignalProcConstants.NO_OF_PRINT_VALUES)
 						for (int it = aCurrentIndex; it <= aNextIndex; it++) {
 							if (it < SignalProcConstants.NO_OF_PRINT_VALUES){
-								// a = y1 + (y2-y1) * (ax - x1)/(x2-x1) ;
+								// a = y1 + (y2-y1) * (ax - x1)/(x2-x1) ; linear interpolation
 								iFinalQrsHrPlot[it] = (int) (iFinalHR[aPreviousQRSIndex]
 										+ (iFinalHR[i] - iFinalHR[aPreviousQRSIndex]) * (aCurrentIndex * SignalProcConstants.DIFFERENCE_SAMPLES + 2000 - aQRS1)
 										/ (aQRS2 - aQRS1));
@@ -4269,8 +4400,8 @@ public void filtfilt_Sos(double[] iInput, double[][] iSOS,  double[] iGain, doub
 
         for (int i = 0; i < 13; i++) {
             if (iOverlap[i] >= 2){
-                if (iEndLocation < 5000 + i*SignalProcConstants.MA_SHIFT){
-                    iEndLocation = 5000 + i*SignalProcConstants.MA_SHIFT;
+                if (iEndLocation < 2000 + i*SignalProcConstants.MA_SHIFT){
+                    iEndLocation = 2000 + i*SignalProcConstants.MA_SHIFT;
                 }
                 aIndOverlap = i;
             }
@@ -4279,13 +4410,13 @@ public void filtfilt_Sos(double[] iInput, double[][] iSOS,  double[] iGain, doub
         if (aIndOverlap > 0 ){
             for (int i = aIndOverlap+1; i < 13; i++) {
                 if (iOverlap[i] == 1 && iOverlap[i-1] == 2){
-                    if (iEndLocation < 5000 + i*SignalProcConstants.MA_SHIFT){
-                        iEndLocation = 5000 + i*SignalProcConstants.MA_SHIFT;
+                    if (iEndLocation < 2000 + i*SignalProcConstants.MA_SHIFT){
+                        iEndLocation = 2000 + i*SignalProcConstants.MA_SHIFT;
                     }
                 }
                 else if ( iOverlap[i] == 1 && iOverlap[i-1] == 1) {
-                    if (iEndLocation < 5000 + i*SignalProcConstants.MA_SHIFT){
-                        iEndLocation = 5000 + i*SignalProcConstants.MA_SHIFT;
+                    if (iEndLocation < 2000 + i*SignalProcConstants.MA_SHIFT){
+                        iEndLocation = 2000 + i*SignalProcConstants.MA_SHIFT;
                     }
                 }
                 else if (iOverlap[i] == 1 && iOverlap[i-1] == 0){

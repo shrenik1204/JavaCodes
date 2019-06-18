@@ -144,7 +144,7 @@ public class FQRSDetection {
                     Object[] qrsSelectionInputs = mMatrixFunctions.channelSelection(mQRS1, mQRS2, mQRS3, mQRS4,
                             SignalProcConstants.FQRS_VARIANCE_THRESHOLD, SignalProcConstants.FQRS_RR_LOW_TH, SignalProcConstants.FQRS_RR_HIGH_TH);
 
-					QrsSelectionRobust aQrsSelect = new QrsSelectionRobust();
+					QrsSelectionRobust_New aQrsSelect = new QrsSelectionRobust_New();
 					int[] aQrsF = (int[]) qrsSelectionInputs[0];
 					for (int i = 0; i < aQrsF.length; i++) {
 						Filename.QRSF_Detected.append(aQrsF[i]+",");

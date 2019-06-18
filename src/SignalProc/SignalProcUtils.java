@@ -161,6 +161,10 @@ public class SignalProcUtils {
      */
     public static int lastQRSFetal = 0;
     /**
+     * Last fetal QRS location >10000 detected in previous iteration.
+     */
+    public static List<Integer> lastQRSFetalArray = new ArrayList<>();
+    /**
      * Interpolated length of fetal peaks at the end of previous iteration.
      */
     public static int interpolatedLengthFetal = 0;
@@ -311,6 +315,7 @@ public class SignalProcUtils {
         independantdet_flag = false;
 
         lastQRSFetal = 0;
+        lastQRSFetalArray.clear();
         interpolatedLengthFetal = 0;
         interpolationCount = 0;
 

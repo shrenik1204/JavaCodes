@@ -5,10 +5,10 @@ import java.io.File;
 public class Filename {
 
 	private static Filename filename;
-	static String aFilePath = ""+"/Users/kishoresubramanian/Sattva_Aravind/Manipal Javacodes/";
-	static String aFilePath_FHR = ""+"/Users/kishoresubramanian/Sattva_Aravind/Fehmicare/Testing datasets/fhrcsv/";
-	static String aFilePath_EXE = ""+"/Users/kishoresubramanian/Sattva_Aravind/Fehmicare/Testing datasets/execsv/";
-	static String aFilePath_UA = ""+"/Users/kishoresubramanian/Desktop/Sattva work/Java Results Demo test/UA/";
+	static String aFilePath = ""+"/Users/kishoresubramanian/Sattva_Aravind/Java Generated Data/APR_MAY_Newelectrode";
+	static String aFilePath_FHR = ""+"/Users/kishoresubramanian/Sattva_Aravind/Java Generated Data/FHR/";
+	static String aFilePath_EXE = ""+"/Users/kishoresubramanian/Sattva_Aravind/Java Generated Data/EXE/";
+	static String aFilePath_UA = ""+"/Users/kishoresubramanian/Sattva_Aravind/Java Generated Data/UA/";
 
 	static private String aInputFilePath = "";
 	
