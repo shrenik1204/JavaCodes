@@ -131,11 +131,11 @@ public class SignalProcUtils {
     /**
      * Temp QRS locations of the iteration.
      */
-    public static LinkedList<Integer> qrsfLocTemp;
+    public static LinkedList<Integer> qrsfLocTemp = new LinkedList<>();
     /**
      * Temp HR of the iteartion.
      */
-    public static LinkedList<Float> hrfTemp;
+    public static LinkedList<Float> hrfTemp = new LinkedList<>();
     /**
      * Last iteration with fetal peaks selected. - remove
      */
@@ -202,13 +202,13 @@ public class SignalProcUtils {
     /**
      * Temp MQRS locations of the iteration
      */
-    public static LinkedList<Integer> qrsmLocTemp;
+    public static LinkedList<Integer> qrsmLocTemp = new LinkedList<>();
 
     public static int maternalHrNew = 0; // - remove
     /**
      * Temp MHR values of the iteration
      */
-    public static LinkedList<Float> hrmTemp;
+    public static LinkedList<Float> hrmTemp = new LinkedList<>();
     public static int maternalHrEnd = 0; // - remove
 
 
@@ -305,12 +305,21 @@ public class SignalProcUtils {
         MA_Shift = 0;
         MA_FLAG = false;
 
+        iter = 0;
+
         lastIteration = -1;
+
+        fhrPlot = new int[SignalProcConstants.NO_OF_PRINT_VALUES];
+        mhrPlot = new int[SignalProcConstants.NO_OF_PRINT_VALUES];
+        fhrPrint = new String[SignalProcConstants.NO_OF_PRINT_VALUES];
+        mhrPrint = new String[SignalProcConstants.NO_OF_PRINT_VALUES];
 
         lastQRSMIteration = -1;
         noDetectionFlagMaternal = 0;
         mhrComputed = false;
 
+        qrsfLocTemp.clear();
+        hrfTemp.clear();
         lastQRSFIteration = -1;
         noDetectionFlagFetal = 0;
         lastRRMeanFetal = 0;
@@ -323,6 +332,11 @@ public class SignalProcUtils {
         interpolationCount = 0;
 
         rrMeanCheck_Maternal = false;
+        lastRRMeanMaternal = 0;
+        lastQRSMaternal = 0;
+
+        qrsmLocTemp.clear();
+        hrmTemp.clear();
 
         dataLossCounter = 0;
 
