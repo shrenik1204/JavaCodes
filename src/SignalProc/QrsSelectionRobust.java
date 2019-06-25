@@ -173,7 +173,7 @@ public class QrsSelectionRobust {
 ////
                         SignalProcUtils.independantdet_flag = false;
 
-                        Object[] aQrsConcatOut = aQrsSelectionFunctions.qrsConcatenated(iQrsConcat, iQRSLast, iRRMeanLast, iQrsM);
+                        Object[] aQrsConcatOut = aQrsSelectionFunctions.qrsConcatenated(iQrsConcat, iQrsM);
 
                         aQrsFinal = aQrsSelectionFunctions.interpolate((LinkedList<Integer>) aQrsConcatOut[0],
                                 (LinkedList<Integer>) aQrsConcatOut[1], iQrsM);
@@ -250,7 +250,7 @@ public class QrsSelectionRobust {
 //                }
                 SignalProcUtils.independantdet_flag = false;
 
-                Object[] aQrsConcatOut = aQrsSelectionFunctions.qrsConcatenated(iQrsConcat, iQRSLast, iRRMeanLast, iQrsM);
+                Object[] aQrsConcatOut = aQrsSelectionFunctions.qrsConcatenated(iQrsConcat, iQrsM);
 
                 LinkedList<Integer> aQrsFinal = aQrsSelectionFunctions.interpolate((LinkedList<Integer>) aQrsConcatOut[0],
                         (LinkedList<Integer>) aQrsConcatOut[1], iQrsM);

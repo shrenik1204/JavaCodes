@@ -107,11 +107,11 @@ public class MQRSDetection {
 
 					for (int i = 0; i < aLength; i++) {
 						mChannel1[i] = iInput[i][0];
-						mFiltChannel1[i] = iFilterInput[i][1];
+//						mFiltChannel1[i] = iFilterInput[i][1];
 					}
 
 					try {
-						mQRS1 = mMatrixFunctions.mqrsDetection(mChannel1,mFiltChannel1);
+						mQRS1 = mMatrixFunctions.mqrsDetection(mChannel1);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -122,11 +122,11 @@ public class MQRSDetection {
 
 					for (int i = 0; i < aLength; i++) {
 						mChannel2[i] = iInput[i][1];
-						mFiltChannel2[i] = iFilterInput[i][2];
+//						mFiltChannel2[i] = iFilterInput[i][2];
 					}
 
 					try {
-						mQRS2 = mMatrixFunctions.mqrsDetection(mChannel2,mFiltChannel2);
+						mQRS2 = mMatrixFunctions.mqrsDetection(mChannel2);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -137,11 +137,11 @@ public class MQRSDetection {
 
 					for (int i = 0; i < aLength; i++) {
 						mChannel3[i] = iInput[i][2];
-						mFiltChannel3[i] = iFilterInput[i][3];
+//						mFiltChannel3[i] = iFilterInput[i][3];
 					}
 
 					try {
-						mQRS3 = mMatrixFunctions.mqrsDetection(mChannel3,mFiltChannel3);
+						mQRS3 = mMatrixFunctions.mqrsDetection(mChannel3);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -152,11 +152,11 @@ public class MQRSDetection {
 
 					for (int i = 0; i < aLength; i++) {
 						mChannel4[i] = iInput[i][3];
-						mFiltChannel4[i] = iFilterInput[i][4];
+//						mFiltChannel4[i] = iFilterInput[i][4];
 					}
 
 					try {
-						mQRS4 = mMatrixFunctions.mqrsDetection(mChannel4,mFiltChannel4);
+						mQRS4 = mMatrixFunctions.mqrsDetection(mChannel4);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}

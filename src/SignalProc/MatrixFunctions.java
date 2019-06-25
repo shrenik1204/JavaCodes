@@ -3,10 +3,7 @@ package SignalProc;
 
 import Wrapper.Filename;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 /**
  * <p> Generic functions used at various stages in Algorithm.</p>
@@ -22,9 +19,15 @@ import java.util.List;
  *     		 	<li> First commit.</li>
  *     		</ol>
  *     </li>
+ *     <li> 18th June, 2019
+ *     		<ol>
+ *     		 	<li> Implementing QRS amplitude check with MQRS selection</li>
+ *     		</ol>
+ *     </li>
  * </ul>
  *
  * @author Kishore Subramanian (kishore@sattvamedtech.com)
+ * @author Aravind Prasad (aravind@sattvamedtech.com)
  *         
  */
 
@@ -1345,7 +1348,7 @@ public void filtfilt_Sos(double[] iInput, double[][] iSOS,  double[] iGain, doub
      * </ul>
      * @throws Exception
      */
-	public double[] mqrsDetection(double[] iInput, double[] iFilterInput) throws Exception{
+	public double[] mqrsDetection(double[] iInput) throws Exception{
 
         double aMedianVal = 0;
         double aMeanVal = 0;
@@ -2024,23 +2027,38 @@ public void filtfilt_Sos(double[] iInput, double[][] iSOS,  double[] iGain, doub
 		/**
 		 * Channel selection part
 		 */
-		double[] adiffarray1 = new double[iQRS1.length];
-		double[] adiffarray2 = new double[iQRS2.length];
-		double[] adiffarray3 = new double[iQRS3.length];
-		double[] adiffarray4 = new double[iQRS4.length];
-
-		for (int i = 0; i < iQRS1.length-1; i++) {
-			adiffarray1[i] = iQRS1[i+1]-iQRS1[i];
-		}
-		for (int i = 0; i < iQRS2.length-1; i++) {
-			adiffarray2[i] = iQRS2[i+1]-iQRS2[i];
-		}
-		for (int i = 0; i < iQRS3.length-1; i++) {
-			adiffarray3[i] = iQRS3[i+1]-iQRS3[i];
-		}
-		for (int i = 0; i < iQRS4.length-1; i++) {
-			adiffarray4[i] = iQRS4[i+1]-iQRS4[i];
-		}
+		// Required for data analysis
+//		double[] adiffarray1 = new double[iQRS1.length-1];
+//		double[] adiffarray2 = new double[iQRS2.length-1];
+//		double[] adiffarray3 = new double[iQRS3.length-1];
+//		double[] adiffarray4 = new double[iQRS4.length-1];
+//		int sum = 0;
+//		double mean1, mean2, mean3, mean4;
+//
+//		for (int i = 0; i < iQRS1.length-1; i++) {
+//			adiffarray1[i] = iQRS1[i+1]-iQRS1[i];
+//			sum += adiffarray1[i];
+//		}
+//		mean1 = sum/iQRS1.length-1;
+//		sum = 0;
+//		for (int i = 0; i < iQRS2.length-1; i++) {
+//			adiffarray2[i] = iQRS2[i+1]-iQRS2[i];
+//			sum += adiffarray2[i];
+//		}
+//		mean2 = sum/iQRS2.length-1;
+//		sum = 0;
+//		for (int i = 0; i < iQRS3.length-1; i++) {
+//			adiffarray3[i] = iQRS3[i+1]-iQRS3[i];
+//			sum += adiffarray3[i];
+//		}
+//		mean3 = sum/iQRS3.length-1;
+//		sum = 0;
+//		for (int i = 0; i < iQRS4.length-1; i++) {
+//			adiffarray4[i] = iQRS4[i+1]-iQRS4[i];
+//			sum += adiffarray4[i];
+//		}
+//		mean4 = sum/iQRS4.length-1;
+//		sum = 0;
 
 		int aLen1 = iQRS1.length;
 		int aLen2 = iQRS2.length;
@@ -2048,21 +2066,46 @@ public void filtfilt_Sos(double[] iInput, double[][] iSOS,  double[] iGain, doub
 		int aLen4 = iQRS4.length;
 
 		if (iVarTh > 0 && iRRhighTh > 0 && iRRlowTh > 0) {
-			double aInd1 = 0;
-			double aInd2 = 0;
-			double aInd3 = 0;
-			double aInd4 = 0;
-			// to get the start index in each channel
-			int aStartInd1 = -1;
-			int aStartInd2 = -1;
-			int aStartInd3 = -1;
-			int aStartInd4 = -1;
-			// RR mean for each channel
-			double aRRmean1 = 0;
-			double aRRmean2 = 0;
-			double aRRmean3 = 0;
-			double aRRmean4 = 0;
+//			double aInd1 = 0;
+//			double aInd2 = 0;
+//			double aInd3 = 0;
+//			double aInd4 = 0;
+            // to get the start index in each channel
+//			int aStartInd1 = -1;
+//			int aStartInd2 = -1;
+//			int aStartInd3 = -1;
+//			int aStartInd4 = -1;
+            // RR mean for each channel
+//            double aRRmean1 = 0;
+//            double aRRmean2 = 0;
+//            double aRRmean3 = 0;
+//            double aRRmean4 = 0;
 
+            Object[] qrs1Index = findIndex_Std(iQRS1, iVarTh, iRRlowTh, iRRhighTh, iLastRRmean);
+            Object[] qrs2Index = findIndex_Std(iQRS2, iVarTh, iRRlowTh, iRRhighTh, iLastRRmean);
+            Object[] qrs3Index = findIndex_Std(iQRS3, iVarTh, iRRlowTh, iRRhighTh, iLastRRmean);
+            Object[] qrs4Index = findIndex_Std(iQRS4, iVarTh, iRRlowTh, iRRhighTh, iLastRRmean);
+
+            double[] aInd = new double[4];
+
+            double aInd1 = (double) qrs1Index[0];
+            double aInd2 = (double) qrs2Index[0];
+            double aInd3 = (double) qrs3Index[0];
+            double aInd4 = (double) qrs4Index[0];
+
+			Filename.ExecutionLogs_Maternal.append(aInd1 + "," + aInd2 + "," + aInd3 + "," + aInd4 + ",");
+
+            aInd[0] = (double) qrs1Index[0];
+            aInd[1] = (double) qrs2Index[0];
+            aInd[2] = (double) qrs3Index[0];
+            aInd[3] = (double) qrs4Index[0];
+
+            int aStartInd1 = (int) qrs1Index[1];
+            int aStartInd2 = (int) qrs2Index[1];
+            int aStartInd3 = (int) qrs3Index[1];
+            int aStartInd4 = (int) qrs4Index[1];
+
+            /* Commenting out computation of Indexperc and start index and implemented function findIndex_Std(); 18th June 2019
 			if (aLen1 > 3) {
 				int aNIt = aLen1 - 3;
 				double aVar1[] = new double[aNIt];
@@ -2191,114 +2234,233 @@ public void filtfilt_Sos(double[] iInput, double[][] iSOS,  double[] iGain, doub
 				aRRmean4 = aRRmean4 / counter;
 				aInd4 = counter / aNIt;
 			}
+			Commenting Complete    18th June 2019*/
 
-				double ind = aInd1;
-				int length_Final = aLen1;
-				int ch = 1;
-				double RRmean = 0;
-				for (int i = 0; i < aLen1 - 1; i++) {
-					RRmean = RRmean + iQRS1[i + 1] - iQRS1[i];
-				}
-				RRmean = RRmean / (aLen1 - 1);
-				if (aInd2 == ind) {
-					double RRmean2 = 0;
-					for (int i = 0; i < aLen2 - 1; i++) {
-						RRmean2 = RRmean2 + iQRS2[i + 1] - iQRS2[i];
-					}
-					RRmean2 = RRmean2 / (aLen2 - 1);
-					if (RRmean < RRmean2) {
-						ind = aInd2;
-						ch = 2;
-						length_Final = aLen2;
-						RRmean = RRmean2;
-					}
-				} else if (aInd2 > ind) {
-					ind = aInd2;
-					ch = 2;
-					length_Final = aLen2;
-					double RRmean2 = 0;
-					for (int i = 0; i < aLen2 - 1; i++) {
-						RRmean2 = RRmean2 + iQRS2[i + 1] - iQRS2[i];
-					}
-					RRmean = RRmean2 / (aLen2 - 1);
-				}
-				if (aInd3 == ind) {
-					double RRmean3 = 0;
-					for (int i = 0; i < aLen3 - 1; i++) {
-						RRmean3 = RRmean3 + iQRS3[i + 1] - iQRS3[i];
-					}
-					RRmean3 = RRmean3 / (aLen3 - 1);
-					if (RRmean < RRmean3) {
-						ind = aInd3;
-						ch = 3;
-						length_Final = aLen3;
-						RRmean = RRmean3;
-					}
-				} else if (aInd3 > ind) {
-					ind = aInd3;
-					ch = 3;
-					length_Final = aLen3;
-					double RRmean3 = 0;
-					for (int i = 0; i < aLen3 - 1; i++) {
-						RRmean3 = RRmean3 + iQRS3[i + 1] - iQRS3[i];
-					}
-					RRmean = RRmean3 / (aLen3 - 1);
-				}
-				if (aInd4 == ind) {
-					double RRmean4 = 0;
-					for (int i = 0; i < aLen4 - 1; i++) {
-						RRmean4 = RRmean4 + iQRS4[i + 1] - iQRS4[i];
-					}
-					RRmean4 = RRmean4 / (aLen4 - 1);
-					if (RRmean < RRmean4) {
-						ind = aInd4;
-						ch = 4;
-						length_Final = aLen4;
-						RRmean = RRmean4;
-					}
-				} else if (aInd4 > ind) {
-					ind = aInd4;
-					ch = 4;
-					length_Final = aLen4;
-					double RRmean4 = 0;
-					for (int i = 0; i < aLen4 - 1; i++) {
-						RRmean4 = RRmean4 + iQRS4[i + 1] - iQRS4[i];
-					}
-					RRmean = RRmean4 / (aLen4 - 1);
-				}
-				/**
-				 * Get the start Index and qrs values to find the final QRS.
-				 */
-				int[] qrs = new int[length_Final];
-				int startIndex = -1;
-				switch (ch) {
-					case 1:
-						startIndex = aStartInd1;
-						for (int i = 0; i < length_Final; i++) {
-							qrs[i] = (int) iQRS1[i];
-						}
-						break;
-					case 2:
-						startIndex = aStartInd2;
-						for (int i = 0; i < length_Final; i++) {
-							qrs[i] = (int) iQRS2[i];
-						}
-						break;
-					case 3:
-						startIndex = aStartInd3;
-						for (int i = 0; i < length_Final; i++) {
-							qrs[i] = (int) iQRS3[i];
-						}
-						break;
-					case 4:
-						startIndex = aStartInd4;
-						for (int i = 0; i < length_Final; i++) {
-							qrs[i] = (int) iQRS4[i];
-						}
-						break;
-				}
+			double aMaxOne = aInd[0];
+			int aCh1MaxIndex = 1;
+			double aMaxTwo = aInd[0];
+			int aCh2MaxIndex = 1;
 
+			for(int i = 0; i < aInd.length; i++){
+				if(aInd[i] > aMaxOne){
+					aMaxTwo = aMaxOne;
+					aMaxOne = aInd[i];
+					aCh1MaxIndex = i + 1;
+				} else if(aInd[i] > aMaxTwo){
+					aMaxTwo = aInd[i];
+					aCh2MaxIndex = i + 1;
+				}
+			}
 
+			Object[] mean2ChMqrsPeak = findMeanMqrsPeaks(iQRS1, iQRS2, iQRS3, iQRS4, iFilterInput, aCh1MaxIndex, aCh2MaxIndex);
+
+			double[] aMeanCh1 = (double[])mean2ChMqrsPeak[0];
+			double[] aMeanCh2 = (double[])mean2ChMqrsPeak[1];
+			double[][] aQrsCh1 = (double[][])mean2ChMqrsPeak[2];
+			double[][] aQrsCh2 = (double[][])mean2ChMqrsPeak[3];
+
+            double ind = aInd1;
+            int length_Final = aLen1;
+            int ch = 1;
+            double RRmean = 0;
+            for (int i = 0; i < aLen1 - 1; i++) {
+                RRmean = RRmean + iQRS1[i + 1] - iQRS1[i];
+            }
+            RRmean = RRmean / (aLen1 - 1);
+            if (aInd2 == ind) {
+                double RRmean2 = 0;
+                for (int i = 0; i < aLen2 - 1; i++) {
+                    RRmean2 = RRmean2 + iQRS2[i + 1] - iQRS2[i];
+                }
+                RRmean2 = RRmean2 / (aLen2 - 1);
+                if (RRmean < RRmean2) {
+                    ind = aInd2;
+                    ch = 2;
+                    length_Final = aLen2;
+                    RRmean = RRmean2;
+                }
+            } else if (aInd2 > ind) {
+                ind = aInd2;
+                ch = 2;
+                length_Final = aLen2;
+                double RRmean2 = 0;
+                for (int i = 0; i < aLen2 - 1; i++) {
+                    RRmean2 = RRmean2 + iQRS2[i + 1] - iQRS2[i];
+                }
+                RRmean = RRmean2 / (aLen2 - 1);
+            }
+            if (aInd3 == ind) {
+                double RRmean3 = 0;
+                for (int i = 0; i < aLen3 - 1; i++) {
+                    RRmean3 = RRmean3 + iQRS3[i + 1] - iQRS3[i];
+                }
+                RRmean3 = RRmean3 / (aLen3 - 1);
+                if (RRmean < RRmean3) {
+                    ind = aInd3;
+                    ch = 3;
+                    length_Final = aLen3;
+                    RRmean = RRmean3;
+                }
+            } else if (aInd3 > ind) {
+                ind = aInd3;
+                ch = 3;
+                length_Final = aLen3;
+                double RRmean3 = 0;
+                for (int i = 0; i < aLen3 - 1; i++) {
+                    RRmean3 = RRmean3 + iQRS3[i + 1] - iQRS3[i];
+                }
+                RRmean = RRmean3 / (aLen3 - 1);
+            }
+            if (aInd4 == ind) {
+                double RRmean4 = 0;
+                for (int i = 0; i < aLen4 - 1; i++) {
+                    RRmean4 = RRmean4 + iQRS4[i + 1] - iQRS4[i];
+                }
+                RRmean4 = RRmean4 / (aLen4 - 1);
+                if (RRmean < RRmean4) {
+                    ind = aInd4;
+                    ch = 4;
+                    length_Final = aLen4;
+                    RRmean = RRmean4;
+                }
+            } else if (aInd4 > ind) {
+                ind = aInd4;
+                ch = 4;
+                length_Final = aLen4;
+                double RRmean4 = 0;
+                for (int i = 0; i < aLen4 - 1; i++) {
+                    RRmean4 = RRmean4 + iQRS4[i + 1] - iQRS4[i];
+                }
+                RRmean = RRmean4 / (aLen4 - 1);
+            }
+
+            if(aMaxOne - aMaxTwo < 0.3){
+            	int count = 0;
+				for (int i = 0; i < aMeanCh1.length; i++) {
+					if(aMeanCh2[i] > aMeanCh1[i]){
+						count += 1;
+					}
+				}
+				if(count >= 2){
+					ch = aCh2MaxIndex;
+				}else{
+					ch = aCh1MaxIndex;
+				}
+			}
+			Filename.ExecutionLogs_Maternal.append(ch + ",");
+
+			/**
+             * Get the start Index and qrs values to find the final QRS.
+             */
+            int[] qrs = new int[100];
+			int startIndex = -1;
+			int count = 0;
+            switch (ch) {
+                case 1:
+                    startIndex = aStartInd1;
+					qrs = new int[iQRS1.length];
+                    for (int i = 0; i < iQRS1.length; i++) {
+                        qrs[i] = (int) iQRS1[i];
+                    }
+                    if(ch == aCh1MaxIndex){
+						for (int i = 0; i < aQrsCh1.length; i++) {
+							if(aQrsCh1[i][ch-1] > 1.5 * aMeanCh1[ch-1]){
+								count++;
+								if (count > 3) {
+									SignalProcUtils.rrMeanCheck_Maternal = true;
+								}
+							}
+						}
+					}else if(ch == aCh2MaxIndex){
+						for (int i = 0; i < aQrsCh2.length; i++) {
+							if(aQrsCh2[i][ch-1] > 1.5 * aMeanCh2[ch-1]) {
+								count++;
+								if (count > 3) {
+									SignalProcUtils.rrMeanCheck_Maternal = true;
+								}
+							}
+						}
+					}
+					break;
+                case 2:
+                    startIndex = aStartInd2;
+					qrs = new int[iQRS2.length];
+					for (int i = 0; i < iQRS2.length; i++) {
+                        qrs[i] = (int) iQRS2[i];
+                    }
+					if(ch == aCh1MaxIndex){
+						for (int i = 0; i < aQrsCh1.length; i++) {
+							if(aQrsCh1[i][ch-1] > 1.5 * aMeanCh1[ch-1]) {
+								count++;
+								if (count > 3) {
+									SignalProcUtils.rrMeanCheck_Maternal = true;
+								}
+							}
+						}
+					}else if(ch == aCh2MaxIndex){
+						for (int i = 0; i < aQrsCh2.length; i++) {
+							if(aQrsCh2[i][ch-1] > 1.5 * aMeanCh2[ch-1]) {
+								count++;
+								if (count > 3) {
+									SignalProcUtils.rrMeanCheck_Maternal = true;
+								}
+							}
+						}
+					}
+                    break;
+                case 3:
+                    startIndex = aStartInd3;
+					qrs = new int[iQRS3.length];
+					for (int i = 0; i < iQRS3.length; i++) {
+                        qrs[i] = (int) iQRS3[i];
+                    }
+					if(ch == aCh1MaxIndex){
+						for (int i = 0; i < aQrsCh1.length; i++) {
+							if(aQrsCh1[i][ch-1] > 1.5 * aMeanCh1[ch-1]) {
+								count++;
+								if (count > 3) {
+									SignalProcUtils.rrMeanCheck_Maternal = true;
+								}
+							}
+						}
+					}else if(ch == aCh2MaxIndex){
+						for (int i = 0; i < aQrsCh2.length; i++) {
+							if(aQrsCh2[i][ch-1] > 1.5 * aMeanCh2[ch-1]) {
+								count++;
+								if (count > 2) {
+									SignalProcUtils.rrMeanCheck_Maternal = true;
+								}
+							}
+						}
+					}
+                    break;
+                case 4:
+                    startIndex = aStartInd4;
+					qrs = new int[iQRS4.length];
+					for (int i = 0; i < iQRS4.length; i++) {
+                        qrs[i] = (int) iQRS4[i];
+                    }
+					if(ch == aCh1MaxIndex){
+						for (int i = 0; i < aQrsCh1.length; i++) {
+							if(aQrsCh1[i][ch-1] > 1.5 * aMeanCh1[ch-1]) {
+								count++;
+								if (count > 3) {
+									SignalProcUtils.rrMeanCheck_Maternal = true;
+								}
+							}
+						}
+					}else if(ch == aCh2MaxIndex){
+						for (int i = 0; i < aQrsCh2.length; i++) {
+							if(aQrsCh2[i][ch-1] > 1.5 * aMeanCh2[ch-1]) {
+								count++;
+								if (count > 3) {
+									SignalProcUtils.rrMeanCheck_Maternal = true;
+								}
+							}
+						}
+					}
+                    break;
+            }
 //				double qrs1[] = new double[aLen1 + aLen2 + aLen3 + aLen4];
 //				for (int i = 0; i < aLen1; i++) {
 //					qrs1[i] = iQRS1[i];
@@ -2317,11 +2479,203 @@ public void filtfilt_Sos(double[] iInput, double[][] iSOS,  double[] iGain, doub
 //				}
 //				Arrays.sort(qrs1);
 
-				return new Object[] { qrs, startIndex,ch };
+            return new Object[]{qrs, startIndex, ch};
 //			}
-		} else {
+        } else {
 			throw new Exception("Threshold has to be positive : channelSelection");
 		}
+	}
+
+    public Object[] findIndex_Std(double[] iQRS, int iVarTh, int iRRlowTh, int iRRhighTh,double iLastRRmean){
+	    double aInd =0 ;
+        int aStartInd = -1;
+        double aRRmean = 0;
+		double inewRRlowTh = 0;
+		double inewRRhighTh = 0;
+        if(iLastRRmean != 0) {
+			inewRRlowTh = 1 / (1 / iLastRRmean + SignalProcConstants.QRS_RR_VAR);
+			inewRRhighTh = 1 / (1 / iLastRRmean - SignalProcConstants.QRS_RR_VAR);
+		}else if(iLastRRmean == 0){
+			inewRRlowTh = iRRlowTh;
+			inewRRhighTh = iRRhighTh;
+		}
+
+		int aLen = iQRS.length;
+        if (aLen > 3) {
+            int aNIt = aLen - 3;
+            double aStd[] = new double[aNIt];
+            double t1, t2, t3, aMean, aRRTemp, aVarMin;
+            aVarMin = 1000;
+            double counter = 0;
+            for (int i = 0; i < aNIt; i++) {
+                t1 = iQRS[i + 1] - iQRS[i];
+                t2 = iQRS[i + 2] - iQRS[i + 1];
+                t3 = iQRS[i + 3] - iQRS[i + 2];
+
+                aMean = (t1 + t2 + t3) / 3;
+
+                aStd[i] = Math.sqrt(
+                        ((t1 - aMean) * (t1 - aMean) + (t2 - aMean) * (t2 - aMean) + (t3 - aMean) * (t3 - aMean))
+                                / 2);
+                if (aStd[i] < iVarTh) {
+                    aRRTemp = iQRS[i + 1] - iQRS[i];
+                    if (aRRTemp > inewRRlowTh && aRRTemp < inewRRhighTh) {
+                        aRRmean = aRRmean + aRRTemp;
+                        counter = counter + 1;
+                        if (aStd[i] < aVarMin) {
+                            aVarMin = aStd[i];
+                            aStartInd = i;
+                        }
+                    }
+                }
+            }
+            aRRmean = aRRmean / counter;
+            aInd = counter / aNIt;
+        }
+
+	    return new Object[]{aInd,aStartInd};
+    }
+
+    public  Object[] findMeanMqrsPeaks(double[] iQRS1, double[] iQRS2, double[] iQRS3, double[] iQRS4, double[][]iFilterInput, int ch1MaxIndex, int ch2MaxIndex){
+		ArrayList<Double> aEcgdata1 = new ArrayList<>();
+		ArrayList<Double> aEcgdata2 = new ArrayList<>();
+		ArrayList<Double> aEcgdata3 = new ArrayList<>();
+		ArrayList<Double> aEcgdata4 = new ArrayList<>();
+
+		int lengthFilter = iFilterInput.length;
+
+		double[] channelCh1 = new double[lengthFilter];
+		double[] channelCh2 = new double[lengthFilter];
+		double[] channelCh3 = new double[lengthFilter];
+		double[] channelCh4 = new double[lengthFilter];
+
+		for (int i = 0; i < lengthFilter; i++) {
+			channelCh1[i] = iFilterInput[i][0];
+			channelCh2[i] = iFilterInput[i][1];
+			channelCh3[i] = iFilterInput[i][2];
+			channelCh4[i] = iFilterInput[i][3];
+		}
+
+		double[] aQrsm1 = new double[100];
+		double[][] aQrsmPeak1 = new double[100][4];
+		if(ch1MaxIndex == 1){
+			aQrsm1 = Arrays.copyOf(iQRS1,iQRS1.length);
+			aQrsmPeak1 = new double[iQRS1.length][4];
+		} else if(ch1MaxIndex == 2){
+			aQrsm1 = Arrays.copyOf(iQRS2,iQRS2.length);
+			aQrsmPeak1 = new double[iQRS2.length][4];
+		} else if(ch1MaxIndex == 3){
+			aQrsm1 = Arrays.copyOf(iQRS3,iQRS3.length);
+			aQrsmPeak1 = new double[iQRS3.length][4];
+		} else if(ch1MaxIndex == 4){
+			aQrsm1 = Arrays.copyOf(iQRS4,iQRS4.length);
+			aQrsmPeak1 = new double[iQRS4.length][4];
+		}
+
+		int aDelta = 30;
+
+		for (int i = 0; i < aQrsm1.length; i++) {
+			if(aQrsm1[i] - aDelta >= 0 && aQrsm1[i] + aDelta <= 15000){
+				for (int j = (int)aQrsm1[i] - aDelta; j < aQrsm1[i] + aDelta; j++) {
+					aEcgdata1.add(channelCh1[j]);
+					aEcgdata2.add(channelCh2[j]);
+					aEcgdata3.add(channelCh3[j]);
+					aEcgdata4.add(channelCh4[j]);
+				}
+			} else if(aQrsm1[i] - aDelta < 0){
+				for (int j = 0; j < (int)aQrsm1[i] + aDelta; j++){
+					aEcgdata1.add(channelCh1[j]);
+					aEcgdata2.add(channelCh2[j]);
+					aEcgdata3.add(channelCh3[j]);
+					aEcgdata4.add(channelCh4[j]);
+				}
+			}else if(aQrsm1[i] + aDelta > 15000){
+				for (int j = (int)aQrsm1[i] - aDelta; j < 15000; j++){
+					aEcgdata1.add(channelCh1[j]);
+					aEcgdata2.add(channelCh2[j]);
+					aEcgdata3.add(channelCh3[j]);
+					aEcgdata4.add(channelCh4[j]);
+				}
+			}
+			aQrsmPeak1[i][0] = Math.abs(Collections.max(aEcgdata1) - Collections.min(aEcgdata1));
+			aQrsmPeak1[i][1] = Math.abs(Collections.max(aEcgdata2) - Collections.min(aEcgdata2));
+			aQrsmPeak1[i][2] = Math.abs(Collections.max(aEcgdata3) - Collections.min(aEcgdata3));
+			aQrsmPeak1[i][3] = Math.abs(Collections.max(aEcgdata4) - Collections.min(aEcgdata4));
+			aEcgdata1.clear();
+			aEcgdata2.clear();
+			aEcgdata3.clear();
+			aEcgdata4.clear();
+		}
+
+		double[] aQrsm2 = new double[100];
+		double[][] aQrsmPeak2 = new double[100][4];
+		if(ch2MaxIndex == 1){
+			aQrsm2 = Arrays.copyOf(iQRS1,iQRS1.length);
+			aQrsmPeak2 = new double[iQRS1.length][4];
+		} else if(ch2MaxIndex == 2){
+			aQrsm2 = Arrays.copyOf(iQRS2,iQRS2.length);
+			aQrsmPeak2 = new double[iQRS2.length][4];
+		} else if(ch2MaxIndex == 3){
+			aQrsm2 = Arrays.copyOf(iQRS3,iQRS3.length);
+			aQrsmPeak2 = new double[iQRS3.length][4];
+		} else if(ch2MaxIndex == 4){
+			aQrsm2 = Arrays.copyOf(iQRS4,iQRS4.length);
+			aQrsmPeak2 = new double[iQRS4.length][4];
+		}
+		for (int i = 0; i < aQrsm2.length; i++) {
+			if(aQrsm2[i] - aDelta >= 0 && aQrsm2[i] + aDelta <= 15000){
+				for (int j = (int)aQrsm2[i] - aDelta; j < aQrsm2[i] + aDelta; j++) {
+					aEcgdata1.add(channelCh1[j]);
+					aEcgdata2.add(channelCh2[j]);
+					aEcgdata3.add(channelCh3[j]);
+					aEcgdata4.add(channelCh4[j]);
+				}
+			} else if(aQrsm2[i] - aDelta < 0){
+				for (int j = 0; j < (int)aQrsm2[i] + aDelta; j++){
+					aEcgdata1.add(channelCh1[j]);
+					aEcgdata2.add(channelCh2[j]);
+					aEcgdata3.add(channelCh3[j]);
+					aEcgdata4.add(channelCh4[j]);				}
+			}else if(aQrsm2[i] + aDelta > 15000){
+				for (int j = (int)aQrsm2[i] - aDelta; j < 15000; j++){
+					aEcgdata1.add(channelCh1[j]);
+					aEcgdata2.add(channelCh2[j]);
+					aEcgdata3.add(channelCh3[j]);
+					aEcgdata4.add(channelCh4[j]);				}
+			}
+			aQrsmPeak2[i][0] = Math.abs(Collections.max(aEcgdata1) - Collections.min(aEcgdata1));
+			aQrsmPeak2[i][1] = Math.abs(Collections.max(aEcgdata2) - Collections.min(aEcgdata2));
+			aQrsmPeak2[i][2] = Math.abs(Collections.max(aEcgdata3) - Collections.min(aEcgdata3));
+			aQrsmPeak2[i][3] = Math.abs(Collections.max(aEcgdata4) - Collections.min(aEcgdata4));
+			aEcgdata1.clear();
+			aEcgdata2.clear();
+			aEcgdata3.clear();
+			aEcgdata4.clear();
+		}
+
+		int aCount = 0;
+		double aSum = 0;
+		double[] aMeanCh1 = new double[4];
+		double[] aMeanCh2 = new double[4];
+		for (int j = 0; j < 4; j++) {
+			for (int i = 0; i < aQrsmPeak1.length; i++) {
+				aSum += aQrsmPeak1[i][j];
+				aCount++;
+			}
+			aMeanCh1[j] = aSum/aCount;
+			aSum = 0;
+			aCount = 0;
+		}
+		for (int j = 0; j < 4; j++) {
+			for (int i = 0; i < aQrsmPeak2.length; i++) {
+				aSum += aQrsmPeak2[i][j];
+				aCount++;
+			}
+			aMeanCh2[j] = aSum/aCount;
+			aSum = 0;
+			aCount = 0;
+		}
+		return new Object[]{aMeanCh1,aMeanCh2,aQrsmPeak1,aQrsmPeak2};
 	}
 
 

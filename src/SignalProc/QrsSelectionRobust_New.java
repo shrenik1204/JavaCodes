@@ -64,7 +64,7 @@ public class QrsSelectionRobust_New {
 //            Filename.ExecutionLogs.append( "false,");
 //        }
 
-        Object[] aQrsConcatOut = aQrsSelectionFunctions.qrsConcatenated(iQrsConcat, iQRSLast, iRRMeanLast, iQrsM);
+        Object[] aQrsConcatOut = aQrsSelectionFunctions.qrsConcatenated(iQrsConcat, iQrsM);
 
         LinkedList<Integer> aQrsFinalConcat = aQrsSelectionFunctions.interpolate((LinkedList<Integer>) aQrsConcatOut[0],
                 (LinkedList<Integer>) aQrsConcatOut[1], iQrsM);
