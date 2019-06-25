@@ -69,6 +69,9 @@ public class Run_Algorithm {
 
             int it = 0;
             Filename.ExecutionLogs.append("Iteration, Start Location, MA , QRSM Detection , QRSF Selection Type, Last Fetal QRS, No of QRSF Selected, No of FHR computed, Last RR mean Fetal, Last Valid RRMean Fetal \n");
+            Filename.ExecutionLogs_Maternal.append("Iteration, Start Location, MA , IndCh1, IndCh2, IndCh3, IndCh4, ch , QRSM Detection, No of QRSM Selected,  No of MHR computed ,Last RR mean Maternal\n");
+            Filename.MAlogs.append("Iteration, Chnk 1, Chnk 2, Chnk 3, Chnk 4, Chnk 5, Chnk 6, Chnk 7, Chnk 8, Chnk 9, Chnk 10, Chnk 11, Chnk 12 \n");
+            Filename.PSDlogs.append("Iteration, Values \n");
             while (aInput.length - (SignalProcConstants.QRS_SHIFT * it + MA_shift) >= SignalProcConstants.NO_OF_SAMPLES) {
                 double[][] input1 = new double[15000][4];
                 double[] input2 = new double[15000];
@@ -98,6 +101,9 @@ public class Run_Algorithm {
                         aLocation.add(1);
                     }
                     for (int i = 0; i < SignalProcConstants.NO_OF_PRINT_VALUES; i++) {
+                        if(SignalProcUtils.currentIteration == 0){
+                            SignalProcUtils.dataLossCounter = 0;
+                        }
                         aLocation.set(i, 2000 + SignalProcConstants.DIFFERENCE_SAMPLES * i + SignalProcConstants.QRS_SHIFT * SignalProcUtils.currentIteration + SignalProcUtils.dataLossCounter);
                         SignalProcUtils.UA.add(aUa.get(i));
                         SignalProcUtils.UALoc.add(aLocation.get(i));
@@ -113,6 +119,8 @@ public class Run_Algorithm {
 
                         SignalProcUtils.lastQRSFetal = 0;
                         SignalProcUtils.lastRRMeanFetal = 0;
+                        SignalProcUtils.lastRRMeanMaternal = 0;
+
 
                     } else {
                         List<Integer> Loc = (List<Integer>) Final[0];
@@ -158,9 +166,9 @@ public class Run_Algorithm {
             write2file(Filename.FqrsSelectionType, Filename.aFilePathFqrsSelectionType);
             write2file(Filename.FHR, Filename.aFilePathFHR);
             write2file(Filename.ExecutionLogs, Filename.aFilePathExecutionLogs);
-
-            write2file(Filename.FHR, Filename.aFilePathFHR_new);
-            write2file(Filename.ExecutionLogs, Filename.aFilePathExecutionLogs_new);
+            write2file(Filename.ExecutionLogs_Maternal, Filename.aFilePathExecutionLogs_maternal);
+//            write2file(Filename.FHR, Filename.aFilePathFHR_new);
+//            write2file(Filename.ExecutionLogs, Filename.aFilePathExecutionLogs_new);
             ////////////Write to file //////////////////////
 
 ////////////Write to file //////////////////////
@@ -172,6 +180,8 @@ public class Run_Algorithm {
             }
 
             write2file(Filename.QRSM_Selected, Filename.aFilePathMQRS);
+            write2file(Filename.MHR, Filename.aFilePathMHR);
+
             ////////////Write to file /////////////////////
 
             write2file(Filename.Stddeviation, Filename.aFilePathStddeviation);
@@ -179,7 +189,8 @@ public class Run_Algorithm {
 
 ////////////Write to file //////////////////////
 //        Filename.UA.delete(0,UA.size());
-
+            write2file(Filename.MAlogs, Filename.aFilePathMALogs);
+            write2file(Filename.PSDlogs, Filename.aFilePathPSDLogs);
             for (int i = 0; i < SignalProcUtils.UALoc.size(); i++) {
                 Filename.UA.append(SignalProcUtils.UALoc.get(i));
                 Filename.UA.append(",");
@@ -187,7 +198,7 @@ public class Run_Algorithm {
                 Filename.UA.append("\n");
             }
 
-            write2file(Filename.UA, Filename.aFilePathUA_new);
+//            write2file(Filename.UA, Filename.aFilePathUA_new);
             write2file(Filename.UA, Filename.aFilePathUA);
             ////////////Write to file //////////////////////
 
