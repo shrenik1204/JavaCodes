@@ -56,10 +56,12 @@ public class AlgorithmMain {
 
         SignalProcUtils.currentIteration = iCurrentIteration;
         Filename.ExecutionLogs.append(iCurrentIteration+",");
+        Filename.ExecutionLogs_Maternal.append(iCurrentIteration+",");
         Filename.MAlogs.append(iCurrentIteration+",");
         Filename.PSDlogs.append(iCurrentIteration+",");
         SignalProcUtils.qrsCurrentShift = SignalProcConstants.QRS_SHIFT * SignalProcUtils.currentIteration + SignalProcUtils.dataLossCounter;
         Filename.ExecutionLogs.append(SignalProcUtils.qrsCurrentShift+",");
+        Filename.ExecutionLogs_Maternal.append(SignalProcUtils.qrsCurrentShift+",");
 
         if (iCurrentIteration == 0) {
             SignalProcUtils.qrsFetalLocation.add(0);
@@ -68,8 +70,8 @@ public class AlgorithmMain {
             SignalProcUtils.hrMaternal.add(0f);
         }
 
-        if(SignalProcUtils.currentIteration == 22){
-            SignalProcUtils.currentIteration = 22;
+        if(SignalProcUtils.currentIteration == 39){
+            SignalProcUtils.currentIteration = 39;
         }
         if(SignalProcUtils.currentIteration == 68){
             SignalProcUtils.currentIteration = 68;
@@ -135,10 +137,12 @@ public class AlgorithmMain {
             Filename.RRMeanFetal.append(",\n");
             Filename.FqrsSelectionType.append(" MA \n");
             Filename.ExecutionLogs.append(SignalProcUtils.MA_Shift+",,,,,,,,\n");
+            Filename.ExecutionLogs_Maternal.append(SignalProcUtils.MA_Shift+",,,,,,,,,\n");
             return null;
         }
         else {
             Filename.ExecutionLogs.append(SignalProcUtils.MA_Shift+",");
+            Filename.ExecutionLogs_Maternal.append(SignalProcUtils.MA_Shift+",");
         }
 //        Timber.i("AlgorithmMain : Time for Filtering : "+(System.currentTimeMillis()-aET)+" ms");
 //        FileLoggerHelper.getInstance().sendLogData(ApplicationUtils.getCurrentTime() + " : Algorithm Main : Time for filtering : "+(System.currentTimeMillis()-aET)+" msec.", FileLoggerType.EXECUTION, FLApplication.mFileTimeStamp);
@@ -162,6 +166,7 @@ public class AlgorithmMain {
          */
         MQRSDetection mqrsDetection = new MQRSDetection();
         int[] aQRSM = mqrsDetection.mQRS(aEcgIca1, aEcgFilter);
+
 
 //        Timber.i("AlgorithmMain : Time for MQRS detection : "+(System.currentTimeMillis()-aET)+" ms");
 //        FileLoggerHelper.getInstance().sendLogData(ApplicationUtils.getCurrentTime() + " : Algorithm Main : Time for mQRS : "+(System.currentTimeMillis()-aET)+" msec.", FileLoggerType.EXECUTION, FLApplication.mFileTimeStamp);
@@ -232,8 +237,6 @@ public class AlgorithmMain {
                         SignalProcUtils.hrMaternal.add(SignalProcUtils.hrmTemp.get(i));
                     }
                 }
-
-
             }
 //                for (int i = 0; i<SignalProcUtils.qrsmLocTemp.size() ; i++){
 //                    aFinalHRM[i+1] = SignalProcUtils.hrmTemp.get(i);
@@ -260,6 +263,10 @@ public class AlgorithmMain {
             aHRmPrint = mMatrixFunctions.convertHR2MilliSec(aFinalQrsmHrPlot, aFinalHRM, aFinalQRSM);
             SignalProcUtils.lastQRSMIteration = iCurrentIteration;
             SignalProcUtils.mhrComputed = true;
+            Filename.ExecutionLogs_Maternal.append(SignalProcUtils.mhrComputed+",");
+            Filename.ExecutionLogs_Maternal.append(aQRSM.length+",");
+            Filename.ExecutionLogs_Maternal.append(aSizeMaternalHR+",");
+
 
 //            } else {
 //                SignalProcUtils.mhrComputed = false;
@@ -277,8 +284,11 @@ public class AlgorithmMain {
 
             SignalProcUtils.lastQRSMaternal = 0;
             SignalProcUtils.lastRRMeanMaternal = 0;
+            Filename.ExecutionLogs_Maternal.append(SignalProcUtils.mhrComputed+",,,");
+
         }
         Filename.ExecutionLogs.append(SignalProcUtils.mhrComputed+",");
+
 
         if (SignalProcUtils.mhrComputed){
 
@@ -331,6 +341,7 @@ public class AlgorithmMain {
             SignalProcUtils.noDetectionFlagFetal = (int) aQrsfSelected[2];
 
             Filename.ExecutionLogs.append(aQRSF.length+",");
+
 
             if (aQRSF.length >= SignalProcConstants.FQRS_MIN_SIZE && aQRSF.length <= SignalProcConstants.FQRS_MAX_SIZE) {
 
@@ -502,6 +513,8 @@ public class AlgorithmMain {
         System.out.println("AlgorithmMain : Time for Algorithm : " + (System.currentTimeMillis() - aST) + " ms");
 //        Timber.i("AlgorithmMain : Time for Algorithm : "+(System.currentTimeMillis()-aST)+" ms");
         Filename.ExecutionLogs.append(SignalProcUtils.lastRRMeanFetal+",");
+        Filename.ExecutionLogs_Maternal.append(SignalProcUtils.lastRRMeanMaternal+"\n");
+
         Filename.ExecutionLogs.append(SignalProcUtils.lastvalidRRMeanFetal+"\n");
         if(SignalProcUtils.independentCount >= 2){
             SignalProcUtils.lastvalidRRMeanFetal = SignalProcUtils.lastRRMeanFetal;

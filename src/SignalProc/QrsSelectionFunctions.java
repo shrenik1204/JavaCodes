@@ -716,9 +716,9 @@ public class QrsSelectionFunctions {
      * @return {aQrsFinal, aMissQrsIndex} : Final QRS selected array, missed QRS location.
      * @throws Exception If {@literal iQRS.length <= 0}.
      */
-    public Object[] qrsConcatenated(int[] iQRS, int iQRSLast, double iRRMeanLast, int[] iQrsM) throws Exception {
-        iQRSLast = SignalProcUtils.lastQRSFetal;
-        iRRMeanLast = SignalProcUtils.lastvalidRRMeanFetal;
+    public Object[] qrsConcatenated(int[] iQRS,int[] iQrsM) throws Exception {
+        int iQRSLast = SignalProcUtils.lastQRSFetal;
+        double iRRMeanLast = SignalProcUtils.lastvalidRRMeanFetal;
         List<Integer> iQRSlist = new ArrayList<>();
         for (int i : iQRS) {
             iQRSlist.add(i);

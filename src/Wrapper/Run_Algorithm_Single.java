@@ -57,6 +57,7 @@ public class Run_Algorithm_Single {
 
         int it = 0;
         Filename.ExecutionLogs.append("Iteration, Start Location, MA , QRSM Detection, ch , StartIndex  , Overlap, QRSF Selection Type, Last Fetal QRS, No of QRSF Selected, No of FHR computed, Last RR mean Fetal, Last Valid RRMean Fetal \n");
+        Filename.ExecutionLogs_Maternal.append("Iteration, Start Location, MA , IndCh1, IndCh2, IndCh3, IndCh4, ch , QRSM Detection, No of QRSM Selected,  No of MHR computed ,Last RR mean Maternal\n");
         Filename.MAlogs.append("Iteration, Chnk 1, Chnk 2, Chnk 3, Chnk 4, Chnk 5, Chnk 6, Chnk 7, Chnk 8, Chnk 9, Chnk 10, Chnk 11, Chnk 12 \n");
         Filename.PSDlogs.append("Iteration, Values \n");
         while (aInput.length - (SignalProcConstants.QRS_SHIFT*it+MA_shift) >= SignalProcConstants.NO_OF_SAMPLES)
@@ -140,6 +141,7 @@ public class Run_Algorithm_Single {
 
                     SignalProcUtils.lastQRSFetal = 0;
                     SignalProcUtils.lastRRMeanFetal = 0;
+                    SignalProcUtils.lastRRMeanMaternal = 0;
 
                 }
                 else {
@@ -186,6 +188,8 @@ public class Run_Algorithm_Single {
         write2file(Filename.FqrsSelectionType, Filename.aFilePathFqrsSelectionType);
         write2file(Filename.FHR, Filename.aFilePathFHR);
         write2file(Filename.ExecutionLogs, Filename.aFilePathExecutionLogs);
+        write2file(Filename.ExecutionLogs_Maternal, Filename.aFilePathExecutionLogs_maternal);
+
         ////////////Write to file //////////////////////
 
 ////////////Write to file //////////////////////

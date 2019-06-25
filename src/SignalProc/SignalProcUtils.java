@@ -189,6 +189,9 @@ public class SignalProcUtils {
      * Last iteration with maternal peaks selected.  - remove
      */
     public static int lastQRSMIteration = -1;
+
+
+    public static boolean rrMeanCheck_Maternal = false;
     /**
      * Flag to determine detection of maternal QRS locations in the iteration.
      */
@@ -318,6 +321,8 @@ public class SignalProcUtils {
         lastQRSFetalArray.clear();
         interpolatedLengthFetal = 0;
         interpolationCount = 0;
+
+        rrMeanCheck_Maternal = false;
 
         dataLossCounter = 0;
 

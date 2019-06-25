@@ -53,7 +53,9 @@ public class Filename {
 	public static String aFilePathFqrsSelectionType;
 
 	public static String aFilePathExecutionLogs;
+	public static String aFilePathExecutionLogs_maternal;
 	public static StringBuilder ExecutionLogs = new StringBuilder();
+	public static StringBuilder ExecutionLogs_Maternal = new StringBuilder();
 
 	public static StringBuilder MAlogs = new StringBuilder();
 
@@ -102,6 +104,7 @@ public class Filename {
 		aFilePathPSDLogs = afn.getPath() +File.separator + aInputFilePath + "-PSD_Logs"+".csv";
 
 		aFilePathExecutionLogs = afn.getPath() +File.separator + aInputFilePath + "-Execution"+".csv";
+		aFilePathExecutionLogs_maternal = afn.getPath() +File.separator + aInputFilePath + "-Execution_maternal"+".csv";
 		aFilePathMHR = afn.getPath() +File.separator+ aInputFilePath+"-mhr"+".csv";
 				
 		aFilePathMQRS = afn.getPath() +File.separator+ aInputFilePath+"-mqrs"+".csv";
@@ -168,7 +171,9 @@ public class Filename {
 		aFilePathFqrsSelectionType = null;
 
 		aFilePathExecutionLogs = null;
+		aFilePathExecutionLogs_maternal = null;
 		ExecutionLogs = new StringBuilder();
+		ExecutionLogs_Maternal = new StringBuilder();
 
 		MAlogs = new StringBuilder();
 		PSDlogs = new StringBuilder();
