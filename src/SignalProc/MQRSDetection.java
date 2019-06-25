@@ -57,22 +57,6 @@ public class MQRSDetection {
 	 * Column 4 extracted from iInput
 	 */
 	double[] mChannel4;
-	/**
-	 * Column 1 extracted from iFilterInput
-	 */
-	double[] mFiltChannel1;
-	/**
-	 * Column 2 extracted from iFilterInput
-	 */
-	double[] mFiltChannel2;
-	/**
-	 * Column 3 extracted from iFilterInput
-	 */
-	double[] mFiltChannel3;
-	/**
-	 * Column 4 extracted from iFilterInput
-	 */
-	double[] mFiltChannel4;
 
 	/**
 	 * QRS detected array for each channel.
@@ -97,21 +81,15 @@ public class MQRSDetection {
 				mChannel3 = new double[aLength];
 				mChannel4 = new double[aLength];
 
-				mFiltChannel1 = new double[aLength];
-				mFiltChannel2 = new double[aLength];
-				mFiltChannel3 = new double[aLength];
-				mFiltChannel4 = new double[aLength];
-
 				Future<Boolean> channelOneTask = executorService.submit(() -> {
                     Thread.currentThread().setName(SignalProcUtils.currentIteration + " 1MQRS");
 
 					for (int i = 0; i < aLength; i++) {
 						mChannel1[i] = iInput[i][0];
-						mFiltChannel1[i] = iFilterInput[i][1];
 					}
 
 					try {
-						mQRS1 = mMatrixFunctions.mqrsDetection(mChannel1,mFiltChannel1);
+						mQRS1 = mMatrixFunctions.mqrsDetection(mChannel1);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -122,11 +100,10 @@ public class MQRSDetection {
 
 					for (int i = 0; i < aLength; i++) {
 						mChannel2[i] = iInput[i][1];
-						mFiltChannel2[i] = iFilterInput[i][2];
 					}
 
 					try {
-						mQRS2 = mMatrixFunctions.mqrsDetection(mChannel2,mFiltChannel2);
+						mQRS2 = mMatrixFunctions.mqrsDetection(mChannel2);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -137,11 +114,10 @@ public class MQRSDetection {
 
 					for (int i = 0; i < aLength; i++) {
 						mChannel3[i] = iInput[i][2];
-						mFiltChannel3[i] = iFilterInput[i][3];
 					}
 
 					try {
-						mQRS3 = mMatrixFunctions.mqrsDetection(mChannel3,mFiltChannel3);
+						mQRS3 = mMatrixFunctions.mqrsDetection(mChannel3);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -152,11 +128,10 @@ public class MQRSDetection {
 
 					for (int i = 0; i < aLength; i++) {
 						mChannel4[i] = iInput[i][3];
-						mFiltChannel4[i] = iFilterInput[i][4];
 					}
 
 					try {
-						mQRS4 = mMatrixFunctions.mqrsDetection(mChannel4,mFiltChannel4);
+						mQRS4 = mMatrixFunctions.mqrsDetection(mChannel4);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}

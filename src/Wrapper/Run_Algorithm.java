@@ -15,7 +15,7 @@ import java.util.List;
 public class Run_Algorithm {
 
 	public static void main(String[] args) {
-	    File folderpath = new File("/Users/kishoresubramanian/Sattva_Aravind/Fehmicare/Testing datasets/Algofiles for testing");
+	    File folderpath = new File("/home/sattva/Desktop/Manisha_javaode/algofiles for testing");
         File[] listOfFiles = folderpath.listFiles();
         for (int z = 0; z < listOfFiles.length; z++) {
             SignalProcUtils.reset();
@@ -31,10 +31,10 @@ public class Run_Algorithm {
             int aInputPathLength = aInputFilePath.length();
             Filename nFilw = new Filename(aInputFilePath.substring(aInputPathLength - 18, aInputPathLength - 4));
 
-            String aFilePath = "" + "/Users/kishoresubramanian/Desktop/Sattva work/Java Results Demo test/";
-            String aFilePath_FHR = "" + "/Users/kishoresubramanian/Desktop/Sattva work/Java Results Demo test/FHR/";
-            String aFilePath_EXE = "" + "/Users/kishoresubramanian/Desktop/Sattva work/Java Results Demo test/EXE/";
-            String aFilePath_UA = "" + "/Users/kishoresubramanian/Desktop/Sattva work/Java Results Demo test/UA/";
+            String aFilePath = "" + "/home/sattva/Desktop/Manisha_javaode/java Results Demo/";
+            String aFilePath_FHR = "" + "/home/sattva/Desktop/Manisha_javaode/java Results Demo/FHR";
+            String aFilePath_EXE = "" + "/home/sattva/Desktop/Manisha_javaode/java Results Demo/EXE";
+            String aFilePath_UA = "" + "/home/sattva/Desktop/Manisha_javaode/java Results Demo/UA";
 
             String aFilePath_QRSM = aFilePath + "mhr-" + aInputFilePath.substring(aInputPathLength - 18, aInputPathLength - 4) + ".txt";
             String aFilePath_QRSF = aFilePath + "fhr-" + aInputFilePath.substring(aInputPathLength - 18, aInputPathLength - 4) + ".txt";

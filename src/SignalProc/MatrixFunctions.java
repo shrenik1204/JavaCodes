@@ -1345,7 +1345,7 @@ public void filtfilt_Sos(double[] iInput, double[][] iSOS,  double[] iGain, doub
      * </ul>
      * @throws Exception
      */
-	public double[] mqrsDetection(double[] iInput, double[] iFilterInput) throws Exception{
+	public double[] mqrsDetection(double[] iInput) throws Exception{
 
         double aMedianVal = 0;
         double aMeanVal = 0;

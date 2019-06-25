@@ -16,13 +16,14 @@ public class Run_Algorithm_Single {
     public static void main(String[] args) {
         SignalProcUtils.reset();
 
+
         DataTextFileReader aReadFile = new DataTextFileReader();
-        String aInputFilePath = ""+"/Users/kishoresubramanian/Sattva_Aravind/DATA/April_May_BLR data/sattva-2019-May-28-11-15-00/algo-new1input-sattva-2019-May-28-11-15-00.txt";
+        String aInputFilePath = ""+"/home/sattva/Desktop/pythoncode/algo-new1input-sattva-2019-May-16-11-01-07.txt";
 
         int aInputPathLength = aInputFilePath.length();
         Filename nFilw = new Filename(aInputFilePath.substring(aInputPathLength-18, aInputPathLength-4));
 
-        String aFilePath = ""+"/Users/kishoresubramanian/Desktop/Sattva work/Java Results Demo/";
+        String aFilePath = ""+"/home/sattva/Desktop/Manisha_javaode/Sattva work/Java results demo";
 
         String aFilePath_QRSM = aFilePath + "mhr-"+aInputFilePath.substring(aInputPathLength-18, aInputPathLength-4)+".txt";
         String aFilePath_QRSF = aFilePath + "fhr-"+aInputFilePath.substring(aInputPathLength-18, aInputPathLength-4)+".txt";
