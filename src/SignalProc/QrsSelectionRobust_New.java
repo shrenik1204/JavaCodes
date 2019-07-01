@@ -105,7 +105,7 @@ public class QrsSelectionRobust_New {
 //					FileLoggerHelper.getInstance().sendLogData(String.format(ApplicationUtils.getCurrentTime() + " : aConfirmFlag : %d", aConfirmFlag), FileLoggerType.EXECUTION, FLApplication.mFileTimeStamp);
 ////
                     Filename.FqrsSelectionType.append("Concat CNF\n");
-                    Filename.ExecutionLogs.append("Concat CNF,");
+                    Filename.ExecutionLogs.append("COT,");
                     Filename.ExecutionLogs.append(iQRSLast+",");
                     return new Object[] { convertListtoArray(aQrsFinalConcat), aInterpolatedLength, 0 };
                 } else{
@@ -118,7 +118,7 @@ public class QrsSelectionRobust_New {
 ////					throw new Exception(FLApplication.getInstance().getString(R.string.connection_issue));
 //                }
                     SignalProcUtils.independantdet_flag = false;
-                    Filename.ExecutionLogs.append("Concat,");
+                    Filename.ExecutionLogs.append("COF,");
                     Filename.ExecutionLogs.append(iQRSLast+",");
 
                     Filename.FqrsSelectionType.append("Concat \n");
@@ -203,7 +203,7 @@ public class QrsSelectionRobust_New {
 //					FileLoggerHelper.getInstance().sendLogData(String.format(ApplicationUtils.getCurrentTime() + " : aConfirmFlag : %d", aConfirmFlag), FileLoggerType.EXECUTION, FLApplication.mFileTimeStamp);
 ////
                     Filename.FqrsSelectionType.append("CNF\n");
-                    Filename.ExecutionLogs.append("CNF,");
+                    Filename.ExecutionLogs.append("Confirm Flag,");
                     Filename.ExecutionLogs.append(iQRSLast + ",");
 
 
@@ -225,7 +225,7 @@ public class QrsSelectionRobust_New {
 //					FileLoggerHelper.getInstance().sendLogData(String.format(ApplicationUtils.getCurrentTime() + " : aConfirmFlag : %d", aConfirmFlag), FileLoggerType.EXECUTION, FLApplication.mFileTimeStamp);
 ////
                         Filename.FqrsSelectionType.append("Concat CNF in O\n");
-                        Filename.ExecutionLogs.append("Concat CNF in O,");
+                        Filename.ExecutionLogs.append("CFNCOT,");
                         Filename.ExecutionLogs.append(iQRSLast+",");
 
 
@@ -240,7 +240,7 @@ public class QrsSelectionRobust_New {
 //                }
                         SignalProcUtils.independantdet_flag = false;
                         Filename.FqrsSelectionType.append("Concat CNF N\n");
-                        Filename.ExecutionLogs.append("Concat CNF N,");
+                        Filename.ExecutionLogs.append("CFNCOF,");
                         Filename.ExecutionLogs.append(iQRSLast + ",");
 
 
