@@ -305,8 +305,6 @@ public class SignalProcUtils {
         MA_Shift = 0;
         MA_FLAG = false;
 
-        iter = 0;
-
         lastIteration = -1;
 
         fhrPlot = new int[SignalProcConstants.NO_OF_PRINT_VALUES];

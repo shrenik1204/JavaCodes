@@ -81,24 +81,18 @@ public class QrsSelectionRobust_New {
                 }
             }
         }
-        boolean concatOverlap = false;
 
-        if(SignalProcUtils.currentIteration > 0 && SignalProcUtils.lastQRSFetalArray.size() > 4){
-            concatOverlap = aQrsSelectionFunctions.QrsOverlapCheck(aQrsFinalConcat);
-        }
-        SignalProcUtils.lastQRSFetalArray.clear();
-        for (int i = 0; i < aQrsFinalConcat.size(); i++) {
-            while (aQrsFinalConcat.get(i) > 10000) {
-                SignalProcUtils.lastQRSFetalArray.add((aQrsFinalConcat.get(i)-10000));
-                break;
-            }
-        }
 //        if(concatOverlap){
 //            Filename.ExecutionLogs.append( "true,");
 //        } else{
 //            Filename.ExecutionLogs.append( "false,");
 //        }
         if (iStartIndex <= -1) {
+            boolean concatOverlap = false;
+
+            if(SignalProcUtils.currentIteration > 0 && SignalProcUtils.lastQRSFetalArray.size() > 4){
+                concatOverlap = aQrsSelectionFunctions.QrsOverlapCheck(aQrsFinalConcat);
+            }
             if (SignalProcUtils.lastvalidRRMeanFetal != 0) {
                 if(concatOverlap){
                     Filename.ExecutionLogs.append( "C O true,");
@@ -195,13 +189,6 @@ public class QrsSelectionRobust_New {
             if(SignalProcUtils.currentIteration > 0 && SignalProcUtils.lastQRSFetalArray.size() > 4){
                 overlap = aQrsSelectionFunctions.QrsOverlapCheck(aQrsFinal);
             }
-            SignalProcUtils.lastQRSFetalArray.clear();
-            for (int i = 0; i < aQrsFinal.size(); i++) {
-                while (aQrsFinal.get(i) > 10000) {
-                    SignalProcUtils.lastQRSFetalArray.add((aQrsFinal.get(i)-10000));
-                    break;
-                }
-            }
             if (iNoDetectionFlag == 0 && iRRMeanLast != 0) {
                 boolean aConfirmFlag = aQrsSelectionFunctions.firstQrsCheck(aQrsFinal, iQRSLast, iRRMeanLast, false);
                 if (overlap || aConfirmFlag) {
@@ -222,6 +209,11 @@ public class QrsSelectionRobust_New {
 
                     return new Object[]{convertListtoArray(aQrsFinal), aInterpolatedLength, 0};
                 } else {
+                    boolean concatOverlap = false;
+
+                    if(SignalProcUtils.currentIteration > 0 && SignalProcUtils.lastQRSFetalArray.size() > 4){
+                        concatOverlap = aQrsSelectionFunctions.QrsOverlapCheck(aQrsFinalConcat);
+                    }
                     if(concatOverlap){
                         Filename.ExecutionLogs.append( "C O true,");
                         SignalProcUtils.independentCount++;

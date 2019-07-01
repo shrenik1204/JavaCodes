@@ -70,11 +70,11 @@ public class AlgorithmMain {
             SignalProcUtils.hrMaternal.add(0f);
         }
 
-        if(SignalProcUtils.currentIteration == 39){
-            SignalProcUtils.currentIteration = 39;
+        if(SignalProcUtils.currentIteration == 99){
+            SignalProcUtils.currentIteration = 99;
         }
-        if(SignalProcUtils.currentIteration == 68){
-            SignalProcUtils.currentIteration = 68;
+        if(SignalProcUtils.currentIteration == 20){
+            SignalProcUtils.currentIteration = 20;
         }
 
         LinkedList<Integer> aQrsF = new LinkedList<Integer>();
@@ -323,6 +323,13 @@ public class AlgorithmMain {
             Object[] aQrsfSelected = aFqrsDetection.fQRS(aEcgIca2, aQRSM, SignalProcUtils.interpolatedLengthFetal,
                     SignalProcUtils.lastQRSFetal, SignalProcUtils.lastRRMeanFetal, SignalProcUtils.noDetectionFlagFetal);
             aQRSF = (int[]) aQrsfSelected[0];
+            SignalProcUtils.lastQRSFetalArray.clear();
+            for (int i = 0; i < aQRSF.length; i++) {
+                while (aQRSF[i] > 10000) {
+                    SignalProcUtils.lastQRSFetalArray.add((aQRSF[i]-10000));
+                    break;
+                }
+            }
 
             // Added by Aravind Prasad 9th March 2018
             double[] aStdNoise = mMatrixFunctions.CDQC_fetal(aFetalSig,aQRSF,iCurrentIteration);
@@ -515,11 +522,11 @@ public class AlgorithmMain {
         Filename.ExecutionLogs.append(SignalProcUtils.lastRRMeanFetal+",");
         Filename.ExecutionLogs_Maternal.append(SignalProcUtils.lastRRMeanMaternal+"\n");
 
-        Filename.ExecutionLogs.append(SignalProcUtils.lastvalidRRMeanFetal+"\n");
+        Filename.ExecutionLogs.append(SignalProcUtils.lastvalidRRMeanFetal+"\n\n");
         if(SignalProcUtils.independentCount >= 2){
             SignalProcUtils.lastvalidRRMeanFetal = SignalProcUtils.lastRRMeanFetal;
         }
-        Filename.RRMeanFetal.append(SignalProcUtils.lastRRMeanFetal+",\n");
+        Filename.RRMeanFetal.append(SignalProcUtils.lastRRMeanFetal+",\n\n");
         return new Object[]{aLocation_batch, aFinalQrsmHrPlot, aFinalQrsfHrPlot};
     }
 

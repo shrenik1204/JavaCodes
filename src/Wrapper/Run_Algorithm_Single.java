@@ -17,7 +17,7 @@ public class Run_Algorithm_Single {
         SignalProcUtils.reset();
 
         DataTextFileReader aReadFile = new DataTextFileReader();
-        String aInputFilePath = ""+"/Users/kishoresubramanian/Sattva_Aravind/DATA/April_May_BLR data/sattva-2019-May-28-11-15-00/algo-new1input-sattva-2019-May-28-11-15-00.txt";
+        String aInputFilePath = ""+"/Users/kishoresubramanian/Sattva_Aravind/Crap/June_Algochange_test/sattva-2019-Jun-26-12-02-44/algo-new1input-sattva-2019-Jun-26-12-02-44.txt";
 
         int aInputPathLength = aInputFilePath.length();
         Filename nFilw = new Filename(aInputFilePath.substring(aInputPathLength-18, aInputPathLength-4));
@@ -56,7 +56,7 @@ public class Run_Algorithm_Single {
 
         int it = 0;
         Filename.ExecutionLogs.append("Iteration, Start Location, MA , QRSM Detection, ch , StartIndex  , Overlap, QRSF Selection Type, Last Fetal QRS, No of QRSF Selected, No of FHR computed, Last RR mean Fetal, Last Valid RRMean Fetal \n");
-        Filename.ExecutionLogs_Maternal.append("Iteration, Start Location, MA , IndCh1, IndCh2, IndCh3, IndCh4, ch , QRSM Detection, No of QRSM Selected,  No of MHR computed ,Last RR mean Maternal\n");
+        Filename.ExecutionLogs_Maternal.append("Iteration, Start Location, MA , IndCh1, IndCh2, IndCh3, IndCh4,Maxind-nextmax, ch , QRSM Detection, No of QRSM Selected,  No of MHR computed ,Last RR mean Maternal\n");
         Filename.MAlogs.append("Iteration, Chnk 1, Chnk 2, Chnk 3, Chnk 4, Chnk 5, Chnk 6, Chnk 7, Chnk 8, Chnk 9, Chnk 10, Chnk 11, Chnk 12 \n");
         Filename.PSDlogs.append("Iteration, Values \n");
         while (aInput.length - (SignalProcConstants.QRS_SHIFT*it+MA_shift) >= SignalProcConstants.NO_OF_SAMPLES)

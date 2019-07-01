@@ -1595,155 +1595,184 @@ public void filtfilt_Sos(double[] iInput, double[][] iSOS,  double[] iGain, doub
 		/**
 		 * Channel selection part
 		 */
-		int aLen1 = iQRS1.length;
+        double[] iQrs1 = copyFromIntArray(iQRS1);
+        double[] iQrs2 = copyFromIntArray(iQRS2);
+        double[] iQrs3 = copyFromIntArray(iQRS3);
+        double[] iQrs4 = copyFromIntArray(iQRS4);
+
+        int aLen1 = iQRS1.length;
 		int aLen2 = iQRS2.length;
 		int aLen3 = iQRS3.length;
 		int aLen4 = iQRS4.length;
 
+		double iLastRRmean = SignalProcUtils.lastRRMeanFetal;
+
 		if (iVarTh > 0 && iRRhighTh > 0 && iRRlowTh > 0) {
-			double aInd1 = 0;
-			double aInd2 = 0;
-			double aInd3 = 0;
-			double aInd4 = 0;
-			// to get the start index in each channel
-			int aStartInd1 = -1;
-			int aStartInd2 = -1;
-			int aStartInd3 = -1;
-			int aStartInd4 = -1;
+//			double aInd1 = 0;
+//			double aInd2 = 0;
+//			double aInd3 = 0;
+//			double aInd4 = 0;
+//			// to get the start index in each channel
+//			int aStartInd1 = -1;
+//			int aStartInd2 = -1;
+//			int aStartInd3 = -1;
+//			int aStartInd4 = -1;
 			// RR mean for each channel
 			double aRRmean1 = 0;
 			double aRRmean2 = 0;
 			double aRRmean3 = 0;
 			double aRRmean4 = 0;
 
-			if (aLen1 > 3) {
-				int aNIt = aLen1 - 3;
-				double aVar1[] = new double[aNIt];
-				double t1, t2, t3, aMean, aRRTemp, aVarMin;
-				aVarMin = 1000;
-				double counter = 0;
-				for (int i = 0; i < aNIt; i++) {
-					t1 = iQRS1[i + 1] - iQRS1[i];
-					t2 = iQRS1[i + 2] - iQRS1[i + 1];
-					t3 = iQRS1[i + 3] - iQRS1[i + 2];
+            Object[] qrs1Index = findIndex_Std(iQrs1, iVarTh, iRRlowTh, iRRhighTh, iLastRRmean);
+            Object[] qrs2Index = findIndex_Std(iQrs2, iVarTh, iRRlowTh, iRRhighTh, iLastRRmean);
+            Object[] qrs3Index = findIndex_Std(iQrs3, iVarTh, iRRlowTh, iRRhighTh, iLastRRmean);
+            Object[] qrs4Index = findIndex_Std(iQrs4, iVarTh, iRRlowTh, iRRhighTh, iLastRRmean);
 
-					aMean = (t1 + t2 + t3) / 3;
+            double[] aInd = new double[4];
 
-					aVar1[i] = Math.sqrt(
-							((t1 - aMean) * (t1 - aMean) + (t2 - aMean) * (t2 - aMean) + (t3 - aMean) * (t3 - aMean))
-									/ 2);
-					if (aVar1[i] < iVarTh) {
-						aRRTemp = iQRS1[i + 1] - iQRS1[i];
-						if (aRRTemp > iRRlowTh && aRRTemp < iRRhighTh) {
-							aRRmean1 = aRRmean1 + aRRTemp;
-							counter = counter + 1;
-							if (aVar1[i] < aVarMin) {
-								aVarMin = aVar1[i];
-								aStartInd1 = i;
-							}
-						}
-					}
-				}
-				aRRmean1 = aRRmean1 / counter;
-				aInd1 = counter / aNIt;
-			}
+            double aInd1 = (double) qrs1Index[0];
+            double aInd2 = (double) qrs2Index[0];
+            double aInd3 = (double) qrs3Index[0];
+            double aInd4 = (double) qrs4Index[0];
 
-			if (aLen2 > 3) {
-				int aNIt = aLen2 - 3;
-				double aVar2[] = new double[aNIt];
-				double t1, t2, t3, aMean, aRRTemp, aVarMin;
-				double counter = 0;
-				aVarMin = 1000;
-				for (int i = 0; i < aNIt; i++) {
-					t1 = iQRS2[i + 1] - iQRS2[i];
-					t2 = iQRS2[i + 2] - iQRS2[i + 1];
-					t3 = iQRS2[i + 3] - iQRS2[i + 2];
+            aInd[0] = (double) qrs1Index[0];
+            aInd[1] = (double) qrs2Index[0];
+            aInd[2] = (double) qrs3Index[0];
+            aInd[3] = (double) qrs4Index[0];
 
-					aMean = (t1 + t2 + t3) / 3;
+            int aStartInd1 = (int) qrs1Index[1];
+            int aStartInd2 = (int) qrs2Index[1];
+            int aStartInd3 = (int) qrs3Index[1];
+            int aStartInd4 = (int) qrs4Index[1];
 
-					aVar2[i] = Math.sqrt(
-							((t1 - aMean) * (t1 - aMean) + (t2 - aMean) * (t2 - aMean) + (t3 - aMean) * (t3 - aMean))
-									/ 2);
-					if (aVar2[i] < iVarTh) {
-						aRRTemp = iQRS2[i + 1] - iQRS2[i];
-						if (aRRTemp > iRRlowTh && aRRTemp < iRRhighTh) {
-							aRRmean2 = aRRmean2 + aRRTemp;
-							counter = counter + 1;
-							if (aVar2[i] < aVarMin) {
-								aVarMin = aVar2[i];
-								aStartInd2 = i;
-							}
-						}
-					}
-				}
-				aRRmean2 = aRRmean2 / counter;
-
-				aInd2 = counter / aNIt;
-			}
-
-			if (aLen3 > 3) {
-				int aNIt = aLen3 - 3;
-				double aVar3[] = new double[aNIt];
-				double t1, t2, t3, aMean, aRRTemp, aVarMin;
-				double counter = 0;
-				aVarMin = 1000;
-				for (int i = 0; i < aNIt; i++) {
-					t1 = iQRS3[i + 1] - iQRS3[i];
-					t2 = iQRS3[i + 2] - iQRS3[i + 1];
-					t3 = iQRS3[i + 3] - iQRS3[i + 2];
-
-					aMean = (t1 + t2 + t3) / 3;
-
-					aVar3[i] = Math.sqrt(
-							((t1 - aMean) * (t1 - aMean) + (t2 - aMean) * (t2 - aMean) + (t3 - aMean) * (t3 - aMean))
-									/ 2);
-					if (aVar3[i] < iVarTh) {
-						aRRTemp = iQRS3[i + 1] - iQRS3[i];
-						if (aRRTemp > iRRlowTh && aRRTemp < iRRhighTh) {
-							aRRmean3 = aRRmean3 + 1;
-							counter = counter + 1;
-							if (aVar3[i] < aVarMin) {
-								aVarMin = aVar3[i];
-								aStartInd3 = i;
-							}
-						}
-					}
-				}
-				aRRmean3 = aRRmean3 / counter;
-				aInd3 = counter / aNIt;
-			}
-
-			if (aLen4 > 3) {
-				int aNIt = aLen4 - 3;
-				double aVar4[] = new double[aNIt];
-				double t1, t2, t3, aMean, aRRTemp, aVarMin;
-				double counter = 0;
-				aVarMin = 1000;
-				for (int i = 0; i < aNIt; i++) {
-					t1 = iQRS4[i + 1] - iQRS4[i];
-					t2 = iQRS4[i + 2] - iQRS4[i + 1];
-					t3 = iQRS4[i + 3] - iQRS4[i + 2];
-
-					aMean = (t1 + t2 + t3) / 3;
-
-					aVar4[i] = Math.sqrt(
-							((t1 - aMean) * (t1 - aMean) + (t2 - aMean) * (t2 - aMean) + (t3 - aMean) * (t3 - aMean))
-									/ 2);
-					if (aVar4[i] < iVarTh) {
-						aRRTemp = iQRS4[i + 1] - iQRS4[i];
-						if (aRRTemp > iRRlowTh && aRRTemp < iRRhighTh) {
-							aRRmean4 = aRRmean4 + 1;
-							counter = counter + 1;
-							if (aVar4[i] < aVarMin) {
-								aVarMin = aVar4[i];
-								aStartInd4 = i;
-							}
-						}
-					}
-				}
-				aRRmean4 = aRRmean4 / counter;
-				aInd4 = counter / aNIt;
-			}
+//			if (aLen1 > 3) {
+//				int aNIt = aLen1 - 3;
+//				double aVar1[] = new double[aNIt];
+//				double t1, t2, t3, aMean, aRRTemp, aVarMin;
+//				aVarMin = 1000;
+//				double counter = 0;
+//				for (int i = 0; i < aNIt; i++) {
+//					t1 = iQRS1[i + 1] - iQRS1[i];
+//					t2 = iQRS1[i + 2] - iQRS1[i + 1];
+//					t3 = iQRS1[i + 3] - iQRS1[i + 2];
+//
+//					aMean = (t1 + t2 + t3) / 3;
+//
+//					aVar1[i] = Math.sqrt(
+//							((t1 - aMean) * (t1 - aMean) + (t2 - aMean) * (t2 - aMean) + (t3 - aMean) * (t3 - aMean))
+//									/ 2);
+//					if (aVar1[i] < iVarTh) {
+//						aRRTemp = iQRS1[i + 1] - iQRS1[i];
+//						if (aRRTemp > iRRlowTh && aRRTemp < iRRhighTh) {
+//							aRRmean1 = aRRmean1 + aRRTemp;
+//							counter = counter + 1;
+//							if (aVar1[i] < aVarMin) {
+//								aVarMin = aVar1[i];
+//								aStartInd1 = i;
+//							}
+//						}
+//					}
+//				}
+//				aRRmean1 = aRRmean1 / counter;
+//				aInd1 = counter / aNIt;
+//			}
+//
+//			if (aLen2 > 3) {
+//				int aNIt = aLen2 - 3;
+//				double aVar2[] = new double[aNIt];
+//				double t1, t2, t3, aMean, aRRTemp, aVarMin;
+//				double counter = 0;
+//				aVarMin = 1000;
+//				for (int i = 0; i < aNIt; i++) {
+//					t1 = iQRS2[i + 1] - iQRS2[i];
+//					t2 = iQRS2[i + 2] - iQRS2[i + 1];
+//					t3 = iQRS2[i + 3] - iQRS2[i + 2];
+//
+//					aMean = (t1 + t2 + t3) / 3;
+//
+//					aVar2[i] = Math.sqrt(
+//							((t1 - aMean) * (t1 - aMean) + (t2 - aMean) * (t2 - aMean) + (t3 - aMean) * (t3 - aMean))
+//									/ 2);
+//					if (aVar2[i] < iVarTh) {
+//						aRRTemp = iQRS2[i + 1] - iQRS2[i];
+//						if (aRRTemp > iRRlowTh && aRRTemp < iRRhighTh) {
+//							aRRmean2 = aRRmean2 + aRRTemp;
+//							counter = counter + 1;
+//							if (aVar2[i] < aVarMin) {
+//								aVarMin = aVar2[i];
+//								aStartInd2 = i;
+//							}
+//						}
+//					}
+//				}
+//				aRRmean2 = aRRmean2 / counter;
+//
+//				aInd2 = counter / aNIt;
+//			}
+//
+//			if (aLen3 > 3) {
+//				int aNIt = aLen3 - 3;
+//				double aVar3[] = new double[aNIt];
+//				double t1, t2, t3, aMean, aRRTemp, aVarMin;
+//				double counter = 0;
+//				aVarMin = 1000;
+//				for (int i = 0; i < aNIt; i++) {
+//					t1 = iQRS3[i + 1] - iQRS3[i];
+//					t2 = iQRS3[i + 2] - iQRS3[i + 1];
+//					t3 = iQRS3[i + 3] - iQRS3[i + 2];
+//
+//					aMean = (t1 + t2 + t3) / 3;
+//
+//					aVar3[i] = Math.sqrt(
+//							((t1 - aMean) * (t1 - aMean) + (t2 - aMean) * (t2 - aMean) + (t3 - aMean) * (t3 - aMean))
+//									/ 2);
+//					if (aVar3[i] < iVarTh) {
+//						aRRTemp = iQRS3[i + 1] - iQRS3[i];
+//						if (aRRTemp > iRRlowTh && aRRTemp < iRRhighTh) {
+//							aRRmean3 = aRRmean3 + 1;
+//							counter = counter + 1;
+//							if (aVar3[i] < aVarMin) {
+//								aVarMin = aVar3[i];
+//								aStartInd3 = i;
+//							}
+//						}
+//					}
+//				}
+//				aRRmean3 = aRRmean3 / counter;
+//				aInd3 = counter / aNIt;
+//			}
+//
+//			if (aLen4 > 3) {
+//				int aNIt = aLen4 - 3;
+//				double aVar4[] = new double[aNIt];
+//				double t1, t2, t3, aMean, aRRTemp, aVarMin;
+//				double counter = 0;
+//				aVarMin = 1000;
+//				for (int i = 0; i < aNIt; i++) {
+//					t1 = iQRS4[i + 1] - iQRS4[i];
+//					t2 = iQRS4[i + 2] - iQRS4[i + 1];
+//					t3 = iQRS4[i + 3] - iQRS4[i + 2];
+//
+//					aMean = (t1 + t2 + t3) / 3;
+//
+//					aVar4[i] = Math.sqrt(
+//							((t1 - aMean) * (t1 - aMean) + (t2 - aMean) * (t2 - aMean) + (t3 - aMean) * (t3 - aMean))
+//									/ 2);
+//					if (aVar4[i] < iVarTh) {
+//						aRRTemp = iQRS4[i + 1] - iQRS4[i];
+//						if (aRRTemp > iRRlowTh && aRRTemp < iRRhighTh) {
+//							aRRmean4 = aRRmean4 + 1;
+//							counter = counter + 1;
+//							if (aVar4[i] < aVarMin) {
+//								aVarMin = aVar4[i];
+//								aStartInd4 = i;
+//							}
+//						}
+//					}
+//				}
+//				aRRmean4 = aRRmean4 / counter;
+//				aInd4 = counter / aNIt;
+//			}
 			// FInd the maximum value of 'ind'
 			// Have to add mean RR value also to this computation to get better
 			// estimate of 'ch'
@@ -2334,6 +2363,7 @@ public void filtfilt_Sos(double[] iInput, double[][] iSOS,  double[] iGain, doub
                 RRmean = RRmean4 / (aLen4 - 1);
             }
 
+            Filename.ExecutionLogs_Maternal.append(aMaxOne - aMaxTwo + ",");
             if(aMaxOne - aMaxTwo < 0.3){
             	int count = 0;
 				for (int i = 0; i < aMeanCh1.length; i++) {
@@ -2427,7 +2457,7 @@ public void filtfilt_Sos(double[] iInput, double[][] iSOS,  double[] iGain, doub
 						for (int i = 0; i < aQrsCh2.length; i++) {
 							if(aQrsCh2[i][ch-1] > 1.5 * aMeanCh2[ch-1]) {
 								count++;
-								if (count > 2) {
+								if (count > 3) {
 									SignalProcUtils.rrMeanCheck_Maternal = true;
 								}
 							}
@@ -2493,8 +2523,8 @@ public void filtfilt_Sos(double[] iInput, double[][] iSOS,  double[] iGain, doub
 		double inewRRlowTh = 0;
 		double inewRRhighTh = 0;
         if(iLastRRmean != 0) {
-			inewRRlowTh = 1 / (1 / iLastRRmean + SignalProcConstants.QRS_RR_VAR);
-			inewRRhighTh = 1 / (1 / iLastRRmean - SignalProcConstants.QRS_RR_VAR);
+			inewRRlowTh = 1 / (1 / iLastRRmean + SignalProcConstants.QRS_RR_VAR_M);
+			inewRRhighTh = 1 / (1 / iLastRRmean - SignalProcConstants.QRS_RR_VAR_M);
 		}else if(iLastRRmean == 0){
 			inewRRlowTh = iRRlowTh;
 			inewRRhighTh = iRRhighTh;
@@ -2508,6 +2538,10 @@ public void filtfilt_Sos(double[] iInput, double[][] iSOS,  double[] iGain, doub
             aVarMin = 1000;
             double counter = 0;
             for (int i = 0; i < aNIt; i++) {
+                if(i>0){
+                    inewRRlowTh = iRRlowTh;
+                    inewRRhighTh = iRRhighTh;
+                }
                 t1 = iQRS[i + 1] - iQRS[i];
                 t2 = iQRS[i + 2] - iQRS[i + 1];
                 t3 = iQRS[i + 3] - iQRS[i + 2];
@@ -5013,6 +5047,12 @@ public void filtfilt_Sos(double[] iInput, double[][] iSOS,  double[] iGain, doub
 		return stdnosie;
 	}
 
-
+    public double[] copyFromIntArray(int[] source) {
+        double[] dest = new double[source.length];
+        for(int i=0; i<source.length; i++) {
+            dest[i] = source[i];
+        }
+        return dest;
+    }
 	
 }// close class

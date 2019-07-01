@@ -710,9 +710,8 @@ public class QrsSelectionFunctions {
     /**
      * <p> QRS selection forward using information from previous iteration.</p>
      *
-     * @param iQRS        Possible set of QRS locations.
-     * @param iQRSLast    Location of last QRS determined in previous iteration.
-     * @param iRRMeanLast Mean RR of last 4 QRS determined in previous iteration.
+     * @param iQRS        Possible set of fetal QRS locations.
+     * @param iQrsM    Location Maternal QRS Location.
      * @return {aQrsFinal, aMissQrsIndex} : Final QRS selected array, missed QRS location.
      * @throws Exception If {@literal iQRS.length <= 0}.
      */
