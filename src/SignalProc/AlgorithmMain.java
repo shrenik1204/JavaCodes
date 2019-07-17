@@ -70,11 +70,11 @@ public class AlgorithmMain {
             SignalProcUtils.hrMaternal.add(0f);
         }
 
-        if(SignalProcUtils.currentIteration == 99){
-            SignalProcUtils.currentIteration = 99;
+        if(SignalProcUtils.currentIteration == 11){
+            SignalProcUtils.currentIteration = 11;
         }
-        if(SignalProcUtils.currentIteration == 20){
-            SignalProcUtils.currentIteration = 20;
+        if(SignalProcUtils.currentIteration == 60){
+            SignalProcUtils.currentIteration = 60;
         }
 
         LinkedList<Integer> aQrsF = new LinkedList<Integer>();
@@ -153,8 +153,14 @@ public class AlgorithmMain {
          */
         JadeMainFuction aJade = new JadeMainFuction();
         double[][] aEcgIca1 = aJade.jade(aEcgFilter);
+        for (int i = 0; i < 10000; i++) {
+            Filename.ICA1.append(aEcgIca1[i][0] + ",");
+            Filename.ICA1.append(aEcgIca1[i][1] + ",");
+            Filename.ICA1.append(aEcgIca1[i][2] + ",");
+            Filename.ICA1.append(aEcgIca1[i][3] + "\n");
+        }
 
-
+        Filename.ICA1.append(aEcgIca1);
 //        ApplicationUtils.getTaskList().add(TaskEnum.MQRS_DETECTION.getTaskName() + " started at : " + ApplicationUtils.getCurrentTime());
 //
 //        Timber.i("AlgorithmMain : Time for ICA1 : "+(System.currentTimeMillis()-aET)+" ms");
@@ -166,7 +172,13 @@ public class AlgorithmMain {
          */
         MQRSDetection mqrsDetection = new MQRSDetection();
         int[] aQRSM = mqrsDetection.mQRS(aEcgIca1, aEcgFilter);
-
+        SignalProcUtils.lastQRSMaternalArray.clear();
+        for (int i = 0; i < aQRSM.length; i++) {
+            while (aQRSM[i] > 10000) {
+                SignalProcUtils.lastQRSMaternalArray.add((aQRSM[i]-10000));
+                break;
+            }
+        }
 
 //        Timber.i("AlgorithmMain : Time for MQRS detection : "+(System.currentTimeMillis()-aET)+" ms");
 //        FileLoggerHelper.getInstance().sendLogData(ApplicationUtils.getCurrentTime() + " : Algorithm Main : Time for mQRS : "+(System.currentTimeMillis()-aET)+" msec.", FileLoggerType.EXECUTION, FLApplication.mFileTimeStamp);
@@ -308,7 +320,12 @@ public class AlgorithmMain {
 
 
             double[][] aEcgIca2 = aJade.jade(aFetalSig);
-
+            for (int i = 0; i < 10000; i++) {
+                Filename.ICA2.append(aEcgIca2[i][0] + ",");
+                Filename.ICA2.append(aEcgIca2[i][1] + ",");
+                Filename.ICA2.append(aEcgIca2[i][2] + ",");
+                Filename.ICA2.append(aEcgIca2[i][3] + "\n");
+            }
 //            Timber.i("AlgorithmMain : Time for ICA2 : "+(System.currentTimeMillis()-aET)+" ms");
 //            FileLoggerHelper.getInstance().sendLogData(ApplicationUtils.getCurrentTime() + " : Algorithm Main : Time for ICA2 : "+(System.currentTimeMillis()-aET)+" msec.", FileLoggerType.EXECUTION, FLApplication.mFileTimeStamp);
             aET = System.currentTimeMillis();

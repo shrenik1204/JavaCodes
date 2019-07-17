@@ -197,8 +197,15 @@ public class SignalProcUtils {
      */
     public static int noDetectionFlagMaternal = 0; // - remove
     public static double lastRRMeanMaternal = 0; // - remove
-    public static int lastQRSMaternal = 0;  // - remove
     public static int InterpolatedLengthMaternal = 0;  // - remove
+    /**
+     * Last fetal QRS location detected in previous iteration.
+     */
+    public static int lastQRSMaternal = 0;
+    /**
+     * Last fetal QRS location >10000 detected in previous iteration.
+     */
+    public static List<Integer> lastQRSMaternalArray = new ArrayList<>();
     /**
      * Temp MQRS locations of the iteration
      */
@@ -332,6 +339,7 @@ public class SignalProcUtils {
         rrMeanCheck_Maternal = false;
         lastRRMeanMaternal = 0;
         lastQRSMaternal = 0;
+        lastQRSMaternalArray.clear();
 
         qrsmLocTemp.clear();
         hrmTemp.clear();

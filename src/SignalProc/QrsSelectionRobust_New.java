@@ -107,7 +107,7 @@ public class QrsSelectionRobust_New {
                     Filename.FqrsSelectionType.append("Concat CNF\n");
                     Filename.ExecutionLogs.append("COT,");
                     Filename.ExecutionLogs.append(iQRSLast+",");
-                    return new Object[] { convertListtoArray(aQrsFinalConcat), aInterpolatedLength, 0 };
+                    return new Object[] { convertListtoArray(aQrsFinalConcat), aInterpolatedLength, 1 };
                 } else{
                     Filename.ExecutionLogs.append( "C O false,");
 
@@ -229,7 +229,7 @@ public class QrsSelectionRobust_New {
                         Filename.ExecutionLogs.append(iQRSLast+",");
 
 
-                        return new Object[] { convertListtoArray(aQrsFinalConcat), aInterpolatedLength, 0 };
+                        return new Object[] { convertListtoArray(aQrsFinalConcat), aInterpolatedLength, 1 };
                     } else {
                         Filename.ExecutionLogs.append( "C O false,");
                         SignalProcUtils.concatCount++;

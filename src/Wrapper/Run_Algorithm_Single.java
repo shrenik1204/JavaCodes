@@ -3,7 +3,7 @@ package Wrapper;
 import SignalProc.AlgorithmMain;
 import SignalProc.SignalProcConstants;
 import SignalProc.SignalProcUtils;
-import SignalProc.UterineActivity;
+import SignalProc.UterineActivity_New;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -17,7 +17,7 @@ public class Run_Algorithm_Single {
         SignalProcUtils.reset();
 
         DataTextFileReader aReadFile = new DataTextFileReader();
-        String aInputFilePath = ""+"/Users/kishoresubramanian/Sattva_Aravind/Crap/June_Algochange_test/sattva-2019-Jun-26-12-02-44/algo-new1input-sattva-2019-Jun-26-12-02-44.txt";
+        String aInputFilePath = ""+"/Users/kishoresubramanian/Sattva_Aravind/DATA/Manipal Data/ManipalDay3 - 19th Sept/sattva-2018-Sep-19-10-13-19/algo-new1input-sattva-2018-Sep-19-10-13-19.txt";
 
         int aInputPathLength = aInputFilePath.length();
         Filename nFilw = new Filename(aInputFilePath.substring(aInputPathLength-18, aInputPathLength-4));
@@ -103,7 +103,9 @@ public class Run_Algorithm_Single {
 
 //					double[] aUc = aUcAlgo.ucAlgoDwt(input2);
                 //Change by Aravind
-                List<Double> aUa = UterineActivity.uaAlgoDwt((input2));
+//                List<Double> aUa = UterineActivity.uaAlgoDwt(input2);
+                List<Double> aUa = UterineActivity_New.uaAlgoDwt(input1);
+
 //					double[] aUc = UterineActivity.ucAlgoDwt(input2);
                 List<Integer> aLocation = new ArrayList<>(SignalProcConstants.NO_OF_PRINT_VALUES);
 
@@ -220,6 +222,9 @@ public class Run_Algorithm_Single {
         }
 
         write2file(Filename.UA, Filename.aFilePathUA);
+        write2file(Filename.ICA1, Filename.aFilePathICA1);
+        write2file(Filename.ICA2, Filename.aFilePathICA2);
+
         ////////////Write to file //////////////////////
 
 

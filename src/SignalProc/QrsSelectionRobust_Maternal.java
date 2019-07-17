@@ -5,304 +5,306 @@ package SignalProc;
 //import com.sattvamedtech.fetallite.helper.FileLoggerHelper;
 //import com.sattvamedtech.fetallite.utils.ApplicationUtils;
 
-import Wrapper.Filename;
-
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * <p> Final qrs selection from the best channel selected using information from previous iteration.</p>
  * <p> Change Logs :</p>
  * <ul>
- *     <li> 28th August, 2017
+ *     <li> 7th July, 2019
  *         <ol>
- *             <li> Added condition to find miss locations only for Fetal QRS selection.</li>
- *             <li> Linked Maternal QRS selection to QRS Selection Robust.</li>
+ *             <li> Logic for selecting correct MQRS peaks detected in all the 4 channels after ICA1</li>
  *         </ol>
  *     </li>
- *     <li> 21st August, 2017
- *			<ol>
- *			 <li> Restructured to simple functions.</li>
- *			</ol>
- *     </li>
- *     <li> 8th August, 2017
- *     	<ol>
- *     	    <li> First commit.</li>
- *     	</ol>
- *     	</li>
  * </ul>
  *
- * @author Kishore Subramanian (kishore@sattvamedtech.com)
+ * @author Aravind Prasad (aravind@sattvamedtech.com)
  */
 public class QrsSelectionRobust_Maternal {
 
     /**
      * <p> Final qrs selection from the best channel selected.</p>
+     *
      * @param iQRS Possible set of QRS locations.
-     * @param iStartIndex First index of confirmed QRS in the iQRS array.
-     * @param iQrsM Set of maternal QRS locations.
-     * @param iInterpolatedLength Length of QRS interpolated at the end in previous iteration.
-     * @param iQRSLast Location of last QRS determined in previous iteration.
-     * @param iRRMeanLast Mean RR of last 4 QRS determined in previous iteration.
-     * @param iNoDetectionFlag <pre> (int) '1' if no single channel has been determined to
-     *                contain possible QRS locations else '0'.  </pre>
-     * @param iQrsConcat Concatenated sorted array of possible QRS locations from all channels.
-     * @return {aQRSFinal, aInterpolatedLength, aNoDetectionFLag} : Return QRS selected and update Flags.
+     *             //     * @param iStartIndex First index of confirmed QRS in the iQRS array.
+     * @return {aQRSFinal} : Return QRS selected and update Flags.
      * @throws Exception Message containing the exception.
      */
-    public Object[] mqrsSelection(int[] iQRS, int iStartIndex, int[] iQrsM, int iInterpolatedLength, int iQRSLast,
-                                 double iRRMeanLast, int iNoDetectionFlag, int[] iQrsConcat) throws Exception{
+    public static double[] mqrsSelection(double[] iQRS, double[][] iQrsAmplitude, double[] iMeanCh) throws Exception {
+        double[] aDiffArray = new double[iQRS.length];
 
-        QrsSelectionFunctions aQrsSelectionFunctions = new QrsSelectionFunctions();
-//		QrsSelectionInterpolation aQrsInterpolate = new QrsSelectionInterpolation();
+        LinkedList<Double> aQrsFinal = new LinkedList<Double>();
 
-        int aInterpolatedLength = 0;
-        if (iStartIndex > -1) {
+        boolean aConfirmFlag = firstQrsCheck(aQrsFinal);
 
-            /**
-             * Forward Iteration
-             */
-//			QrsSelectionForwardIteration aQrsForward = new QrsSelectionForwardIteration();
-            Object[] aQrsForwardOut = aQrsSelectionFunctions.qrsForwardIteration(iQRS, iStartIndex);
 
-            LinkedList<Integer> aQrsFinal = aQrsSelectionFunctions.interpolate((LinkedList<Integer>) aQrsForwardOut[0],
-                    (LinkedList<Integer>) aQrsForwardOut[1], iQrsM);
+        for (int i = 0; i < iQRS.length - 1; i++) {
+            aDiffArray[i] = iQRS[i + 1] - iQRS[i];
+        }
+        double iVarTh = SignalProcConstants.MQRS_VARIANCE_THRESHOLD;
+        double iRRlowTh = SignalProcConstants.MQRS_RR_LOW_TH;
+        double iRRhighTh = SignalProcConstants.MQRS_RR_HIGH_TH;
+        double aRRDiff;
+        double aRRMean, aRRLowTh, aRRHighTh;
+        double iLastRRmean = SignalProcUtils.lastRRMeanMaternal;
+        double aNoRR = 2; //SignalProcConstants.QRS_NO_RR_MEAN;
+        double inewRRlowTh = 0;
+        double inewRRhighTh = 0;
+        int aStartInd = -1;
+        double aRRmean = 0;
 
-            /**
-             * Interpolate at the end
-             */
+        if (iLastRRmean != 0) {
+            inewRRlowTh = 1 / (1 / iLastRRmean + SignalProcConstants.QRS_RR_VAR_M);
+            inewRRhighTh = 1 / (1 / iLastRRmean - SignalProcConstants.QRS_RR_VAR_M);
+        } else if (iLastRRmean == 0) {
+            inewRRlowTh = iRRlowTh;
+            inewRRhighTh = iRRhighTh;
+        }
+        int aMinRRDiff0 = 0, aMinRRDiff1;
+        int aIncrement1 = 0, aIncrement2 = 0;
+        int aLengthQRS = iQRS.length;
 
-            if (aQrsFinal.getLast() <= SignalProcConstants.QRS_END_VALUE && aQrsFinal.size() >= 2) {
+        int aForwardIteration = 0;
+        int aCountF = 0;
+        int aCountI = 0;
+        int aLen = iQRS.length;
 
-                aInterpolatedLength = aInterpolatedLength + SignalProcConstants.QRS_END_VALUE - aQrsFinal.getLast();
-                if (aInterpolatedLength < SignalProcConstants.QRS_LENGTH_MAX_INTERPOLATE) {
-                    int aLenQRS = aQrsFinal.size();
-                    int aDiffLast = aQrsFinal.get(aLenQRS - 1) - aQrsFinal.get(aLenQRS - 2);
 
-                    while (aQrsFinal.getLast() <= SignalProcConstants.QRS_END_VALUE) {
-                        aQrsFinal.add(aQrsFinal.getLast() + aDiffLast);
+        if (aLen > 3) {
+            LinkedList<Double> aMissQrsIndex = new LinkedList<Double>();
+
+            // adding First 2 QRS locations to QRSFinal
+            aQrsFinal.add(iQRS[aForwardIteration]);
+            aQrsFinal.add(iQRS[aForwardIteration + 1]);
+            aForwardIteration = aForwardIteration + 2;
+            aCountF = 2;
+            int aMinCheckFlag = 0;
+            int aFindFlag = 0;
+
+            LinkedList<Double> aRRMeanArr = new LinkedList<>();
+            aRRMeanArr.add((aQrsFinal.get(aCountF - 1) - aQrsFinal.get(aCountF - 2)));
+
+            while (aForwardIteration < aLengthQRS) {
+                aCountI = aCountF;
+
+                if (aRRMeanArr.size() <= aNoRR) {
+                    aRRMean = 0;
+                    for (int it = 0; it < aRRMeanArr.size(); it++) {
+                        aRRMean = aRRMean + aRRMeanArr.get(it);
                     }
-                }
-            }
-            int aForwardLen = aQrsFinal.size();
-            /**
-             * Backward Iteration
-             */
-
-//			QrsSelectionBackwardIteration aQrsBackward = new QrsSelectionBackwardIteration();
-            Object[] aQrsBackwardOut = aQrsSelectionFunctions.qrsBackwardIteration(iQRS, iStartIndex, aQrsFinal);
-
-            aQrsFinal = aQrsSelectionFunctions.interpolate((LinkedList<Integer>) aQrsBackwardOut[0],
-                    (LinkedList<Integer>) aQrsBackwardOut[1], iQrsM);
-
-            /**
-             * Interpolate at the start
-             */
-
-            if (aQrsFinal.getFirst() >= SignalProcConstants.QRS_START_VALUE && aQrsFinal.size() >= 2) {
-
-                aInterpolatedLength = aInterpolatedLength + aQrsFinal.getFirst() - SignalProcConstants.QRS_START_VALUE;
-                if (aInterpolatedLength < SignalProcConstants.QRS_LENGTH_MAX_INTERPOLATE) {
-                    int aDiffLast = aQrsFinal.get(1) - aQrsFinal.get(0);
-
-                    while (aQrsFinal.getFirst() > SignalProcConstants.QRS_START_VALUE) {
-                        aQrsFinal.addFirst(aQrsFinal.getFirst() - aDiffLast);
-                    }
-                }
-            }
-
-            boolean overlap = false;
-
-            if(SignalProcUtils.currentIteration > 0 && SignalProcUtils.lastQRSFetalArray.size() > 4){
-                overlap = aQrsSelectionFunctions.QrsOverlapCheck(aQrsFinal);
-            }
-            SignalProcUtils.lastQRSFetalArray.clear();
-            for (int i = 0; i < aQrsFinal.size(); i++) {
-                while (aQrsFinal.get(i) > 10000) {
-                    SignalProcUtils.lastQRSFetalArray.add((aQrsFinal.get(i)-10000));
-                    break;
-                }
-            }
-            if(overlap){
-                Filename.ExecutionLogs.append( "true,");
-            } else{
-                Filename.ExecutionLogs.append( "false,");
-            }
-
-
-
-
-
-            /**
-             * Check for first QRS within range of last RRmean n last Qrs
-             */
-            if ( iNoDetectionFlag == 0 && iRRMeanLast !=0 ){
-                boolean aConfirmFlag = aQrsSelectionFunctions.firstQrsCheck(aQrsFinal, iQRSLast, iRRMeanLast, false);
-
-
-                if (aConfirmFlag) {
-                    SignalProcUtils.independentCount++;
-                    if(SignalProcUtils.independentCount == 3){
-                        SignalProcUtils.concatCount = 0;
-                    }
-//					SignalProcUtils.lastvalidRRMeanFetal = iRRMeanLast;
-                    SignalProcUtils.independantdet_flag = true;
-//					FileLoggerHelper.getInstance().sendLogData(String.format(ApplicationUtils.getCurrentTime() + " : aConfirmFlag : %d", aConfirmFlag), FileLoggerType.EXECUTION, FLApplication.mFileTimeStamp);
-////
-                    Filename.FqrsSelectionType.append("Confirm Flag\n");
-                    Filename.ExecutionLogs.append("Confirm Flag,");
-                    Filename.ExecutionLogs.append(iQRSLast+",");
-
-
-                    return new Object[] { convertListtoArray(aQrsFinal), aInterpolatedLength, 0 };
+                    aRRMean = aRRMean / aRRMeanArr.size();
                 } else {
-				    /* NEW IMPLEMENTATION BY ARAVIND   */
-//                    aQrsSelectionFunctions.qrsIndependent(aQrsFinal);
+                    aRRMean = 0;
+                    for (int it = aRRMeanArr.size() - 1; it >= aRRMeanArr.size() - aNoRR; it--) {
+                        aRRMean = aRRMean + aRRMeanArr.get(it);
+                    }
+                    aRRMean = aRRMean / aNoRR;
+                }
 
-//                    boolean recheckFlag = aQrsSelectionFunctions.firstQrsCheck(aQrsFinal, iQRSLast, iRRMeanLast, true);
+                aRRDiff = iQRS[aForwardIteration] - aQrsFinal.get(aCountF - 1);
+//                if(SignalProcUtils.lastQRSFetal == 0 || SignalProcUtils.lastRRMeanFetal == 0){
+                aRRLowTh = 1 / (1 / aRRMean + SignalProcConstants.QRS_RR_VAR_M);
+                aRRHighTh = 1 / (1 / aRRMean - SignalProcConstants.QRS_RR_VAR_M);
+                if (aRRLowTh < SignalProcConstants.MQRS_RR_LOW_TH) {
+                    aRRLowTh = SignalProcConstants.MQRS_RR_LOW_TH;
+                }
+                if (aRRHighTh > SignalProcConstants.MQRS_RR_HIGH_TH) {
+                    aRRHighTh = SignalProcConstants.MQRS_RR_HIGH_TH;
+                }
+//                }else{
+//                    aRRLowTh = 1 / (1 / SignalProcUtils.lastvalidRRMeanFetal + aDelta1);
+//                    aRRHighTh = 1 / (1 / SignalProcUtils.lastvalidRRMeanFetal - aDelta1);
+//                }
 
 
-				     /*NEW IMPLEMENTATION BY ARAVIND END*/
-                    if(!overlap) {
+                if (aRRDiff < aRRLowTh) {
+                    aForwardIteration++;
+                } else if (aRRDiff >= aRRLowTh && aRRDiff <= aRRHighTh) {
+                    aMinRRDiff0 = 10000;
+                    aMinCheckFlag = 1;
+                } else {
+                    aFindFlag = 0;
+                    aIncrement1 = aForwardIteration;
+                    aIncrement2 = aForwardIteration + 1;
+                    if (aIncrement2 >= (aLengthQRS - 1)) {
+                        aForwardIteration = aIncrement2;
+                        aFindFlag = 1;
+                    }
 
-                        SignalProcUtils.concatCount++;
-                        SignalProcUtils.independentCount = 0;
-                        if (SignalProcUtils.concatCount == 6) {
-//                        FileLoggerHelper.getInstance().sendLogData(ApplicationUtils.getCurrentTime() + " : QrsSelectionRobust : Six Continuous/Intermittent Concat Output", FileLoggerType.EXECUTION, FLApplication.mFileTimeStamp);
-//						throw new Exception(FLApplication.getInstance().getString(R.string.connection_issue));
-                        }
-////
-                        SignalProcUtils.independantdet_flag = false;
+                    while (aFindFlag == 0) {
 
-                        Object[] aQrsConcatOut = aQrsSelectionFunctions.qrsConcatenated(iQrsConcat,iQrsM);
+                        if ((iQRS[aIncrement1] - aQrsFinal.getLast()) >= (aRRLowTh + aRRMean)) {
 
-                        aQrsFinal = aQrsSelectionFunctions.interpolate((LinkedList<Integer>) aQrsConcatOut[0],
-                                (LinkedList<Integer>) aQrsConcatOut[1], iQrsM);
-
-                        aInterpolatedLength = 0;
-                        if (aQrsFinal.getLast() <= SignalProcConstants.QRS_END_VALUE && aQrsFinal.size() >= 2) {
-
-                            aInterpolatedLength = aInterpolatedLength + SignalProcConstants.QRS_END_VALUE - aQrsFinal.getLast();
-                            if (aInterpolatedLength < SignalProcConstants.QRS_LENGTH_MAX_INTERPOLATE) {
-                                int aLenQRS = aQrsFinal.size();
-                                int aDiffLast = aQrsFinal.get(aLenQRS - 1) - aQrsFinal.get(aLenQRS - 2);
-
-                                while (aQrsFinal.getLast() <= SignalProcConstants.QRS_END_VALUE) {
-                                    aQrsFinal.add(aQrsFinal.getLast() + aDiffLast);
+                            aRRDiff = iQRS[aIncrement2] - iQRS[aIncrement1];
+                            if (aRRDiff >= aRRLowTh && aRRDiff <= aRRHighTh) {
+                                aMinRRDiff0 = 10000;
+                                aFindFlag = 1;
+                            } else if (aRRDiff < aRRLowTh) {
+                                aIncrement2++;
+                                if (aIncrement2 >= (aLengthQRS - 1)) {
+                                    aForwardIteration = aIncrement2;
+                                    aFindFlag = 1;
+                                }
+                            } else if (aRRDiff > aRRHighTh) {
+                                aIncrement1++;
+                                if (aIncrement2 == aIncrement1) {
+                                    aIncrement2++;
+                                    if (aIncrement2 >= (aLengthQRS - 1)) {
+                                        aForwardIteration = aIncrement2;
+                                        aFindFlag = 1;
+                                    }
+                                }
+                            }
+                        } else {
+                            aIncrement1++;
+                            if (aIncrement2 == aIncrement1) {
+                                aIncrement2++;
+                                if (aIncrement2 >= (aLengthQRS - 1)) {
+                                    aForwardIteration = aIncrement2;
+                                    aFindFlag = 1;
                                 }
                             }
                         }
-                        Filename.FqrsSelectionType.append("CFN : Concat\n");
-                        Filename.ExecutionLogs.append("CFN : Concat,");
-                        Filename.ExecutionLogs.append(iQRSLast+",");
-
-
-                        return new Object[] { convertListtoArray(aQrsFinal), aInterpolatedLength, 1 };
-                    } else{
-//                        while (aQrsFinal.get(i) < 2000) {
-//                            aQrsFinal.remove(i);
-//                            if (aQrsFinal.size() <= 0) {
-//                                break;
-//                            }
-//                        }
-                        SignalProcUtils.independantdet_flag = false;
-
-                        Filename.FqrsSelectionType.append("CFN : Independent/Overlap true\n");
-                        Filename.ExecutionLogs.append("CFN : Independent/Overlap true,");
-                        Filename.ExecutionLogs.append(iQRSLast+",");
-
-
-                        return new Object[] { convertListtoArray(aQrsFinal), aInterpolatedLength, 0 };
                     }
-//					FileLoggerHelper.getInstance().sendLogData(String.format(ApplicationUtils.getCurrentTime() + " : Concatenated FQRS detection"), FileLoggerType.EXECUTION, FLApplication.mFileTimeStamp);
 
-                    /**
-                     * ADD fqrsMissIndex indentification
-                     */
+                } // END of finding if QRS is to be selected.
 
-                }
-            }
-            else {
-                SignalProcUtils.independentCount++;
-                if(SignalProcUtils.independentCount == 3){
-                    SignalProcUtils.concatCount = 0;
-                }
-//				SignalProcUtils.lastvalidRRMeanFetal = iRRMeanLast;
-                SignalProcUtils.independantdet_flag = true;
+                if (aMinCheckFlag == 1) {
+                    LinkedList<Double> aTemp = new LinkedList<Double>();
+                    for (int i = aForwardIteration; i < aLengthQRS; i++) {
 
-                Filename.ExecutionLogs.append("Independent,");
-                Filename.ExecutionLogs.append(iQRSLast+",");
-
-                Filename.FqrsSelectionType.append("Independent \n");
-
-//
-//				FileLoggerHelper.getInstance().sendLogData(String.format(ApplicationUtils.getCurrentTime() + " : Independent FQRS detection"), FileLoggerType.EXECUTION, FLApplication.mFileTimeStamp);
-                return new Object[] { convertListtoArray(aQrsFinal), aInterpolatedLength, 0 };
-            }
-        } else {
-//			FileLoggerHelper.getInstance().sendLogData(String.format(ApplicationUtils.getCurrentTime() + " : No FQRS detection"), FileLoggerType.EXECUTION, FLApplication.mFileTimeStamp);
-
-            if (SignalProcUtils.lastvalidRRMeanFetal != 0) {
-                SignalProcUtils.concatCount++;
-                SignalProcUtils.independentCount = 0;
-                if(SignalProcUtils.concatCount == 6){
-//                    FileLoggerHelper.getInstance().sendLogData(ApplicationUtils.getCurrentTime() + " : QrsSelectionRobust : Six Continuous/Intermittent Concat Output", FileLoggerType.EXECUTION, FLApplication.mFileTimeStamp);
-//					throw new Exception(FLApplication.getInstance().getString(R.string.connection_issue));
-                }
-                SignalProcUtils.independantdet_flag = false;
-
-                Object[] aQrsConcatOut = aQrsSelectionFunctions.qrsConcatenated(iQrsConcat, iQrsM);
-
-                LinkedList<Integer> aQrsFinal = aQrsSelectionFunctions.interpolate((LinkedList<Integer>) aQrsConcatOut[0],
-                        (LinkedList<Integer>) aQrsConcatOut[1], iQrsM);
-
-                aInterpolatedLength = 0;
-                if (aQrsFinal.getLast() <= SignalProcConstants.QRS_END_VALUE && aQrsFinal.size() >= 2) {
-
-                    aInterpolatedLength = aInterpolatedLength + SignalProcConstants.QRS_END_VALUE - aQrsFinal.getLast();
-                    if (aInterpolatedLength < SignalProcConstants.QRS_LENGTH_MAX_INTERPOLATE) {
-                        int aLenQRS = aQrsFinal.size();
-                        int aDiffLast = aQrsFinal.get(aLenQRS - 1) - aQrsFinal.get(aLenQRS - 2);
-
-                        while (aQrsFinal.getLast() <= SignalProcConstants.QRS_END_VALUE) {
-                            aQrsFinal.add(aQrsFinal.getLast() + aDiffLast);
+                        if (iQRS[i] <= aQrsFinal.get(aCountF - 1) + aRRHighTh) {
+                            aTemp.add(iQRS[i]);
+                        } else if (iQRS[i] > iQRS[aForwardIteration] + aRRHighTh) {
+                            break;
                         }
                     }
+                    double aTempQRS = 0;
+                    int aShift = 0;
+                    for (int j = 0; j < aTemp.size(); j++) {
+                        aRRDiff = aTemp.get(j) - aQrsFinal.get(aCountF - 1);
+
+                        if (aRRDiff >= aRRLowTh && aRRDiff <= aRRHighTh) {
+                            aMinRRDiff1 = (int) Math.abs(aRRDiff - aRRMean);
+                            if (aMinRRDiff1 < aMinRRDiff0) {
+                                aTempQRS = aTemp.get(j);
+                                aShift = aForwardIteration + j + 1;
+                                aMinRRDiff0 = aMinRRDiff1;
+                            }
+                        }
+                    }
+                    aQrsFinal.add(aTempQRS);
+                    aMinCheckFlag = 0;
+                    aCountF++;
+                    aRRMeanArr.add(aQrsFinal.get(aCountF - 1) - aQrsFinal.get(aCountF - 2));
+                    aForwardIteration = aShift;
                 }
-
-//					FileLoggerHelper.getInstance().sendLogData(String.format(ApplicationUtils.getCurrentTime() + " : Concatenated FQRS detection"), FileLoggerType.EXECUTION, FLApplication.mFileTimeStamp);
-
-                /**
-                 * ADD fqrsMissIndex indentification
-                 */
-                Filename.ExecutionLogs.append("Concat,");
-                Filename.ExecutionLogs.append(iQRSLast+",");
-
-                Filename.FqrsSelectionType.append("Concat \n");
-                return new Object[]{convertListtoArray(aQrsFinal), aInterpolatedLength, 1};
             }
-            else {
-                Filename.ExecutionLogs.append("No Det,");
 
-                Filename.FqrsSelectionType.append("No Det\n");
 
-                return new Object[]{new int[]{}, 0, 1};
+            return null;
+        }
+        return null;
+    }
+    public boolean QrsOverlapCheck(LinkedList<Double> iQrsFinal) {
+
+
+        List<Double> iQRSlist = new ArrayList<>();
+
+        for (int i = 0; i < iQrsFinal.size(); i++) {
+            while (iQrsFinal.get(i) < 5000) {
+                iQRSlist.add(iQrsFinal.get(i));
+                break;
+            }
+        }
+//        for (int i : iQrsFinal) {
+//            iQRSlist.add(i);
+//        }
+        double th = 40, lowTH, highTH, overlapCount = 0;
+
+        for (int lastQRSM : SignalProcUtils.lastQRSMaternalArray) {
+            for (int i = 0; i < iQRSlist.size(); i++) {
+                if(iQRSlist.get(i) - th < 0){
+                    lowTH = 0;
+                    highTH = iQrsFinal.get(i) + th;
+                }else if(iQRSlist.get(i) + th > 15000){
+                    lowTH = iQrsFinal.get(i) - th;
+                    highTH = 15000;
+                }
+                else{
+                    lowTH = iQRSlist.get(i) - th;
+                    highTH = iQRSlist.get(i) + th;
+                }
+                if ((lastQRSM >= lowTH && lastQRSM <= highTH)) {
+                    iQRSlist.remove(i);
+                    overlapCount++;
+                }
+            }
+        }
+        return iQRSlist.size() <= 3 || overlapCount > 1;
+    }
+
+    public static boolean firstQrsCheck(LinkedList<Double> iQrsFinal) {
+//        LinkedList<Integer> iQrsListnew = new LinkedList<>();
+//        if(iQrsFinal.size() > 0){
+//            iQrsListnew.addAll(iQrsFinal);
+//        }else{
+//            iQrsListnew.add(0);
+//            iQrsFinal.add(0);
+//        }
+        double iRRMeanLast = SignalProcUtils.lastRRMeanMaternal;
+        double iQRSLast = SignalProcUtils.lastQRSMaternalArray.indexOf(SignalProcUtils.lastQRSMaternalArray.size());
+
+        int i = 0;
+
+        while (iQrsFinal.get(i) < 2000) {
+            iQrsFinal.remove(i);
+            if (iQrsFinal.size() <= 0) {
+                break;
             }
         }
 
-    }
+        double aDelta = SignalProcConstants.QRS_RR_VAR_M;
+//        double aDelta1 = SignalProcConstants.QRS_RR_VAR_Continuous;
 
-    /**
-     * <p>Convert linked list to array.</p>
-     * @param iQRS Input list.
-     * @return Integer array.
-     */
-    private int[] convertListtoArray(LinkedList<Integer> iQRS){
-        int aLen = iQRS.size();
-        int[] aQRS = new int[aLen];
-        for (int i =0; i<aLen; i++){
-            aQRS[i] = iQRS.get(i);
+
+        double aRRLowTh = 1 / (1 / iRRMeanLast + aDelta);
+        double aRRHighTh = 1 / (1 / iRRMeanLast - aDelta);
+
+        double aRRDiff;
+        boolean aCheckFlag = false;
+
+        // Check first qrs location
+        if (iQrsFinal.size() > 0) {
+            while (iQrsFinal.get(i) - iQRSLast <= aRRHighTh) {
+                aRRDiff = iQrsFinal.get(i) - iQRSLast;
+
+                if (aRRDiff < aRRLowTh) {
+                    iQrsFinal.remove(i);
+                } else if (aRRDiff >= aRRLowTh && aRRDiff <= aRRHighTh) {
+                    aCheckFlag = true;
+                    i++;
+                    if (i >= iQrsFinal.size()) {
+                        break;
+                    }
+                }
+            }
         }
-        return aQRS;
-    }
+        // Check RR value range
+        if (aCheckFlag) {
+            aRRDiff = iQrsFinal.get(1) - iQrsFinal.get(0);
+            aCheckFlag = aRRDiff >= aRRLowTh && aRRDiff <= aRRHighTh;
+        } else {
+            if (iQrsFinal.size() > 1) {
+                double aRRLowThnew = 1 / (1 / SignalProcUtils.lastvalidRRMeanFetal + aDelta);
+                double aRRHighThnew = 1 / (1 / SignalProcUtils.lastvalidRRMeanFetal - aDelta);
+                aRRDiff = (iQrsFinal.get(1) - iQrsFinal.get((0)));
+                aCheckFlag = aRRDiff >= aRRLowThnew && aRRDiff <= aRRHighThnew;
+            }
+        }
 
+        return aCheckFlag;
+    }
 }
