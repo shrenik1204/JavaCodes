@@ -58,7 +58,7 @@ public class Run_Algorithm_test {
         ArrayList<Integer> UCLoc = new ArrayList<>();
 //        UcAlgo aUcAlgo = new UcAlgo();
 
-//		Filename.ExecutionLogs.append("Iteration, Start Location, MA , QRSM Detection , QRSF Selection Type, Last Fetal QRS, No of QRSF Selected, No of FHR computed, Last RR mean Fetal \n");
+//		Filename.summarizedData.append("Iteration, Start Location, MA , QRSM Detection , QRSF Selection Type, Last Fetal QRS, No of QRSF Selected, No of FHR computed, Last RR mean Fetal \n");
         while (aInput.length - (SignalProcConstants.QRS_SHIFT*it+MA_shift) >= SignalProcConstants.NO_OF_SAMPLES)
         {
             double[][] input1 = new double[15000][4];
@@ -170,7 +170,7 @@ public class Run_Algorithm_test {
 //        write2file(Filename.RRMeanFetal, Filename.aFilePathRRMeanFetal);
 //        write2file(Filename.FqrsSelectionType, Filename.aFilePathFqrsSelectionType);
 //        write2file(Filename.FHR, Filename.aFilePathFHR);
-//        write2file(Filename.ExecutionLogs, Filename.aFilePathExecutionLogs);
+//        write2file(Filename.summarizedData, Filename.aFilePathExecutionLogs);
         ////////////Write to file //////////////////////
 
 ////////////Write to file //////////////////////

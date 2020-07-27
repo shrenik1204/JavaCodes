@@ -17,9 +17,8 @@ import java.util.List;
 public class AlgorithmMain {
 
     public static Object[] algoStart(double[][] iInput, int iCurrentIteration) throws Exception {
-        if(SignalProcUtils.UArecheck_global){
-            SignalProcUtils.UArecheck = true;
-        }
+        SignalProcUtils.UArecheck = SignalProcUtils.UArecheck_global;
+
         MatrixFunctions mMatrixFunctions = new MatrixFunctions();
 
         long aST = System.currentTimeMillis();
@@ -55,26 +54,19 @@ public class AlgorithmMain {
 
 
         SignalProcUtils.currentIteration = iCurrentIteration;
-        Filename.ExecutionLogs.append(iCurrentIteration+",");
-        Filename.ExecutionLogs_Maternal.append(iCurrentIteration+",");
+        Filename.summarizedData.append(iCurrentIteration+",");
+        Filename.summarizedData_maternal.append(iCurrentIteration+",");
         Filename.MAlogs.append(iCurrentIteration+",");
         Filename.PSDlogs.append(iCurrentIteration+",");
         SignalProcUtils.qrsCurrentShift = SignalProcConstants.QRS_SHIFT * SignalProcUtils.currentIteration + SignalProcUtils.dataLossCounter;
-        Filename.ExecutionLogs.append(SignalProcUtils.qrsCurrentShift+",");
-        Filename.ExecutionLogs_Maternal.append(SignalProcUtils.qrsCurrentShift+",");
+        Filename.summarizedData.append(SignalProcUtils.qrsCurrentShift+",");
+        Filename.summarizedData_maternal.append(SignalProcUtils.qrsCurrentShift+",");
 
         if (iCurrentIteration == 0) {
             SignalProcUtils.qrsFetalLocation.add(0);
             SignalProcUtils.hrFetal.add(0f);
             SignalProcUtils.qrsMaternalLocation.add(0);
             SignalProcUtils.hrMaternal.add(0f);
-        }
-
-        if(SignalProcUtils.currentIteration == 11){
-            SignalProcUtils.currentIteration = 11;
-        }
-        if(SignalProcUtils.currentIteration == 60){
-            SignalProcUtils.currentIteration = 60;
         }
 
         LinkedList<Integer> aQrsF = new LinkedList<Integer>();
@@ -131,18 +123,19 @@ public class AlgorithmMain {
 //        FilterLowHiNotch aFilter = new FilterLowHiNotch();
         double[][] aEcgFilter = aFilter.filterParallel(aInput);
 
+//        Logging the data to files
         if (SignalProcUtils.MA_FLAG){
             SignalProcUtils.lastQRSFetalArray.clear();
             Filename.CHF_Ind.append(SignalProcUtils.currentIteration+", , , , , , , , , ,\n ");
             Filename.RRMeanFetal.append(",\n");
             Filename.FqrsSelectionType.append(" MA \n");
-            Filename.ExecutionLogs.append(SignalProcUtils.MA_Shift+",,,,,,,,\n");
-            Filename.ExecutionLogs_Maternal.append(SignalProcUtils.MA_Shift+",,,,,,,,,\n");
+            Filename.summarizedData.append(SignalProcUtils.MA_Shift+",,,,,,,,\n");
+            Filename.summarizedData_maternal.append(SignalProcUtils.MA_Shift+",,,,,,,,,\n");
             return null;
         }
         else {
-            Filename.ExecutionLogs.append(SignalProcUtils.MA_Shift+",");
-            Filename.ExecutionLogs_Maternal.append(SignalProcUtils.MA_Shift+",");
+            Filename.summarizedData.append(SignalProcUtils.MA_Shift+",");
+            Filename.summarizedData_maternal.append(SignalProcUtils.MA_Shift+",");
         }
 //        Timber.i("AlgorithmMain : Time for Filtering : "+(System.currentTimeMillis()-aET)+" ms");
 //        FileLoggerHelper.getInstance().sendLogData(ApplicationUtils.getCurrentTime() + " : Algorithm Main : Time for filtering : "+(System.currentTimeMillis()-aET)+" msec.", FileLoggerType.EXECUTION, FLApplication.mFileTimeStamp);
@@ -153,6 +146,8 @@ public class AlgorithmMain {
          */
         JadeMainFuction aJade = new JadeMainFuction();
         double[][] aEcgIca1 = aJade.jade(aEcgFilter);
+
+//        Logging the data to files
         for (int i = 0; i < 10000; i++) {
             Filename.ICA1.append(aEcgIca1[i][0] + ",");
             Filename.ICA1.append(aEcgIca1[i][1] + ",");
@@ -172,6 +167,8 @@ public class AlgorithmMain {
          */
         MQRSDetection mqrsDetection = new MQRSDetection();
         int[] aQRSM = mqrsDetection.mQRS(aEcgIca1, aEcgFilter);
+
+        // Following lines not present in android
         SignalProcUtils.lastQRSMaternalArray.clear();
         for (int i = 0; i < aQRSM.length; i++) {
             while (aQRSM[i] > 10000) {
@@ -275,9 +272,9 @@ public class AlgorithmMain {
             aHRmPrint = mMatrixFunctions.convertHR2MilliSec(aFinalQrsmHrPlot, aFinalHRM, aFinalQRSM);
             SignalProcUtils.lastQRSMIteration = iCurrentIteration;
             SignalProcUtils.mhrComputed = true;
-            Filename.ExecutionLogs_Maternal.append(SignalProcUtils.mhrComputed+",");
-            Filename.ExecutionLogs_Maternal.append(aQRSM.length+",");
-            Filename.ExecutionLogs_Maternal.append(aSizeMaternalHR+",");
+            Filename.summarizedData_maternal.append(SignalProcUtils.mhrComputed+",");
+            Filename.summarizedData_maternal.append(aQRSM.length+",");
+            Filename.summarizedData_maternal.append(aSizeMaternalHR+",");
 
 
 //            } else {
@@ -296,10 +293,10 @@ public class AlgorithmMain {
 
             SignalProcUtils.lastQRSMaternal = 0;
             SignalProcUtils.lastRRMeanMaternal = 0;
-            Filename.ExecutionLogs_Maternal.append(SignalProcUtils.mhrComputed+",,,");
+            Filename.summarizedData_maternal.append(SignalProcUtils.mhrComputed+",,,");
 
         }
-        Filename.ExecutionLogs.append(SignalProcUtils.mhrComputed+",");
+        Filename.summarizedData.append(SignalProcUtils.mhrComputed+",");
 
 
         if (SignalProcUtils.mhrComputed){
@@ -364,7 +361,7 @@ public class AlgorithmMain {
             SignalProcUtils.interpolatedLengthFetal = (int) aQrsfSelected[1];
             SignalProcUtils.noDetectionFlagFetal = (int) aQrsfSelected[2];
 
-            Filename.ExecutionLogs.append(aQRSF.length+",");
+            Filename.summarizedData.append(aQRSF.length+",");
 
 
             if (aQRSF.length >= SignalProcConstants.FQRS_MIN_SIZE && aQRSF.length <= SignalProcConstants.FQRS_MAX_SIZE) {
@@ -400,7 +397,7 @@ public class AlgorithmMain {
                 HeartRateFetal aFHR = new HeartRateFetal();
                 aFHR.heartRate(aQRSF);
                 int aSizeFetalHR = SignalProcUtils.qrsfLocTemp.size();
-                Filename.ExecutionLogs.append(aSizeFetalHR+",");
+                Filename.summarizedData.append(aSizeFetalHR+",");
 
 //                if (SignalProcUtils.fetalHrNew == 1){
 //                    aSizeFetalHR = aSizeFetalHR + 4;
@@ -478,7 +475,7 @@ public class AlgorithmMain {
 ////                    }
 //                }
             } else {
-                Filename.ExecutionLogs.append(0+",");
+                Filename.summarizedData.append(0+",");
 
                 SignalProcUtils.lastQRSFetal = 0;
                 SignalProcUtils.lastRRMeanFetal = 0;
@@ -536,10 +533,10 @@ public class AlgorithmMain {
         aLocation_batch.addAll(SignalProcUtils.aLocation_UA_Batch);
         System.out.println("AlgorithmMain : Time for Algorithm : " + (System.currentTimeMillis() - aST) + " ms");
 //        Timber.i("AlgorithmMain : Time for Algorithm : "+(System.currentTimeMillis()-aST)+" ms");
-        Filename.ExecutionLogs.append(SignalProcUtils.lastRRMeanFetal+",");
-        Filename.ExecutionLogs_Maternal.append(SignalProcUtils.lastRRMeanMaternal+"\n");
+        Filename.summarizedData.append(SignalProcUtils.lastRRMeanFetal+",");
+        Filename.summarizedData_maternal.append(SignalProcUtils.lastRRMeanMaternal+"\n");
 
-        Filename.ExecutionLogs.append(SignalProcUtils.lastvalidRRMeanFetal+"\n\n");
+        Filename.summarizedData.append(SignalProcUtils.lastvalidRRMeanFetal+"\n\n");
         if(SignalProcUtils.independentCount >= 2){
             SignalProcUtils.lastvalidRRMeanFetal = SignalProcUtils.lastRRMeanFetal;
         }

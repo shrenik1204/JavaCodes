@@ -68,8 +68,8 @@ public class Run_Algorithm {
 //		ArrayList<Integer> UALoc = new ArrayList<>();
 
             int it = 0;
-            Filename.ExecutionLogs.append("Iteration, Start Location, MA , QRSM Detection , QRSF Selection Type, Last Fetal QRS, No of QRSF Selected, No of FHR computed, Last RR mean Fetal, Last Valid RRMean Fetal \n");
-            Filename.ExecutionLogs_Maternal.append("Iteration, Start Location, MA , IndCh1, IndCh2, IndCh3, IndCh4, ch , QRSM Detection, No of QRSM Selected,  No of MHR computed ,Last RR mean Maternal\n");
+            Filename.summarizedData.append("Iteration, Start Location, MA , QRSM Detection , QRSF Selection Type, Last Fetal QRS, No of QRSF Selected, No of FHR computed, Last RR mean Fetal, Last Valid RRMean Fetal \n");
+            Filename.summarizedData_maternal.append("Iteration, Start Location, MA , IndCh1, IndCh2, IndCh3, IndCh4, ch , QRSM Detection, No of QRSM Selected,  No of MHR computed ,Last RR mean Maternal\n");
             Filename.MAlogs.append("Iteration, Chnk 1, Chnk 2, Chnk 3, Chnk 4, Chnk 5, Chnk 6, Chnk 7, Chnk 8, Chnk 9, Chnk 10, Chnk 11, Chnk 12 \n");
             Filename.PSDlogs.append("Iteration, Values \n");
             while (aInput.length - (SignalProcConstants.QRS_SHIFT * it + MA_shift) >= SignalProcConstants.NO_OF_SAMPLES) {
@@ -165,10 +165,10 @@ public class Run_Algorithm {
             write2file(Filename.RRMeanFetal, Filename.aFilePathRRMeanFetal);
             write2file(Filename.FqrsSelectionType, Filename.aFilePathFqrsSelectionType);
             write2file(Filename.FHR, Filename.aFilePathFHR);
-            write2file(Filename.ExecutionLogs, Filename.aFilePathExecutionLogs);
-            write2file(Filename.ExecutionLogs_Maternal, Filename.aFilePathExecutionLogs_maternal);
+            write2file(Filename.summarizedData, Filename.aFilePathExecutionLogs);
+            write2file(Filename.summarizedData_maternal, Filename.aFilePathExecutionLogs_maternal);
 //            write2file(Filename.FHR, Filename.aFilePathFHR_new);
-//            write2file(Filename.ExecutionLogs, Filename.aFilePathExecutionLogs_new);
+//            write2file(Filename.summarizedData, Filename.aFilePathExecutionLogs_new);
             ////////////Write to file //////////////////////
 
 ////////////Write to file //////////////////////
@@ -232,7 +232,7 @@ public class Run_Algorithm {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public static void write2file(StringBuilder sb, String iFilename) {
 		try {
 			BufferedWriter br = new BufferedWriter(new FileWriter(iFilename));
@@ -272,7 +272,7 @@ public class Run_Algorithm {
 			StringBuilder sb = new StringBuilder();
 			for (int i = 0; i < iQRS.length; i++) {
 			 sb.append(iQRS[i]);
-			 
+
 			 sb.append("\n");
 			}
 //			sb.append("\n");

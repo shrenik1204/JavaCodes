@@ -52,34 +52,26 @@ public class HeartRateFetal {
 	 */
 	public void heartRate(int[] iQRS) throws Exception {
 
-        if(SignalProcUtils.currentIteration == 41){
-            SignalProcUtils.currentIteration = 41;
-        }
+        SignalProcUtils.qrsfLocTemp = new LinkedList<>();
+        SignalProcUtils.hrfTemp = new LinkedList<>();
+        MatrixFunctions aMatrixFunctions = new MatrixFunctions();
+        double mean = 0;
+        double aRRLowTh = 0;
+        double aRRHighTh = 0;
+        double aDelta = SignalProcConstants.QRS_RR_VAR;
+        int aLengthQrs = iQRS.length;
+        int aStartLoc = aMatrixFunctions.findVarianceMinLocation(iQRS, (int) SignalProcConstants.QRS_NO_RR_MEAN);
+        LinkedList<Integer> aRRDiffArr = new LinkedList<>();
 
-
-
+        // Not present in android
         ArrayList<Integer> qrsArray = new ArrayList<>();
         for (int i = 0; i < iQRS.length; i++) {
             qrsArray.add(iQRS[i]);
         }
-
-        double mean = 0;
-        MatrixFunctions aMatrixFunctions = new MatrixFunctions();
-        double aRRLowTh = 0;
-        double aRRHighTh = 0;
-        double aDelta = SignalProcConstants.QRS_RR_VAR;
-
         int[] adiffarray = new int[iQRS.length];
-
         for (int i = 0; i < iQRS.length-1; i++) {
             adiffarray[i] = iQRS[i+1]-iQRS[i];
         }
-
-        SignalProcUtils.qrsfLocTemp = new LinkedList<>();
-		SignalProcUtils.hrfTemp = new LinkedList<>();
-        int aLengthQrs = iQRS.length;
-        int aStartLoc = aMatrixFunctions.findVarianceMinLocation(iQRS, (int) SignalProcConstants.QRS_NO_RR_MEAN);
-        LinkedList<Integer> aRRDiffArr = new LinkedList<>();
 
         if (aStartLoc > -1) {
             SignalProcUtils.lastRRMeanFetal = 0;
@@ -114,6 +106,7 @@ public class HeartRateFetal {
                     aRRMean = aRRMean / SignalProcConstants.QRS_NO_RR_MEAN;
                     SignalProcUtils.qrsfLocTemp.add(iQRS[i]);
                     SignalProcUtils.hrfTemp.add((float) (60 * SignalProcConstants.FS / aRRMean));
+
                     if (SignalProcUtils.qrsfLocTemp.getLast() >= SignalProcConstants.QRS_END_VALUE && SignalProcUtils.qrsfLocTemp.get(SignalProcUtils.qrsfLocTemp.size()-2) < SignalProcConstants.QRS_END_VALUE) {
                         SignalProcUtils.lastRRMeanFetal = aRRMean;
                     }
@@ -199,7 +192,6 @@ public class HeartRateFetal {
                     SignalProcUtils.lastRRMeanFetal = aRRMean;
                 }
             }
-
             int aQrsTemp = 0;
             float aHrTemp = 0;
             if (SignalProcUtils.qrsfLocTemp.size() > 0) {

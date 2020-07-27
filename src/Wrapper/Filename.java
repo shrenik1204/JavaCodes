@@ -5,16 +5,16 @@ import java.io.File;
 public class Filename {
 
 	private static Filename filename;
-	static String aFilePath = ""+"/Users/kishoresubramanian/Sattva_Aravind/Java Generated Data/APR_MAY_Newelectrode";
-	static String aFilePath_FHR = ""+"/Users/kishoresubramanian/Sattva_Aravind/Java Generated Data/FHR/";
-	static String aFilePath_EXE = ""+"/Users/kishoresubramanian/Sattva_Aravind/Java Generated Data/EXE/";
-	static String aFilePath_UA = ""+"/Users/kishoresubramanian/Sattva_Aravind/Java Generated Data/UA/";
+	static String aFilePath = "" + "/Users/kishoresubramanian/Dheeraj/Sattva_FetalLite/Java_Data/JavaResults";
+	static String aFilePath_FHR = "" + "/Users/kishoresubramanian/Dheeraj/Sattva_FetalLite/Java_Data/FHR/";
+	static String aFilePath_EXE = "" + "/Users/kishoresubramanian/Dheeraj/Sattva_FetalLite/Java_Data/EXE/";
+	static String aFilePath_UA = "" + "/Users/kishoresubramanian/Dheeraj/Sattva_FetalLite/Java_Data/UA/";
 
 	static private String aInputFilePath = "";
-	
-	 public Filename(String aInputFilePath) {
-		 Filename.aInputFilePath = aInputFilePath;
-				 createFilePath();
+
+	public Filename(String aInputFilePath) {
+		Filename.aInputFilePath = aInputFilePath;
+		createFilePath();
 	}
 
 	public static String aFilePathMALogs;
@@ -42,9 +42,9 @@ public class Filename {
 	public static String aFilePathQRSMDet;
 	public static String aFilePathQRSMSel;
 	public static String aFilePathCHM;
-	
+
 	public static String aFilePathResidue;
-	
+
 	public static String aFilePathQRSFDet;
 	public static String aFilePathQRSFSel;
 	public static String aFilePathCHF;
@@ -54,8 +54,8 @@ public class Filename {
 
 	public static String aFilePathExecutionLogs;
 	public static String aFilePathExecutionLogs_maternal;
-	public static StringBuilder ExecutionLogs = new StringBuilder();
-	public static StringBuilder ExecutionLogs_Maternal = new StringBuilder();
+	public static StringBuilder summarizedData = new StringBuilder();
+	public static StringBuilder summarizedData_maternal = new StringBuilder();
 
 	public static StringBuilder MAlogs = new StringBuilder();
 
@@ -83,55 +83,55 @@ public class Filename {
 	public static StringBuilder FHR_FQRS = new StringBuilder();
 
 	public static int CH_counter = 0;
-	
+
 	private static void createFilePath() {
-		File afn = new File(aFilePath+File.separator+aInputFilePath);
-		File afnfhr = new File(aFilePath_FHR+File.separator);
-		File afnexe = new File(aFilePath_EXE+File.separator);
-		File afnua = new File(aFilePath_UA+File.separator);
+		File afn = new File(aFilePath + File.separator + aInputFilePath);
+		File afnfhr = new File(aFilePath_FHR + File.separator);
+		File afnexe = new File(aFilePath_EXE + File.separator);
+		File afnua = new File(aFilePath_UA + File.separator);
 
-		if (!afn.exists()||!afnexe.exists()||!afnfhr.exists()||!afnua.exists()) {
+		if (!afn.exists() || !afnexe.exists() || !afnfhr.exists() || !afnua.exists()) {
 			afn.mkdir();
-//			afnfhr.mkdir();
-//			afnexe.mkdir();
-//			afnua.mkdir();
+//          afnfhr.mkdir();
+//          afnexe.mkdir();
+//          afnua.mkdir();
 		}
-		aFilePathExecutionLogs_new = afnexe.getPath() +File.separator + aInputFilePath + "-Execution"+".csv";
-		aFilePathFHR_new = afnfhr.getPath() +File.separator+aInputFilePath+"-fhr"+".csv";
-		aFilePathUA_new = afnua.getPath() +File.separator+ aInputFilePath+"-ua"+".csv";
+		aFilePathExecutionLogs_new = afnexe.getPath() + File.separator + aInputFilePath + "-Execution" + ".csv";
+		aFilePathFHR_new = afnfhr.getPath() + File.separator + aInputFilePath + "-fhr" + ".csv";
+		aFilePathUA_new = afnua.getPath() + File.separator + aInputFilePath + "-ua" + ".csv";
 
-		aFilePathMALogs = afn.getPath() +File.separator + aInputFilePath + "-MA_Logs"+".csv";
-		aFilePathPSDLogs = afn.getPath() +File.separator + aInputFilePath + "-PSD_Logs"+".csv";
+		aFilePathMALogs = afn.getPath() + File.separator + aInputFilePath + "-MA_Logs" + ".csv";
+		aFilePathPSDLogs = afn.getPath() + File.separator + aInputFilePath + "-PSD_Logs" + ".csv";
 
-		aFilePathExecutionLogs = afn.getPath() +File.separator + aInputFilePath + "-Execution"+".csv";
-		aFilePathExecutionLogs_maternal = afn.getPath() +File.separator + aInputFilePath + "-Execution_maternal"+".csv";
-		aFilePathMHR = afn.getPath() +File.separator+ aInputFilePath+"-mhr"+".csv";
-				
-		aFilePathMQRS = afn.getPath() +File.separator+ aInputFilePath+"-mqrs"+".csv";
+		aFilePathExecutionLogs = afn.getPath() + File.separator + aInputFilePath + "-Execution" + ".csv";
+		aFilePathExecutionLogs_maternal = afn.getPath() + File.separator + aInputFilePath + "-Execution_maternal" + ".csv";
+		aFilePathMHR = afn.getPath() + File.separator + aInputFilePath + "-mhr" + ".csv";
 
-		aFilePathFHR = afn.getPath() +File.separator+aInputFilePath+"-fhr"+".csv";
-		aFilePathFQRS = afn.getPath() +File.separator+ aInputFilePath+"-fqrs"+".csv";
-		aFilePathFHR_FQRS = afn.getPath() +File.separator+ aInputFilePath+"-fhr_fqrs"+".csv";
+		aFilePathMQRS = afn.getPath() + File.separator + aInputFilePath + "-mqrs" + ".csv";
 
-		aFilePathStddeviation = afn.getPath() +File.separator+aInputFilePath+"-stddeviation"+".csv";
+		aFilePathFHR = afn.getPath() + File.separator + aInputFilePath + "-fhr" + ".csv";
+		aFilePathFQRS = afn.getPath() + File.separator + aInputFilePath + "-fqrs" + ".csv";
+		aFilePathFHR_FQRS = afn.getPath() + File.separator + aInputFilePath + "-fhr_fqrs" + ".csv";
 
-		aFilePathUA = afn.getPath() +File.separator+ aInputFilePath+"-ua"+".csv";
+		aFilePathStddeviation = afn.getPath() + File.separator + aInputFilePath + "-stddeviation" + ".csv";
 
-		aFilePathICA1 = afn.getPath()+File.separator+ aInputFilePath+"-ica1"+".csv";
-		aFilePathICA2 = afn.getPath() +File.separator+ aInputFilePath+"-ica2"+".csv";
+		aFilePathUA = afn.getPath() + File.separator + aInputFilePath + "-ua" + ".csv";
 
-		aFilePathQRSMDet = afn.getPath() +File.separator+ aInputFilePath+"-qrsmD"+".csv";
-		aFilePathQRSMSel = afn.getPath() +File.separator+ aInputFilePath+"-qrsmS"+".csv";
-		aFilePathCHM = afn.getPath() +File.separator+ aInputFilePath+"-chm"+".csv";
-		
-		aFilePathQRSFDet = afn.getPath() +File.separator+ aInputFilePath+"-qrsfD"+".csv";
-		aFilePathQRSFSel = afn.getPath() +File.separator+ aInputFilePath+"-qrsfS"+".csv";
-		aFilePathCHF = afn.getPath() +File.separator+ aInputFilePath+"-chf"+".csv";
-		aFilePathChfInd = afn.getPath() +File.separator+ aInputFilePath+"-chf Ind"+".csv";
-		aFilePathResidue = afn.getPath() +File.separator+ aInputFilePath+"-residue"+".csv";
+		aFilePathICA1 = afn.getPath() + File.separator + aInputFilePath + "-ica1" + ".csv";
+		aFilePathICA2 = afn.getPath() + File.separator + aInputFilePath + "-ica2" + ".csv";
 
-        aFilePathRRMeanFetal = afn.getPath() +File.separator+ aInputFilePath+"-rrMeanFetal"+".csv";
-        aFilePathFqrsSelectionType = afn.getPath() +File.separator+ aInputFilePath+"-FqrsSelectionType"+".csv";
+		aFilePathQRSMDet = afn.getPath() + File.separator + aInputFilePath + "-qrsmD" + ".csv";
+		aFilePathQRSMSel = afn.getPath() + File.separator + aInputFilePath + "-qrsmS" + ".csv";
+		aFilePathCHM = afn.getPath() + File.separator + aInputFilePath + "-chm" + ".csv";
+
+		aFilePathQRSFDet = afn.getPath() + File.separator + aInputFilePath + "-qrsfD" + ".csv";
+		aFilePathQRSFSel = afn.getPath() + File.separator + aInputFilePath + "-qrsfS" + ".csv";
+		aFilePathCHF = afn.getPath() + File.separator + aInputFilePath + "-chf" + ".csv";
+		aFilePathChfInd = afn.getPath() + File.separator + aInputFilePath + "-chf Ind" + ".csv";
+		aFilePathResidue = afn.getPath() + File.separator + aInputFilePath + "-residue" + ".csv";
+
+		aFilePathRRMeanFetal = afn.getPath() + File.separator + aInputFilePath + "-rrMeanFetal" + ".csv";
+		aFilePathFqrsSelectionType = afn.getPath() + File.separator + aInputFilePath + "-FqrsSelectionType" + ".csv";
 	}
 
 	public static void reset() {
@@ -172,8 +172,8 @@ public class Filename {
 
 		aFilePathExecutionLogs = null;
 		aFilePathExecutionLogs_maternal = null;
-		ExecutionLogs = new StringBuilder();
-		ExecutionLogs_Maternal = new StringBuilder();
+		summarizedData = new StringBuilder();
+		summarizedData_maternal = new StringBuilder();
 
 		MAlogs = new StringBuilder();
 		PSDlogs = new StringBuilder();

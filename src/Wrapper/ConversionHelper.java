@@ -30,7 +30,7 @@ public class ConversionHelper {
 
     private int mSampleCounter;
 
-    private static int mNextValidSampleCounter =-1;
+    private static int mNextValidSampleCounter = -1;
 
     private Object aFinal[];
 
@@ -43,7 +43,7 @@ public class ConversionHelper {
 
     }
 
-    public void convert () {
+    public void convert() {
         if (populateInputArray()) {
             SignalProcUtils.lastIteration = SignalProcUtils.currentIteration;
             ApplicationUtils.HANDLE_DATA_SIZE = 10000;
@@ -57,7 +57,7 @@ public class ConversionHelper {
     }
 
 
-    private boolean populateInputArray(){
+    private boolean populateInputArray() {
 //        FileLoggerHelper.getInstance().sendLogData(ApplicationUtils.getCurrentTime() + " : ConversionHelper : Iteration " + (ApplicationUtils.algoProcessStartCount+1), FileLoggerType.INTERPOLATION, FLApplication.mFileTimeStamp);
 
         long aST = System.currentTimeMillis();
@@ -78,7 +78,7 @@ public class ConversionHelper {
                 aLastSampleIndex2 = (int) (aSemiValidSample.charAt(1)) - SignalProcConstants.ASCII_START;
                 SignalProcUtils.lastSampleIndex = aLastSampleIndex1 * SignalProcConstants.ASCII_DIFF + aLastSampleIndex2;
                 feedInputArray(aSemiValidSample, aInputArrayCounter);
-            } else{
+            } else {
                 aInputArrayCounter--;
             }
 
@@ -103,20 +103,20 @@ public class ConversionHelper {
 //                                Timber.i(" : current sample index : %d", aInputArrayCounter);
 //                                Timber.i(" : no of samples missed : %d", aDiffSampleIndex);
 
-                                feedInputArray(aSemiValidSample, aInputArrayCounter+aDiffSampleIndex-1);
+                                feedInputArray(aSemiValidSample, aInputArrayCounter + aDiffSampleIndex - 1);
 
-                                if ((aDiffSampleIndex-1) < 5){
-                                    doLinearInterpolation(aInputArrayCounter-1, aDiffSampleIndex-1);
+                                if ((aDiffSampleIndex - 1) < 5) {
+                                    doLinearInterpolation(aInputArrayCounter - 1, aDiffSampleIndex - 1);
                                 } else {
                                     SampleMissed sampleMissed = new SampleMissed(aInputArrayCounter - 1, aDiffSampleIndex - 1);
                                     mSampleMissedList.add(sampleMissed);
                                 }
 
 
-                                aInputArrayCounter += aDiffSampleIndex-1;
-                                SignalProcUtils.interpolationCount += aDiffSampleIndex -1;
+                                aInputArrayCounter += aDiffSampleIndex - 1;
+                                SignalProcUtils.interpolationCount += aDiffSampleIndex - 1;
 
-                                if (aDiffSampleIndex > SignalProcConstants.MAX_DATA_LOSS && aInputArrayCounter < SignalProcConstants.BUFFER_SIZE){
+                                if (aDiffSampleIndex > SignalProcConstants.MAX_DATA_LOSS && aInputArrayCounter < SignalProcConstants.BUFFER_SIZE) {
                                     SignalProcUtils.dataLossCounter += aInputArrayCounter;
                                     ApplicationUtils.mDoubleArrayBuffer[0][0] = ApplicationUtils.mDoubleArrayBuffer[aInputArrayCounter][0];
                                     ApplicationUtils.mDoubleArrayBuffer[0][1] = ApplicationUtils.mDoubleArrayBuffer[aInputArrayCounter][1];
@@ -124,12 +124,11 @@ public class ConversionHelper {
                                     ApplicationUtils.mDoubleArrayBuffer[0][3] = ApplicationUtils.mDoubleArrayBuffer[aInputArrayCounter][3];
                                     ApplicationUtils.mDoubleArrayUC[0] = ApplicationUtils.mDoubleArrayUC[aInputArrayCounter];
                                     SignalProcUtils.lastSampleIndex = SignalProcUtils.currentSampleIndex;
-                                    ApplicationUtils.HANDLE_DATA_SIZE = 15000-1; // Have saved the last value of previous iteration
+                                    ApplicationUtils.HANDLE_DATA_SIZE = 15000 - 1; // Have saved the last value of previous iteration
                                     return false;
-                                }
-                                else if (aDiffSampleIndex > SignalProcConstants.MAX_DATA_LOSS && aInputArrayCounter >= SignalProcConstants.BUFFER_SIZE){
+                                } else if (aDiffSampleIndex > SignalProcConstants.MAX_DATA_LOSS && aInputArrayCounter >= SignalProcConstants.BUFFER_SIZE) {
                                     ApplicationUtils.HANDLE_DATA_SIZE = 15000;
-                                    SignalProcUtils.lastSampleIndex = -1 ;
+                                    SignalProcUtils.lastSampleIndex = -1;
                                     return false;
                                 }
                             } else {
@@ -138,20 +137,21 @@ public class ConversionHelper {
 //                                FileLoggerHelper.getInstance().sendLogData(ApplicationUtils.getCurrentTime() + " :                    no of samples missed : " + mNextValidSampleCounter, FileLoggerType.INTERPOLATION, FLApplication.mFileTimeStamp);
 //                                Timber.i(" : current sample index : %d", aInputArrayCounter);
 //                                Timber.i(" : no of samples missed : %d", mNextValidSampleCounter);
-                                feedInputArray(aSemiValidSample,aInputArrayCounter+mNextValidSampleCounter);
+                                feedInputArray(aSemiValidSample, aInputArrayCounter + mNextValidSampleCounter);
 
-                                if (mNextValidSampleCounter < 5){
-                                    doLinearInterpolation(aInputArrayCounter-1, mNextValidSampleCounter);
+                                if (mNextValidSampleCounter < 5) {
+                                    doLinearInterpolation(aInputArrayCounter - 1, mNextValidSampleCounter);
                                 } else {
                                     SampleMissed sampleMissed = new SampleMissed(aInputArrayCounter - 1, mNextValidSampleCounter);
                                     mSampleMissedList.add(sampleMissed);
                                 }
 
-
                                 aInputArrayCounter += mNextValidSampleCounter;
+                                // Change Aravind
                                 SignalProcUtils.interpolationCount += mNextValidSampleCounter;
+                                // End
 
-                                if (aDiffSampleIndex > SignalProcConstants.MAX_DATA_LOSS && aInputArrayCounter < SignalProcConstants.BUFFER_SIZE){
+                                if (aDiffSampleIndex > SignalProcConstants.MAX_DATA_LOSS && aInputArrayCounter < SignalProcConstants.BUFFER_SIZE) {
                                     SignalProcUtils.dataLossCounter += aInputArrayCounter;
                                     ApplicationUtils.mDoubleArrayBuffer[0][0] = ApplicationUtils.mDoubleArrayBuffer[aInputArrayCounter][0];
                                     ApplicationUtils.mDoubleArrayBuffer[0][1] = ApplicationUtils.mDoubleArrayBuffer[aInputArrayCounter][1];
@@ -160,17 +160,17 @@ public class ConversionHelper {
                                     ApplicationUtils.mDoubleArrayUC[0] = ApplicationUtils.mDoubleArrayUC[aInputArrayCounter];
                                     SignalProcUtils.lastSampleIndex = SignalProcUtils.currentSampleIndex;
                                     ApplicationUtils.HANDLE_DATA_SIZE = 15000 - 1;
+
                                     return false;
-                                }
-                                else if (aDiffSampleIndex > SignalProcConstants.MAX_DATA_LOSS && aInputArrayCounter >= SignalProcConstants.BUFFER_SIZE){
+                                } else if (aDiffSampleIndex > SignalProcConstants.MAX_DATA_LOSS && aInputArrayCounter >= SignalProcConstants.BUFFER_SIZE) {
                                     ApplicationUtils.HANDLE_DATA_SIZE = 15000;
-                                    SignalProcUtils.lastSampleIndex = -1 ;
+                                    SignalProcUtils.lastSampleIndex = -1;
                                     return false;
                                 }
                             }
                         } else {
                             if (aDiffSampleIndex > mNextValidSampleCounter) {
-                                if ((aInputArrayCounter-1) != 4999) {
+                                if ((aInputArrayCounter - 1) != 4999) {
 //                                    FileLoggerHelper.getInstance().sendLogData(ApplicationUtils.getCurrentTime() + " : ConversionHelper : Input Array Index : " + (aInputArrayCounter-1), FileLoggerType.INTERPOLATION, FLApplication.mFileTimeStamp);
 //                                    FileLoggerHelper.getInstance().sendLogData(ApplicationUtils.getCurrentTime() + " :                       sample  missed : " + aSemiValidSample, FileLoggerType.INTERPOLATION, FLApplication.mFileTimeStamp);
 //                                    FileLoggerHelper.getInstance().sendLogData(ApplicationUtils.getCurrentTime() + " :                current sample  Index : " + SignalProcUtils.currentSampleIndex, FileLoggerType.INTERPOLATION, FLApplication.mFileTimeStamp);
@@ -180,20 +180,22 @@ public class ConversionHelper {
 //                                    Timber.i(" : no of samples missed : %d", aDiffSampleIndex);
                                 }
 
-                                feedInputArray(aSemiValidSample,aInputArrayCounter+aDiffSampleIndex-1);
+                                feedInputArray(aSemiValidSample, aInputArrayCounter + aDiffSampleIndex - 1);
 
-                                if ((aDiffSampleIndex-1) < 5){
-                                    doLinearInterpolation(aInputArrayCounter-1, aDiffSampleIndex-1);
+                                if ((aDiffSampleIndex - 1) < 5) {
+                                    doLinearInterpolation(aInputArrayCounter - 1, aDiffSampleIndex - 1);
                                 } else {
                                     SampleMissed sampleMissed = new SampleMissed(aInputArrayCounter - 1, aDiffSampleIndex - 1);
                                     mSampleMissedList.add(sampleMissed);
                                 }
 
 
-                                aInputArrayCounter += aDiffSampleIndex-1;
-                                SignalProcUtils.interpolationCount += aDiffSampleIndex -1;
+                                aInputArrayCounter += aDiffSampleIndex - 1;
+                                // Change Aravind
+                                SignalProcUtils.interpolationCount += aDiffSampleIndex - 1;
+                                // End
 
-                                if (aDiffSampleIndex > SignalProcConstants.MAX_DATA_LOSS && aInputArrayCounter < SignalProcConstants.BUFFER_SIZE){
+                                if (aDiffSampleIndex > SignalProcConstants.MAX_DATA_LOSS && aInputArrayCounter < SignalProcConstants.BUFFER_SIZE) {
                                     SignalProcUtils.dataLossCounter += aInputArrayCounter;
                                     ApplicationUtils.mDoubleArrayBuffer[0][0] = ApplicationUtils.mDoubleArrayBuffer[aInputArrayCounter][0];
                                     ApplicationUtils.mDoubleArrayBuffer[0][1] = ApplicationUtils.mDoubleArrayBuffer[aInputArrayCounter][1];
@@ -203,17 +205,16 @@ public class ConversionHelper {
                                     SignalProcUtils.lastSampleIndex = SignalProcUtils.currentSampleIndex;
                                     ApplicationUtils.HANDLE_DATA_SIZE = 15000 - 1;
                                     return false;
-                                }
-                                else if (aDiffSampleIndex > SignalProcConstants.MAX_DATA_LOSS && aInputArrayCounter >= SignalProcConstants.BUFFER_SIZE){
-                                    SignalProcUtils.lastSampleIndex = -1 ;
+                                } else if (aDiffSampleIndex > SignalProcConstants.MAX_DATA_LOSS && aInputArrayCounter >= SignalProcConstants.BUFFER_SIZE) {
+                                    SignalProcUtils.lastSampleIndex = -1;
                                     ApplicationUtils.HANDLE_DATA_SIZE = 15000;
                                     return false;
                                 }
                             } else {
-                                feedInputArray(aSemiValidSample,aInputArrayCounter+mNextValidSampleCounter);
+                                feedInputArray(aSemiValidSample, aInputArrayCounter + mNextValidSampleCounter);
 
-                                if (mNextValidSampleCounter < 5){
-                                    doLinearInterpolation(aInputArrayCounter-1, mNextValidSampleCounter);
+                                if (mNextValidSampleCounter < 5) {
+                                    doLinearInterpolation(aInputArrayCounter - 1, mNextValidSampleCounter);
                                 } else {
                                     SampleMissed sampleMissed = new SampleMissed(aInputArrayCounter - 1, mNextValidSampleCounter);
                                     mSampleMissedList.add(sampleMissed);
@@ -226,32 +227,33 @@ public class ConversionHelper {
 //                                Timber.i(" : no of samples missed : %d", mNextValidSampleCounter);
 
                                 aInputArrayCounter += mNextValidSampleCounter;
+                                // Change Aravind
                                 SignalProcUtils.interpolationCount += mNextValidSampleCounter;
+                                // End
 
-                                if (aDiffSampleIndex > SignalProcConstants.MAX_DATA_LOSS && aInputArrayCounter < SignalProcConstants.BUFFER_SIZE){
+                                if (aDiffSampleIndex > SignalProcConstants.MAX_DATA_LOSS && aInputArrayCounter < SignalProcConstants.BUFFER_SIZE) {
                                     SignalProcUtils.dataLossCounter += aInputArrayCounter;
                                     ApplicationUtils.mDoubleArrayBuffer[0][0] = ApplicationUtils.mDoubleArrayBuffer[aInputArrayCounter][0];
                                     ApplicationUtils.mDoubleArrayBuffer[0][1] = ApplicationUtils.mDoubleArrayBuffer[aInputArrayCounter][1];
                                     ApplicationUtils.mDoubleArrayBuffer[0][2] = ApplicationUtils.mDoubleArrayBuffer[aInputArrayCounter][2];
                                     ApplicationUtils.mDoubleArrayBuffer[0][3] = ApplicationUtils.mDoubleArrayBuffer[aInputArrayCounter][3];
                                     ApplicationUtils.mDoubleArrayUC[0] = ApplicationUtils.mDoubleArrayUC[aInputArrayCounter];
-                                    ApplicationUtils.HANDLE_DATA_SIZE = 15000-1; // Have saved the last value of previous iteration
+                                    ApplicationUtils.HANDLE_DATA_SIZE = 15000 - 1; // Have saved the last value of previous iteration
                                     SignalProcUtils.lastSampleIndex = SignalProcUtils.currentSampleIndex;
                                     return false;
-                                }
-                                else if (aDiffSampleIndex > SignalProcConstants.MAX_DATA_LOSS && aInputArrayCounter >= SignalProcConstants.BUFFER_SIZE){
+                                } else if (aDiffSampleIndex > SignalProcConstants.MAX_DATA_LOSS && aInputArrayCounter >= SignalProcConstants.BUFFER_SIZE) {
                                     ApplicationUtils.HANDLE_DATA_SIZE = 15000;
-                                    SignalProcUtils.lastSampleIndex = -1 ;
+                                    SignalProcUtils.lastSampleIndex = -1;
                                     return false;
                                 }
                             }
                         }
                     } else {
                         if (mNextValidSampleCounter > 0) {
-                            feedInputArray(aSemiValidSample,aInputArrayCounter+mNextValidSampleCounter);
+                            feedInputArray(aSemiValidSample, aInputArrayCounter + mNextValidSampleCounter);
 
-                            if (mNextValidSampleCounter < 5){
-                                doLinearInterpolation(aInputArrayCounter-1, mNextValidSampleCounter);
+                            if (mNextValidSampleCounter < 5) {
+                                doLinearInterpolation(aInputArrayCounter - 1, mNextValidSampleCounter);
                             } else {
                                 SampleMissed sampleMissed = new SampleMissed(aInputArrayCounter - 1, mNextValidSampleCounter);
                                 mSampleMissedList.add(sampleMissed);
@@ -263,9 +265,11 @@ public class ConversionHelper {
 //                            Timber.i(" : no of samples missed : %d", mNextValidSampleCounter);
 
                             aInputArrayCounter += mNextValidSampleCounter;
+                            // Change Aravind
                             SignalProcUtils.interpolationCount += mNextValidSampleCounter;
+                            // End
 
-                            if (aDiffSampleIndex > SignalProcConstants.MAX_DATA_LOSS && aInputArrayCounter < SignalProcConstants.BUFFER_SIZE){
+                            if (aDiffSampleIndex > SignalProcConstants.MAX_DATA_LOSS && aInputArrayCounter < SignalProcConstants.BUFFER_SIZE) {
                                 SignalProcUtils.dataLossCounter += aInputArrayCounter;
                                 ApplicationUtils.mDoubleArrayBuffer[0][0] = ApplicationUtils.mDoubleArrayBuffer[aInputArrayCounter][0];
                                 ApplicationUtils.mDoubleArrayBuffer[0][1] = ApplicationUtils.mDoubleArrayBuffer[aInputArrayCounter][1];
@@ -273,20 +277,17 @@ public class ConversionHelper {
                                 ApplicationUtils.mDoubleArrayBuffer[0][3] = ApplicationUtils.mDoubleArrayBuffer[aInputArrayCounter][3];
                                 ApplicationUtils.mDoubleArrayUC[0] = ApplicationUtils.mDoubleArrayUC[aInputArrayCounter];
                                 SignalProcUtils.lastSampleIndex = SignalProcUtils.currentSampleIndex;
-                                ApplicationUtils.HANDLE_DATA_SIZE = 15000-1; // Have saved the last value of previous iteration
+                                ApplicationUtils.HANDLE_DATA_SIZE = 15000 - 1; // Have saved the last value of previous iteration
                                 return false;
-                            }
-                            else if (aDiffSampleIndex > SignalProcConstants.MAX_DATA_LOSS && aInputArrayCounter >= SignalProcConstants.BUFFER_SIZE){
-                                SignalProcUtils.lastSampleIndex = -1 ;
+                            } else if (aDiffSampleIndex > SignalProcConstants.MAX_DATA_LOSS && aInputArrayCounter >= SignalProcConstants.BUFFER_SIZE) {
+                                SignalProcUtils.lastSampleIndex = -1;
                                 ApplicationUtils.HANDLE_DATA_SIZE = 15000; // Have saved the last value of previous iteration
                                 return false;
                             }
-
                         } else {
-                            feedInputArray(aSemiValidSample,aInputArrayCounter);
+                            feedInputArray(aSemiValidSample, aInputArrayCounter);
                         }
                     }
-
 
                     SignalProcUtils.lastSampleIndex = SignalProcUtils.currentSampleIndex;
                 } else {
@@ -302,7 +303,7 @@ public class ConversionHelper {
                             ApplicationUtils.mDoubleArrayBuffer[0][2] = ApplicationUtils.mDoubleArrayBuffer[aInputArrayCounter][2];
                             ApplicationUtils.mDoubleArrayBuffer[0][3] = ApplicationUtils.mDoubleArrayBuffer[aInputArrayCounter][3];
                             ApplicationUtils.mDoubleArrayUC[0] = ApplicationUtils.mDoubleArrayUC[aInputArrayCounter];
-                            ApplicationUtils.HANDLE_DATA_SIZE = 15000-1; // Have saved the last value of previous iteration
+                            ApplicationUtils.HANDLE_DATA_SIZE = 15000 - 1; // Have saved the last value of previous iteration
                             return false;
                         }
                     } else {
@@ -312,7 +313,7 @@ public class ConversionHelper {
                 }
             }
 
-            if (aInputArrayCounter >= SignalProcConstants.NO_OF_SAMPLES && (mSampleMissedList.size() > 0)){
+            if (aInputArrayCounter >= SignalProcConstants.NO_OF_SAMPLES && (mSampleMissedList.size() > 0)) {
                 SampleMissed aSampleMissed = mSampleMissedList.remove(mSampleMissedList.size() - 1);
                 doLinearInterpolation(aSampleMissed.getmSampleMissedLoc(), aSampleMissed.getmNoSampleMissed());
             }
@@ -352,7 +353,7 @@ public class ConversionHelper {
 
 //        Timber.i("No of times to interpolate : " + (mSampleMissedList.size() - aSampleLocNegative));
 
-        for (int i = aSampleLocNegative; i <mSampleMissedList.size() ; i++) {
+        for (int i = aSampleLocNegative; i < mSampleMissedList.size(); i++) {
             aDataPointLoc = new ArrayList<>();
             aMissedSamples = new ArrayList<>();
             aMissedLocation = new ArrayList<>();
@@ -364,12 +365,12 @@ public class ConversionHelper {
             int aLoss = aMissedSamples.get(0);
             int aLossCheck = 0;
 
-            if (aCount <mSampleMissedList.size()-1) {
-                aLossCheck = mSampleMissedList.get(aCount + 1).getmSampleMissedLoc() - aMissedLocation.get(0) -aLoss;
-                while ( aLossCheck< SignalProcConstants.CUBIC_INTERPOLATE_SIZE) {
+            if (aCount < mSampleMissedList.size() - 1) {
+                aLossCheck = mSampleMissedList.get(aCount + 1).getmSampleMissedLoc() - aMissedLocation.get(0) - aLoss;
+                while (aLossCheck < SignalProcConstants.CUBIC_INTERPOLATE_SIZE) {
                     aMissedLocation.add(mSampleMissedList.get(aCount + 1).getmSampleMissedLoc());
                     aMissedSamples.add(mSampleMissedList.get(aCount + 1).getmNoSampleMissed());
-                    aLoss += mSampleMissedList.get(aCount+1).getmNoSampleMissed();
+                    aLoss += mSampleMissedList.get(aCount + 1).getmNoSampleMissed();
                     aCount++;
                     if (aCount == (mSampleMissedList.size() - 1)) {
                         break;
@@ -379,41 +380,41 @@ public class ConversionHelper {
 
             aDataSize = 0;
 
-            if (aMissedLocation.get(0) < SignalProcConstants.CUBIC_INTERPOLATE_SIZE){
+            if (aMissedLocation.get(0) < SignalProcConstants.CUBIC_INTERPOLATE_SIZE) {
                 for (int j = 0; j <= aMissedLocation.get(0); j++) {
                     aDataPointLoc.add(j);
                 }
 //                aDataSize = aMissedLocation.get(0) + 1;
             } else {
                 for (int j = 0; j < SignalProcConstants.CUBIC_INTERPOLATE_SIZE; j++) {
-                    aDataPointLoc.add(aMissedLocation.get(0)-(SignalProcConstants.CUBIC_INTERPOLATE_SIZE-1-j));
+                    aDataPointLoc.add(aMissedLocation.get(0) - (SignalProcConstants.CUBIC_INTERPOLATE_SIZE - 1 - j));
                 }
 //                aDataSize = 10;
             }
 
-            aMissedLoc = aDataPointLoc.size()-1;
+            aMissedLoc = aDataPointLoc.size() - 1;
 
             boolean aRightFlag = false;
             int aRightCount = 0;
             int aIter = 0;
 
-            while (aIter < aMissedLocation.size()){
-                if (aIter+1 < aMissedLocation.size()){
-                    for (int j = aMissedLocation.get(aIter)+aMissedSamples.get(aIter)+1 ; j <= aMissedLocation.get(aIter+1) ; j++) {
+            while (aIter < aMissedLocation.size()) {
+                if (aIter + 1 < aMissedLocation.size()) {
+                    for (int j = aMissedLocation.get(aIter) + aMissedSamples.get(aIter) + 1; j <= aMissedLocation.get(aIter + 1); j++) {
                         aDataPointLoc.add(j);
                         aRightCount++;
 
-                        if (aRightCount == SignalProcConstants.CUBIC_INTERPOLATE_SIZE){
+                        if (aRightCount == SignalProcConstants.CUBIC_INTERPOLATE_SIZE) {
                             aRightFlag = true;
                             break;
                         }
                     }
                 } else {
-                    for (int j = aMissedLocation.get(aIter)+aMissedSamples.get(aIter)+1; j < SignalProcConstants.NO_OF_SAMPLES; j++) {
+                    for (int j = aMissedLocation.get(aIter) + aMissedSamples.get(aIter) + 1; j < SignalProcConstants.NO_OF_SAMPLES; j++) {
                         aDataPointLoc.add(j);
                         aRightCount++;
 
-                        if (aRightCount == SignalProcConstants.CUBIC_INTERPOLATE_SIZE){
+                        if (aRightCount == SignalProcConstants.CUBIC_INTERPOLATE_SIZE) {
                             aRightFlag = true;
                             break;
                         }
@@ -422,7 +423,7 @@ public class ConversionHelper {
 
                 aIter++;
 
-                if (aRightFlag){
+                if (aRightFlag) {
                     break;
                 }
             }
@@ -438,7 +439,6 @@ public class ConversionHelper {
     }
 
 
-
     private void populateRetainedData() {
         for (int i = 0; i < ApplicationUtils.RETAINED_DATA_SIZE; i++) {
             ApplicationUtils.mDoubleArrayBuffer[i][0] = ApplicationUtils.mDoubleArrayBuffer[ApplicationUtils.HANDLE_DATA_SIZE + i][0];
@@ -448,21 +448,20 @@ public class ConversionHelper {
             ApplicationUtils.mDoubleArrayUC[i] = ApplicationUtils.mDoubleArrayBuffer[ApplicationUtils.HANDLE_DATA_SIZE + i][0];
         }
     }
+
     private void doLinearInterpolation(int iMissedLocation, int iNoOfSamplesMissed) {
         int aStartIndex = iMissedLocation;
         int aEndIndex = (iMissedLocation + 1) + iNoOfSamplesMissed;
         for (int i = 0; i < SignalProcConstants.NO_OF_CHANNELS; i++) {
-            double aScale = (ApplicationUtils.mDoubleArrayBuffer[aEndIndex][i] - ApplicationUtils.mDoubleArrayBuffer[aStartIndex][i])/(aEndIndex-aStartIndex);
-            for (int j = aStartIndex+1; j < aEndIndex; j++) {
-                ApplicationUtils.mDoubleArrayBuffer[j][i] = ApplicationUtils.mDoubleArrayBuffer[aStartIndex][i] + aScale * (j-aStartIndex);
-                if (i == 0){
+            double aScale = (ApplicationUtils.mDoubleArrayBuffer[aEndIndex][i] - ApplicationUtils.mDoubleArrayBuffer[aStartIndex][i]) / (aEndIndex - aStartIndex);
+            for (int j = aStartIndex + 1; j < aEndIndex; j++) {
+                ApplicationUtils.mDoubleArrayBuffer[j][i] = ApplicationUtils.mDoubleArrayBuffer[aStartIndex][i] + aScale * (j - aStartIndex);
+                if (i == 0) {
                     ApplicationUtils.mDoubleArrayUC[j] = ApplicationUtils.mDoubleArrayBuffer[j][i];
                 }
             }
         }
-
     }
-
 
     private void doInterpolation(final ArrayList<Integer> aDataPointLoc, final int missedLocation, final int missedSamples) {
         long aSt = System.currentTimeMillis();
@@ -476,7 +475,7 @@ public class ConversionHelper {
                 aDataPoints[j] = ApplicationUtils.mDoubleArrayBuffer[aDataPointLoc.get(j)][0];
             }
 
-            cubicInterpolateDynamic(aDataPoints,aDataPointLoc, missedLocation, missedSamples, 0);
+            cubicInterpolateDynamic(aDataPoints, aDataPointLoc, missedLocation, missedSamples, 0);
         }, true);
 
         Future<Boolean> channelTwoInterpolation = executorService.submit(() -> {
@@ -484,7 +483,7 @@ public class ConversionHelper {
             for (int j = 0; j < aDataPointLoc.size(); j++) {
                 aDataPoints[j] = ApplicationUtils.mDoubleArrayBuffer[aDataPointLoc.get(j)][1];
             }
-            cubicInterpolateDynamic(aDataPoints,aDataPointLoc, missedLocation, missedSamples, 1);
+            cubicInterpolateDynamic(aDataPoints, aDataPointLoc, missedLocation, missedSamples, 1);
         }, true);
 
         Future<Boolean> channelThreeInterpolation = executorService.submit(() -> {
@@ -492,7 +491,7 @@ public class ConversionHelper {
             for (int j = 0; j < aDataPointLoc.size(); j++) {
                 aDataPoints[j] = ApplicationUtils.mDoubleArrayBuffer[aDataPointLoc.get(j)][2];
             }
-            cubicInterpolateDynamic(aDataPoints,aDataPointLoc, missedLocation, missedSamples, 2);
+            cubicInterpolateDynamic(aDataPoints, aDataPointLoc, missedLocation, missedSamples, 2);
         }, true);
 
         Future<Boolean> channelFourInterpolation = executorService.submit(() -> {
@@ -500,7 +499,7 @@ public class ConversionHelper {
             for (int j = 0; j < aDataPointLoc.size(); j++) {
                 aDataPoints[j] = ApplicationUtils.mDoubleArrayBuffer[aDataPointLoc.get(j)][3];
             }
-            cubicInterpolateDynamic(aDataPoints,aDataPointLoc, missedLocation, missedSamples, 3);
+            cubicInterpolateDynamic(aDataPoints, aDataPointLoc, missedLocation, missedSamples, 3);
         }, true);
 
         try {
@@ -524,38 +523,36 @@ public class ConversionHelper {
     }
 
     private void cubicInterpolateDynamic(double[] iDataPoints, ArrayList<Integer> iDataLocation, int iMissRegion, int iMissedSamples, int iCol) {
-
         long st = System.currentTimeMillis();
 
         int aNoOfDataPoints = iDataPoints.length;
-        int aNoOfRegions = aNoOfDataPoints-1;
+        int aNoOfRegions = aNoOfDataPoints - 1;
 
 
         double[] aStepSize = new double[aNoOfRegions];
-        for (int i =0; i<aNoOfRegions ; i++) {
-            aStepSize[i] = iDataLocation.get(i+1) - iDataLocation.get(i);
+        for (int i = 0; i < aNoOfRegions; i++) {
+            aStepSize[i] = iDataLocation.get(i + 1) - iDataLocation.get(i);
         }
-
 
 //		aStepSize[aMissRegion] = iNoOfSamplesMissed+1;
         double[] aSlope = new double[aNoOfRegions];
-        for (int i =0; i<aNoOfRegions; i++) {
-            aSlope[i] = (iDataPoints[i+1] - iDataPoints[i])/aStepSize[i];
+        for (int i = 0; i < aNoOfRegions; i++) {
+            aSlope[i] = (iDataPoints[i + 1] - iDataPoints[i]) / aStepSize[i];
         }
 
-        int aSizeOfTriDiagonalMatrix = aNoOfRegions-1;
+        int aSizeOfTriDiagonalMatrix = aNoOfRegions - 1;
         double[][] aTriDiagonalMatrix = new double[aSizeOfTriDiagonalMatrix][aSizeOfTriDiagonalMatrix];
-        for (int i = 0; i<aSizeOfTriDiagonalMatrix; i++) {
-            aTriDiagonalMatrix[i][i] = 2 * (aStepSize[i] + aStepSize[i+1]);
+        for (int i = 0; i < aSizeOfTriDiagonalMatrix; i++) {
+            aTriDiagonalMatrix[i][i] = 2 * (aStepSize[i] + aStepSize[i + 1]);
         }
-        for (int i =1; i<aSizeOfTriDiagonalMatrix; i++) {
-            aTriDiagonalMatrix[i-1][i] = aStepSize[i];
-            aTriDiagonalMatrix[i][i-1] = aStepSize[i];
+        for (int i = 1; i < aSizeOfTriDiagonalMatrix; i++) {
+            aTriDiagonalMatrix[i - 1][i] = aStepSize[i];
+            aTriDiagonalMatrix[i][i - 1] = aStepSize[i];
         }
 
         double[] aB = new double[aSizeOfTriDiagonalMatrix];
-        for (int i = 0;i < aSizeOfTriDiagonalMatrix; i++) {
-            aB[i] = 6 * (aSlope[i+1] - aSlope[i]);
+        for (int i = 0; i < aSizeOfTriDiagonalMatrix; i++) {
+            aB[i] = 6 * (aSlope[i + 1] - aSlope[i]);
         }
 
         solve_TriDiagonal(aTriDiagonalMatrix, aB);
@@ -563,14 +560,14 @@ public class ConversionHelper {
         double[] aCoiefficients = new double[4];
 
         aCoiefficients[0] = iDataPoints[iMissRegion];
-        aCoiefficients[1] = aSlope[iMissRegion] - aStepSize[iMissRegion] * (2 * aB[iMissRegion-1] + aB[iMissRegion]) / 6;
-        aCoiefficients[2] = aB[iMissRegion-1]/2;
-        aCoiefficients[3] = ( aB[iMissRegion] - aB[iMissRegion-1] )/ (6 * aStepSize[iMissRegion]) ;
+        aCoiefficients[1] = aSlope[iMissRegion] - aStepSize[iMissRegion] * (2 * aB[iMissRegion - 1] + aB[iMissRegion]) / 6;
+        aCoiefficients[2] = aB[iMissRegion - 1] / 2;
+        aCoiefficients[3] = (aB[iMissRegion] - aB[iMissRegion - 1]) / (6 * aStepSize[iMissRegion]);
 
-        for (int i = iMissedSamples; i>0; i--) {
-            ApplicationUtils.mDoubleArrayBuffer[iDataLocation.get(iMissRegion) + i][iCol] =  aCoiefficients[0] + aCoiefficients[1] * i + aCoiefficients[2] * Math.pow(i,2) + aCoiefficients[3] * Math.pow(i,3) ;
+        for (int i = iMissedSamples; i > 0; i--) {
+            ApplicationUtils.mDoubleArrayBuffer[iDataLocation.get(iMissRegion) + i][iCol] = aCoiefficients[0] + aCoiefficients[1] * i + aCoiefficients[2] * Math.pow(i, 2) + aCoiefficients[3] * Math.pow(i, 3);
 //            aInterpolatedSamples.addFirst( aCoiefficients[0] + aCoiefficients[1] * i + aCoiefficients[2] * Math.pow(i,2) + aCoiefficients[3] * Math.pow(i,3) );
-            if (iCol == 0){
+            if (iCol == 0) {
                 ApplicationUtils.mDoubleArrayUC[iDataLocation.get(iMissRegion) + i] = ApplicationUtils.mDoubleArrayBuffer[iDataLocation.get(iMissRegion) + i][iCol];
             }
         }
@@ -581,27 +578,27 @@ public class ConversionHelper {
         int aLength = iTriDiagonalMatrix.length;
 
         double[] aAlpha = new double[aLength];
-        double[] aBeta = new double[aLength-1];
+        double[] aBeta = new double[aLength - 1];
 
         aAlpha[0] = iTriDiagonalMatrix[0][0];
-        for (int i =1; i< aLength; i++) {
+        for (int i = 1; i < aLength; i++) {
             aAlpha[i] = iTriDiagonalMatrix[i][i];
-            aBeta[i-1] = iTriDiagonalMatrix[i][i-1];
+            aBeta[i - 1] = iTriDiagonalMatrix[i][i - 1];
         }
         double aTemp;
-        for (int i = 1; i<aLength; i++) {
-            aTemp = aBeta[i-1];
-            aBeta[i-1] = aTemp / aAlpha[i-1];
-            aAlpha[i] = aAlpha[i] - aTemp * aBeta[i-1];
+        for (int i = 1; i < aLength; i++) {
+            aTemp = aBeta[i - 1];
+            aBeta[i - 1] = aTemp / aAlpha[i - 1];
+            aAlpha[i] = aAlpha[i] - aTemp * aBeta[i - 1];
         }
 
         iRHS[0] = iRHS[0] / aAlpha[0];
-        for (int i = 1 ; i<aLength; i++) {
-            iRHS[i] = ( iRHS[i] - (aBeta[i-1] * aAlpha[i-1] * iRHS[i-1]) ) / aAlpha[i];
+        for (int i = 1; i < aLength; i++) {
+            iRHS[i] = (iRHS[i] - (aBeta[i - 1] * aAlpha[i - 1] * iRHS[i - 1])) / aAlpha[i];
         }
 
-        for (int i = aLength-2; i>=0; i--) {
-            iRHS[i] = iRHS[i] - aBeta[i] * iRHS[i+1];
+        for (int i = aLength - 2; i >= 0; i--) {
+            iRHS[i] = iRHS[i] - aBeta[i] * iRHS[i + 1];
         }
     }
 
@@ -622,8 +619,7 @@ public class ConversionHelper {
 
     private void feedInputArray(String iInputString, int iInputArrayCounter) {
         for (int i = 0; i < SignalProcConstants.NO_OF_CHANNELS; i++) {
-            if (iInputArrayCounter >=  SignalProcConstants.BUFFER_SIZE) {
-//                Timber.d(ApplicationUtils.getCurrentTime() + " : iInputArrayCounter : %d", iInputArrayCounter);
+            if (iInputArrayCounter >= SignalProcConstants.BUFFER_SIZE) {
                 break;
             }
 
@@ -656,5 +652,4 @@ public class ConversionHelper {
 
         return aOut;
     }
-
 }

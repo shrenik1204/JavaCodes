@@ -40,8 +40,8 @@ public class QrsSelectionFunctions {
         if (iQRS.length > (iStartIndex + 1)) {
             int[] adiffarray = new int[iQRS.length];
 
-            for (int i = 0; i < iQRS.length-1; i++) {
-                adiffarray[i] = iQRS[i+1]-iQRS[i];
+            for (int i = 0; i < iQRS.length - 1; i++) {
+                adiffarray[i] = iQRS[i + 1] - iQRS[i];
             }
 
             int aRRDiff;
@@ -78,9 +78,9 @@ public class QrsSelectionFunctions {
 
             int aFindFlag = 0;
 
-			LinkedList<Double> aRRMeanArr = new LinkedList<>();
+            LinkedList<Double> aRRMeanArr = new LinkedList<>();
 //            if(SignalProcUtils.lastQRSFetal == 0 || SignalProcUtils.lastRRMeanFetal == 0){
-                aRRMeanArr.add((double) (aQrsFinal.get(aCountF - 1) - aQrsFinal.get(aCountF - 2)));
+            aRRMeanArr.add((double) (aQrsFinal.get(aCountF - 1) - aQrsFinal.get(aCountF - 2)));
 //            }else{
 //                aRRMeanArr.add(iRRmeanLast);
 //            }
@@ -104,12 +104,12 @@ public class QrsSelectionFunctions {
 
                 aRRDiff = iQRS[aForwardIteration] - aQrsFinal.get(aCountF - 1);
 //                if(SignalProcUtils.lastQRSFetal == 0 || SignalProcUtils.lastRRMeanFetal == 0){
-                    aRRLowTh = 1 / (1 / aRRMean + aDelta);
-                    aRRHighTh = 1 / (1 / aRRMean - aDelta);
-                if(aRRLowTh < SignalProcConstants.FQRS_RR_LOW_TH){
+                aRRLowTh = 1 / (1 / aRRMean + aDelta);
+                aRRHighTh = 1 / (1 / aRRMean - aDelta);
+                if (aRRLowTh < SignalProcConstants.FQRS_RR_LOW_TH) {
                     aRRLowTh = SignalProcConstants.FQRS_RR_LOW_TH;
                 }
-                if(aRRHighTh > SignalProcConstants.FQRS_RR_HIGH_TH){
+                if (aRRHighTh > SignalProcConstants.FQRS_RR_HIGH_TH) {
                     aRRHighTh = SignalProcConstants.FQRS_RR_HIGH_TH;
                 }
 //                }else{
@@ -127,7 +127,7 @@ public class QrsSelectionFunctions {
                     aFindFlag = 0;
                     aIncrement1 = aForwardIteration;
                     aIncrement2 = aForwardIteration + 1;
-                    if (aIncrement2 >= (aLengthQRS - 1)) {
+                    if (aIncrement2 >= aLengthQRS - 1) {
                         aForwardIteration = aIncrement2;
                         aFindFlag = 1;
                     }
@@ -143,7 +143,7 @@ public class QrsSelectionFunctions {
                                 aFindFlag = 1;
                             } else if (aRRDiff < aRRLowTh) {
                                 aIncrement2++;
-                                if (aIncrement2 >= (aLengthQRS - 1)) {
+                                if (aIncrement2 >= aLengthQRS - 1) {
                                     aForwardIteration = aIncrement2;
                                     aFindFlag = 1;
                                 }
@@ -151,7 +151,7 @@ public class QrsSelectionFunctions {
                                 aIncrement1++;
                                 if (aIncrement2 == aIncrement1) {
                                     aIncrement2++;
-                                    if (aIncrement2 >= (aLengthQRS - 1)) {
+                                    if (aIncrement2 >= aLengthQRS - 1) {
                                         aForwardIteration = aIncrement2;
                                         aFindFlag = 1;
                                     }
@@ -161,7 +161,7 @@ public class QrsSelectionFunctions {
                             aIncrement1++;
                             if (aIncrement2 == aIncrement1) {
                                 aIncrement2++;
-                                if (aIncrement2 >= (aLengthQRS - 1)) {
+                                if (aIncrement2 >= aLengthQRS - 1) {
                                     aForwardIteration = aIncrement2;
                                     aFindFlag = 1;
                                 }
@@ -280,8 +280,8 @@ public class QrsSelectionFunctions {
         if (iQRS.length > iStartIndex && iQrsFinal.size() >= 2) {
             int[] adiffarray = new int[iQRS.length];
 
-            for (int i = 0; i < iQRS.length-1; i++) {
-                adiffarray[i] = iQRS[i+1]-iQRS[i];
+            for (int i = 0; i < iQRS.length - 1; i++) {
+                adiffarray[i] = iQRS[i + 1] - iQRS[i];
             }
             int aRRDiff;
             double aRRMean, aRRLowTh, aRRHighTh;
@@ -335,12 +335,12 @@ public class QrsSelectionFunctions {
 
                 aRRDiff = iQrsFinal.getFirst() - iQRS[aBackIteration];
 //                if(SignalProcUtils.lastQRSFetal == 0  || SignalProcUtils.lastRRMeanFetal == 0){
-                    aRRLowTh = 1 / (1 / aRRMean + aDelta);
-                    aRRHighTh = 1 / (1 / aRRMean - aDelta);
-                if(aRRLowTh < SignalProcConstants.FQRS_RR_LOW_TH){
+                aRRLowTh = 1 / (1 / aRRMean + aDelta);
+                aRRHighTh = 1 / (1 / aRRMean - aDelta);
+                if (aRRLowTh < SignalProcConstants.FQRS_RR_LOW_TH) {
                     aRRLowTh = SignalProcConstants.FQRS_RR_LOW_TH;
                 }
-                if(aRRHighTh > SignalProcConstants.FQRS_RR_HIGH_TH){
+                if (aRRHighTh > SignalProcConstants.FQRS_RR_HIGH_TH) {
                     aRRHighTh = SignalProcConstants.FQRS_RR_HIGH_TH;
                 }
 //                }else{
@@ -616,14 +616,13 @@ public class QrsSelectionFunctions {
 
         for (int lastQRSF : SignalProcUtils.lastQRSFetalArray) {
             for (int i = 0; i < iQRSlist.size(); i++) {
-                if(iQRSlist.get(i) - th < 0){
+                if (iQRSlist.get(i) - th < 0) {
                     lowTH = 0;
                     highTH = iQrsFinal.get(i) + th;
-                }else if(iQRSlist.get(i) + th > 15000){
+                } else if (iQRSlist.get(i) + th > 15000) {
                     lowTH = iQrsFinal.get(i) - th;
                     highTH = 15000;
-                }
-                else{
+                } else {
                     lowTH = iQRSlist.get(i) - th;
                     highTH = iQRSlist.get(i) + th;
                 }
@@ -636,14 +635,14 @@ public class QrsSelectionFunctions {
         return iQRSlist.size() <= 3 || overlapCount > 1;
     }
 
-        /**
-         * Check the first QRS location and first RR value with previous iteration.
-         *
-         * @param iQrsFinal   Final QRS selected.
-         * @param iQRSLast    Location of last QRS determined in previous iteration.
-         * @param iRRMeanLast Mean RR of last 4 QRS determined in previous iteration.
-         * @return Flag : 0 or 1.
-         */
+    /**
+     * Check the first QRS location and first RR value with previous iteration.
+     *
+     * @param iQrsFinal   Final QRS selected.
+     * @param iQRSLast    Location of last QRS determined in previous iteration.
+     * @param iRRMeanLast Mean RR of last 4 QRS determined in previous iteration.
+     * @return Flag : 0 or 1.
+     */
     public boolean firstQrsCheck(LinkedList<Integer> iQrsFinal, int iQRSLast, double iRRMeanLast, boolean iRecheck) {
 //        LinkedList<Integer> iQrsListnew = new LinkedList<>();
 //        if(iQrsFinal.size() > 0){
@@ -673,7 +672,7 @@ public class QrsSelectionFunctions {
         boolean aCheckFlag = false;
 
         // Check first qrs location
-        if(!iRecheck) {
+        if (!iRecheck) {
             if (iQrsFinal.size() > 0) {
                 while (iQrsFinal.get(i) - iQRSLast <= aRRHighTh) {
                     aRRDiff = iQrsFinal.get(i) - iQRSLast;
@@ -710,12 +709,12 @@ public class QrsSelectionFunctions {
     /**
      * <p> QRS selection forward using information from previous iteration.</p>
      *
-     * @param iQRS        Possible set of fetal QRS locations.
-     * @param iQrsM    Location Maternal QRS Location.
+     * @param iQRS  Possible set of fetal QRS locations.
+     * @param iQrsM Location Maternal QRS Location.
      * @return {aQrsFinal, aMissQrsIndex} : Final QRS selected array, missed QRS location.
      * @throws Exception If {@literal iQRS.length <= 0}.
      */
-    public Object[] qrsConcatenated(int[] iQRS,int[] iQrsM) throws Exception {
+    public Object[] qrsConcatenated(int[] iQRS, int[] iQrsM) throws Exception {
         int iQRSLast = SignalProcUtils.lastQRSFetal;
         double iRRMeanLast = SignalProcUtils.lastvalidRRMeanFetal;
         List<Integer> iQRSlist = new ArrayList<>();
@@ -800,10 +799,10 @@ public class QrsSelectionFunctions {
 //                    }
                     aRRLowTh = 1 / (1 / aRRMean + aDelta);
                     aRRHighTh = 1 / (1 / aRRMean - aDelta);
-                    if(aRRLowTh < SignalProcConstants.FQRS_RR_LOW_TH){
+                    if (aRRLowTh < SignalProcConstants.FQRS_RR_LOW_TH) {
                         aRRLowTh = SignalProcConstants.FQRS_RR_LOW_TH;
                     }
-                    if(aRRHighTh > SignalProcConstants.FQRS_RR_HIGH_TH){
+                    if (aRRHighTh > SignalProcConstants.FQRS_RR_HIGH_TH) {
                         aRRHighTh = SignalProcConstants.FQRS_RR_HIGH_TH;
                     }
 

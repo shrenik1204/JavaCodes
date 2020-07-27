@@ -11,7 +11,6 @@ public class HeartRateMaternal {
 	public void heartRate(int[] iQRS) {
 
 	    MatrixFunctions aMatrixFunctions = new MatrixFunctions();
-
         int[] adiffarray = new int[iQRS.length - 1];
 
         for (int i = 0; i < iQRS.length-1; i++) {

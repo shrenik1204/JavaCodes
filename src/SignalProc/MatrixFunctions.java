@@ -28,7 +28,7 @@ import java.util.*;
  *
  * @author Kishore Subramanian (kishore@sattvamedtech.com)
  * @author Aravind Prasad (aravind@sattvamedtech.com)
- *         
+ *
  */
 
 public class MatrixFunctions {
@@ -341,7 +341,7 @@ public class MatrixFunctions {
 			throw new Exception("Enter non empty array : findGivensTheta");
 		}
 	}
-	
+
 	/**
 	 * <p> Create Identity matrix of given size.</p>
 	 * @param iSize Size of identity matrix required.
@@ -361,7 +361,7 @@ public class MatrixFunctions {
 		}
 	}
 
-	
+
 	/**
 	 * <p> Element wise multiplication of A and B.</p>
 	 * @param iA Input matrix A.
@@ -453,7 +453,7 @@ public class MatrixFunctions {
 
 		return aTranspose;
 	}
-	 
+
 	/**
 	 * <p> Extract a submatrix from a given matrix.</p>
 	 * @param iA Input matrix.
@@ -582,7 +582,7 @@ public class MatrixFunctions {
 
 	}
 
-	
+
 	/**
 	 * <p> Generate a trapezoidal window function of given length.</p>
 	 * @param nSamplesBeforeQRS Length of window before QRS.
@@ -918,7 +918,7 @@ public void filtfilt_Sos(double[] iInput, double[][] iSOS,  double[] iGain, doub
      * </ul>
      */
 	public void filtfilt(double[] iInput, double[] iA, double[] iB, double[] iZ) throws Exception{
-		
+
 		int aLength = iInput.length;
 		int aLengthExt = 3 * (iA.length - 1);
 
@@ -946,7 +946,7 @@ public void filtfilt_Sos(double[] iInput, double[][] iSOS,  double[] iGain, doub
             aTime = System.currentTimeMillis();
 			reverse(aMirrorExtension);
             aTime = System.currentTimeMillis();
-			
+
 			for (int i =0; i<aLength; i++) {
 				iInput[i] = aMirrorExtension[i+aLengthExt];
 			}
@@ -955,11 +955,11 @@ public void filtfilt_Sos(double[] iInput, double[][] iSOS,  double[] iGain, doub
 		else {
 			throw new Exception("Enter valid Inputs : filtfilt");
 		}
-		
-		
-		
+
+
+
 	}
-	
+
 	/**
 	 * <p> Filtering of signals with filter of order N and delay.</p>
 	 * @param iInput Input data.
@@ -1109,7 +1109,7 @@ public void filtfilt_Sos(double[] iInput, double[][] iSOS,  double[] iGain, doub
 		}
 	}
 
-	
+
 	/**
 	 * <p> Peak detection for array with minimum difference of delta between local extremum.</p>
 	 * @param iInput Input data.
@@ -1440,7 +1440,7 @@ public void filtfilt_Sos(double[] iInput, double[][] iSOS,  double[] iGain, doub
 
 
 	public int[] fetalQRS(double[] iChannel, int[] iQrsM) throws Exception {
-		
+
 		int aLength = iChannel.length;
 		if (aLength >= SignalProcConstants.FQRS_WINDOW) {
 			// differentiate and square
@@ -1600,12 +1600,12 @@ public void filtfilt_Sos(double[] iInput, double[][] iSOS,  double[] iGain, doub
         double[] iQrs3 = copyFromIntArray(iQRS3);
         double[] iQrs4 = copyFromIntArray(iQRS4);
 
-        int aLen1 = iQRS1.length;
+		double iLastRRmean = SignalProcUtils.lastRRMeanFetal;
+
+		int aLen1 = iQRS1.length;
 		int aLen2 = iQRS2.length;
 		int aLen3 = iQRS3.length;
 		int aLen4 = iQRS4.length;
-
-		double iLastRRmean = SignalProcUtils.lastRRMeanFetal;
 
 		if (iVarTh > 0 && iRRhighTh > 0 && iRRlowTh > 0) {
 //			double aInd1 = 0;
@@ -1805,7 +1805,7 @@ public void filtfilt_Sos(double[] iInput, double[][] iSOS,  double[] iGain, doub
 					qrs[i + shift] = iQRS4[i];
 				}
 				Arrays.sort(qrs);
-				Filename.ExecutionLogs.append("none" + "," + "-1" + ",");
+				Filename.summarizedData.append("none" + "," + "-1" + ",");
 				return new Object[] { qrs,  -1, qrs };
 			} else {
 				double ind = aInd1;
@@ -1887,26 +1887,31 @@ public void filtfilt_Sos(double[] iInput, double[][] iSOS,  double[] iGain, doub
 				 */
 				int[] qrs = new int[length_Final];
 				int startIndex = -1;
-				if (ch == 1) {
-					startIndex = aStartInd1;
-					for (int i = 0; i < length_Final; i++) {
-						qrs[i] = iQRS1[i];
-					}
-				} else if (ch == 2) {
-					startIndex = aStartInd2;
-					for (int i = 0; i < length_Final; i++) {
-						qrs[i] = iQRS2[i];
-					}
-				} else if (ch == 3) {
-					startIndex = aStartInd3;
-					for (int i = 0; i < length_Final; i++) {
-						qrs[i] = iQRS3[i];
-					}
-				} else if (ch == 4) {
-					startIndex = aStartInd4;
-					for (int i = 0; i < length_Final; i++) {
-						qrs[i] = iQRS4[i];
-					}
+				switch (ch) {
+					case 1:
+						startIndex = aStartInd1;
+						for (int i = 0; i < length_Final; i++) {
+							qrs[i] = iQRS1[i];
+						}
+						break;
+					case 2:
+						startIndex = aStartInd2;
+						for (int i = 0; i < length_Final; i++) {
+							qrs[i] = iQRS2[i];
+						}
+						break;
+					case 3:
+						startIndex = aStartInd3;
+						for (int i = 0; i < length_Final; i++) {
+							qrs[i] = iQRS3[i];
+						}
+						break;
+					case 4:
+						startIndex = aStartInd4;
+						for (int i = 0; i < length_Final; i++) {
+							qrs[i] = iQRS4[i];
+						}
+						break;
 				}
 				// TODO: 21/11/18 This Code snippet can be used for something else
 
@@ -2042,7 +2047,7 @@ public void filtfilt_Sos(double[] iInput, double[][] iSOS,  double[] iGain, doub
 				}
 				Arrays.sort(concatQrs);
 
-				Filename.ExecutionLogs.append(ch + "," + startIndex + ",");
+				Filename.summarizedData.append(ch + "," + startIndex + ",");
 
 				return new Object[] { qrs, startIndex,concatQrs };
 			}
@@ -2121,7 +2126,7 @@ public void filtfilt_Sos(double[] iInput, double[][] iSOS,  double[] iGain, doub
             double aInd3 = (double) qrs3Index[0];
             double aInd4 = (double) qrs4Index[0];
 
-			Filename.ExecutionLogs_Maternal.append(aInd1 + "," + aInd2 + "," + aInd3 + "," + aInd4 + ",");
+			Filename.summarizedData_maternal.append(aInd1 + "," + aInd2 + "," + aInd3 + "," + aInd4 + ",");
 
             aInd[0] = (double) qrs1Index[0];
             aInd[1] = (double) qrs2Index[0];
@@ -2399,7 +2404,7 @@ public void filtfilt_Sos(double[] iInput, double[][] iSOS,  double[] iGain, doub
 
             int ch = aCh1MaxIndex;
 
-            Filename.ExecutionLogs_Maternal.append(aMaxOne - aMaxTwo + ",");
+            Filename.summarizedData_maternal.append(aMaxOne - aMaxTwo + ",");
             if(aMaxOne - aMaxTwo < 0.4){
             	int count = 0;
 				for (int i = 0; i < aMeanCh1.length; i++) {
@@ -2413,7 +2418,7 @@ public void filtfilt_Sos(double[] iInput, double[][] iSOS,  double[] iGain, doub
 					ch = aCh1MaxIndex;
 				}
 			}
-			Filename.ExecutionLogs_Maternal.append(ch + ",");
+			Filename.summarizedData_maternal.append(ch + ",");
 
 			/**
              * Get the start Index and qrs values to find the final QRS.
@@ -3007,11 +3012,11 @@ public void filtfilt_Sos(double[] iInput, double[][] iSOS,  double[] iGain, doub
 	 * @throws Exception If {@literal iFinalQrsHrPlot.length != }{@link SignalProcConstants#NO_OF_PRINT_VALUES No of print values}.
 	 */
 	public String[] convertHR2MilliSec(int[] iFinalQrsHrPlot, float[] iFinalHR, int[] iFinalQRS) throws Exception{
-		
+
 
 		/**
 		 * 1. First QRS is below 2000+10000*CurrentIter .
-		 * 
+		 *
 		 * 2. First QRS is == 2000+10000*CurrentIter && First HR = 0; 3. The
 		 * Points are from [2, 2.5, 3, ... , 10, 10.5, 11, 11.5] = 20 points.
 		 * Hence, the last point HR is equal to the heart rate in the last point
@@ -3022,7 +3027,7 @@ public void filtfilt_Sos(double[] iInput, double[][] iSOS,  double[] iGain, doub
 //		double aDecimalRange = 1 - 584;
 		int[] aHrDecimalPrint = new int[SignalProcConstants.NO_OF_PRINT_VALUES];
 		if (iFinalQrsHrPlot.length == SignalProcConstants.NO_OF_PRINT_VALUES && iFinalHR.length == iFinalQRS.length){
-			
+
 
 			int aQrsScale = SignalProcUtils.qrsCurrentShift;
 
@@ -3118,20 +3123,28 @@ public void filtfilt_Sos(double[] iInput, double[][] iSOS,  double[] iGain, doub
 					aScale = (int) Math.pow(16, i);
 					aQuotient = aInputVal / aScale;
 					aInputVal = aInputVal - aQuotient * aScale;
-					if (aQuotient == 10) {
-						aHrPrint[j] = aHrPrint[j] + "A";
-					} else if (aQuotient == 11) {
-						aHrPrint[j] = aHrPrint[j] + "B";
-					} else if (aQuotient == 12) {
-						aHrPrint[j] = aHrPrint[j] + "C";
-					} else if (aQuotient == 13) {
-						aHrPrint[j] = aHrPrint[j] + "D";
-					} else if (aQuotient == 14) {
-						aHrPrint[j] = aHrPrint[j] + "E";
-					} else if (aQuotient == 15) {
-						aHrPrint[j] = aHrPrint[j] + "F";
-					} else {
-						aHrPrint[j] = aHrPrint[j] + aQuotient;
+					switch (aQuotient) {
+						case 10:
+							aHrPrint[j] = aHrPrint[j] + "A";
+							break;
+						case 11:
+							aHrPrint[j] = aHrPrint[j] + "B";
+							break;
+						case 12:
+							aHrPrint[j] = aHrPrint[j] + "C";
+							break;
+						case 13:
+							aHrPrint[j] = aHrPrint[j] + "D";
+							break;
+						case 14:
+							aHrPrint[j] = aHrPrint[j] + "E";
+							break;
+						case 15:
+							aHrPrint[j] = aHrPrint[j] + "F";
+							break;
+						default:
+							aHrPrint[j] = aHrPrint[j] + aQuotient;
+							break;
 					}
 				}
 			} else {
@@ -3142,7 +3155,7 @@ public void filtfilt_Sos(double[] iInput, double[][] iSOS,  double[] iGain, doub
 		return aHrPrint;
 	} // end Function to convert to milliSec and Hex values.
 
-	
+
 	public double[] fastfouriertransform_UA(double[] X ) throws Exception {
 
 		if (X.length == 50) {
@@ -4944,7 +4957,7 @@ public void filtfilt_Sos(double[] iInput, double[][] iSOS,  double[] iGain, doub
 
                 // PSD
                 double[] aFFT_MA = fastfouriertransform_MA(aTempInput);
-                
+
                 double aSum1 = 0;
                 for (int j = 1; j < 11; j++) {
                     aSum1 += (aFFT_MA[j]);
@@ -5210,8 +5223,8 @@ public void filtfilt_Sos(double[] iInput, double[][] iSOS,  double[] iGain, doub
 
 
 	}
-	public double[] stdNoise_fiveSec(double[][] ecg_Residue,ArrayList<Integer> QRSf){
 
+	public double[] stdNoise_fiveSec(double[][] ecg_Residue,ArrayList<Integer> QRSf){
 		ArrayList<Double> noiseChannel1 = new ArrayList<>();
 		ArrayList<Double> noiseChannel2 = new ArrayList<>();
 		ArrayList<Double> noiseChannel3 = new ArrayList<>();
@@ -5315,5 +5328,5 @@ public void filtfilt_Sos(double[] iInput, double[][] iSOS,  double[] iGain, doub
         }
         return dest;
     }
-	
+
 }// close class

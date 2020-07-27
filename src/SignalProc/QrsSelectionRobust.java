@@ -123,9 +123,9 @@ public class QrsSelectionRobust {
 				}
 			}
 			if(overlap){
-				Filename.ExecutionLogs.append( "true,");
+				Filename.summarizedData.append( "true,");
 			} else{
-				Filename.ExecutionLogs.append( "false,");
+				Filename.summarizedData.append( "false,");
 			}
 
 
@@ -149,8 +149,8 @@ public class QrsSelectionRobust {
 //					FileLoggerHelper.getInstance().sendLogData(String.format(ApplicationUtils.getCurrentTime() + " : aConfirmFlag : %d", aConfirmFlag), FileLoggerType.EXECUTION, FLApplication.mFileTimeStamp);
 ////
                     Filename.FqrsSelectionType.append("Confirm Flag\n");
-					Filename.ExecutionLogs.append("Confirm Flag,");
-					Filename.ExecutionLogs.append(iQRSLast+",");
+					Filename.summarizedData.append("Confirm Flag,");
+					Filename.summarizedData.append(iQRSLast+",");
 
 
 					return new Object[] { convertListtoArray(aQrsFinal), aInterpolatedLength, 0 };
@@ -192,8 +192,8 @@ public class QrsSelectionRobust {
                             }
                         }
                         Filename.FqrsSelectionType.append("CFN : Concat\n");
-                        Filename.ExecutionLogs.append("CFN : Concat,");
-                        Filename.ExecutionLogs.append(iQRSLast+",");
+                        Filename.summarizedData.append("CFN : Concat,");
+                        Filename.summarizedData.append(iQRSLast+",");
 
 
                         return new Object[] { convertListtoArray(aQrsFinal), aInterpolatedLength, 1 };
@@ -207,8 +207,8 @@ public class QrsSelectionRobust {
                         SignalProcUtils.independantdet_flag = false;
 
                         Filename.FqrsSelectionType.append("CFN : Independent/Overlap true\n");
-                        Filename.ExecutionLogs.append("CFN : Independent/Overlap true,");
-                        Filename.ExecutionLogs.append(iQRSLast+",");
+                        Filename.summarizedData.append("CFN : Independent/Overlap true,");
+                        Filename.summarizedData.append(iQRSLast+",");
 
 
                         return new Object[] { convertListtoArray(aQrsFinal), aInterpolatedLength, 0 };
@@ -229,8 +229,8 @@ public class QrsSelectionRobust {
 //				SignalProcUtils.lastvalidRRMeanFetal = iRRMeanLast;
                 SignalProcUtils.independantdet_flag = true;
 
-                Filename.ExecutionLogs.append("Independent,");
-				Filename.ExecutionLogs.append(iQRSLast+",");
+                Filename.summarizedData.append("Independent,");
+				Filename.summarizedData.append(iQRSLast+",");
 
 				Filename.FqrsSelectionType.append("Independent \n");
 
@@ -274,14 +274,14 @@ public class QrsSelectionRobust {
                 /**
                  * ADD fqrsMissIndex indentification
                  */
-				Filename.ExecutionLogs.append("Concat,");
-				Filename.ExecutionLogs.append(iQRSLast+",");
+				Filename.summarizedData.append("Concat,");
+				Filename.summarizedData.append(iQRSLast+",");
 
 				Filename.FqrsSelectionType.append("Concat \n");
                 return new Object[]{convertListtoArray(aQrsFinal), aInterpolatedLength, 1};
             }
             else {
-				Filename.ExecutionLogs.append("No Det,");
+				Filename.summarizedData.append("No Det,");
 
 				Filename.FqrsSelectionType.append("No Det\n");
 

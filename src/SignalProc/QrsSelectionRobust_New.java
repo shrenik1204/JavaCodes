@@ -20,9 +20,9 @@ import java.util.LinkedList;
  *         </ol>
  *     </li>
  *     <li> 21st August, 2017
- *			<ol>
- *			 <li> Restructured to simple functions.</li>
- *			</ol>
+ * 			<ol>
+ * 			 <li> Restructured to simple functions.</li>
+ * 			</ol>
  *     </li>
  *     <li> 8th August, 2017
  *     	<ol>
@@ -45,7 +45,7 @@ public class QrsSelectionRobust_New {
      * @param iQRSLast            Location of last QRS determined in previous iteration.
      * @param iRRMeanLast         Mean RR of last 4 QRS determined in previous iteration.
      * @param iNoDetectionFlag    <pre> (int) '1' if no single channel has been determined to
-     *                                           contain possible QRS locations else '0'.  </pre>
+     *                                                                      contain possible QRS locations else '0'.  </pre>
      * @param iQrsConcat          Concatenated sorted array of possible QRS locations from all channels.
      * @return {aQRSFinal, aInterpolatedLength, aNoDetectionFLag} : Return QRS selected and update Flags.
      * @throws Exception Message containing the exception.
@@ -59,9 +59,9 @@ public class QrsSelectionRobust_New {
         int aInterpolatedLength = 0;
 
 //        if(overlap){
-//            Filename.ExecutionLogs.append( "true,");
+//            Filename.summarizedData.append( "true,");
 //        } else{
-//            Filename.ExecutionLogs.append( "false,");
+//            Filename.summarizedData.append( "false,");
 //        }
 
         Object[] aQrsConcatOut = aQrsSelectionFunctions.qrsConcatenated(iQrsConcat, iQrsM);
@@ -83,21 +83,21 @@ public class QrsSelectionRobust_New {
         }
 
 //        if(concatOverlap){
-//            Filename.ExecutionLogs.append( "true,");
+//            Filename.summarizedData.append( "true,");
 //        } else{
-//            Filename.ExecutionLogs.append( "false,");
+//            Filename.summarizedData.append( "false,");
 //        }
         if (iStartIndex <= -1) {
             boolean concatOverlap = false;
 
-            if(SignalProcUtils.currentIteration > 0 && SignalProcUtils.lastQRSFetalArray.size() > 4){
+            if (SignalProcUtils.currentIteration > 0 && SignalProcUtils.lastQRSFetalArray.size() > 4) {
                 concatOverlap = aQrsSelectionFunctions.QrsOverlapCheck(aQrsFinalConcat);
             }
             if (SignalProcUtils.lastvalidRRMeanFetal != 0) {
-                if(concatOverlap){
-                    Filename.ExecutionLogs.append( "C O true,");
+                if (concatOverlap) {
+                    Filename.summarizedData.append("C O true,");
                     SignalProcUtils.independentCount++;
-                    if(SignalProcUtils.independentCount == 2){
+                    if (SignalProcUtils.independentCount == 2) {
                         SignalProcUtils.concatCount = 0;
                     }
 //					SignalProcUtils.lastvalidRRMeanFetal = iRRMeanLast;
@@ -105,11 +105,11 @@ public class QrsSelectionRobust_New {
 //					FileLoggerHelper.getInstance().sendLogData(String.format(ApplicationUtils.getCurrentTime() + " : aConfirmFlag : %d", aConfirmFlag), FileLoggerType.EXECUTION, FLApplication.mFileTimeStamp);
 ////
                     Filename.FqrsSelectionType.append("Concat CNF\n");
-                    Filename.ExecutionLogs.append("COT,");
-                    Filename.ExecutionLogs.append(iQRSLast+",");
-                    return new Object[] { convertListtoArray(aQrsFinalConcat), aInterpolatedLength, 1 };
-                } else{
-                    Filename.ExecutionLogs.append( "C O false,");
+                    Filename.summarizedData.append("COT,");
+                    Filename.summarizedData.append(iQRSLast + ",");
+                    return new Object[]{convertListtoArray(aQrsFinalConcat), aInterpolatedLength, 1};
+                } else {
+                    Filename.summarizedData.append("C O false,");
 
                     SignalProcUtils.concatCount++;
                     SignalProcUtils.independentCount = 0;
@@ -118,14 +118,14 @@ public class QrsSelectionRobust_New {
 ////					throw new Exception(FLApplication.getInstance().getString(R.string.connection_issue));
 //                }
                     SignalProcUtils.independantdet_flag = false;
-                    Filename.ExecutionLogs.append("COF,");
-                    Filename.ExecutionLogs.append(iQRSLast+",");
+                    Filename.summarizedData.append("COF,");
+                    Filename.summarizedData.append(iQRSLast + ",");
 
                     Filename.FqrsSelectionType.append("Concat \n");
                     return new Object[]{convertListtoArray(aQrsFinalConcat), aInterpolatedLength, 1};
                 }
-            } else{
-                Filename.ExecutionLogs.append("No Det,");
+            } else {
+                Filename.summarizedData.append("No Det,");
 
                 Filename.FqrsSelectionType.append("No Det\n");
 
@@ -186,13 +186,13 @@ public class QrsSelectionRobust_New {
 
             boolean overlap = false;
 
-            if(SignalProcUtils.currentIteration > 0 && SignalProcUtils.lastQRSFetalArray.size() > 4){
+            if (SignalProcUtils.currentIteration > 0 && SignalProcUtils.lastQRSFetalArray.size() > 4) {
                 overlap = aQrsSelectionFunctions.QrsOverlapCheck(aQrsFinal);
             }
             if (iNoDetectionFlag == 0 && iRRMeanLast != 0) {
                 boolean aConfirmFlag = aQrsSelectionFunctions.firstQrsCheck(aQrsFinal, iQRSLast, iRRMeanLast, false);
                 if (overlap || aConfirmFlag) {
-                    Filename.ExecutionLogs.append( "O true,");
+                    Filename.summarizedData.append("O true,");
 
                     SignalProcUtils.independentCount++;
                     if (SignalProcUtils.independentCount == 2) {
@@ -203,21 +203,21 @@ public class QrsSelectionRobust_New {
 //					FileLoggerHelper.getInstance().sendLogData(String.format(ApplicationUtils.getCurrentTime() + " : aConfirmFlag : %d", aConfirmFlag), FileLoggerType.EXECUTION, FLApplication.mFileTimeStamp);
 ////
                     Filename.FqrsSelectionType.append("CNF\n");
-                    Filename.ExecutionLogs.append("Confirm Flag,");
-                    Filename.ExecutionLogs.append(iQRSLast + ",");
+                    Filename.summarizedData.append("Confirm Flag,");
+                    Filename.summarizedData.append(iQRSLast + ",");
 
 
                     return new Object[]{convertListtoArray(aQrsFinal), aInterpolatedLength, 0};
                 } else {
                     boolean concatOverlap = false;
 
-                    if(SignalProcUtils.currentIteration > 0 && SignalProcUtils.lastQRSFetalArray.size() > 4){
+                    if (SignalProcUtils.currentIteration > 0 && SignalProcUtils.lastQRSFetalArray.size() > 4) {
                         concatOverlap = aQrsSelectionFunctions.QrsOverlapCheck(aQrsFinalConcat);
                     }
-                    if(concatOverlap){
-                        Filename.ExecutionLogs.append( "C O true,");
+                    if (concatOverlap) {
+                        Filename.summarizedData.append("C O true,");
                         SignalProcUtils.independentCount++;
-                        if(SignalProcUtils.independentCount == 2){
+                        if (SignalProcUtils.independentCount == 2) {
                             SignalProcUtils.concatCount = 0;
                         }
 //					SignalProcUtils.lastvalidRRMeanFetal = iRRMeanLast;
@@ -225,13 +225,13 @@ public class QrsSelectionRobust_New {
 //					FileLoggerHelper.getInstance().sendLogData(String.format(ApplicationUtils.getCurrentTime() + " : aConfirmFlag : %d", aConfirmFlag), FileLoggerType.EXECUTION, FLApplication.mFileTimeStamp);
 ////
                         Filename.FqrsSelectionType.append("Concat CNF in O\n");
-                        Filename.ExecutionLogs.append("CFNCOT,");
-                        Filename.ExecutionLogs.append(iQRSLast+",");
+                        Filename.summarizedData.append("CFNCOT,");
+                        Filename.summarizedData.append(iQRSLast + ",");
 
 
-                        return new Object[] { convertListtoArray(aQrsFinalConcat), aInterpolatedLength, 1 };
+                        return new Object[]{convertListtoArray(aQrsFinalConcat), aInterpolatedLength, 1};
                     } else {
-                        Filename.ExecutionLogs.append( "C O false,");
+                        Filename.summarizedData.append("C O false,");
                         SignalProcUtils.concatCount++;
                         SignalProcUtils.independentCount = 0;
 //                if(SignalProcUtils.concatCount == 6){
@@ -240,42 +240,44 @@ public class QrsSelectionRobust_New {
 //                }
                         SignalProcUtils.independantdet_flag = false;
                         Filename.FqrsSelectionType.append("Concat CNF N\n");
-                        Filename.ExecutionLogs.append("CFNCOF,");
-                        Filename.ExecutionLogs.append(iQRSLast + ",");
+                        Filename.summarizedData.append("CFNCOF,");
+                        Filename.summarizedData.append(iQRSLast + ",");
 
 
                         return new Object[]{convertListtoArray(aQrsFinalConcat), aInterpolatedLength, 1};
                     }
                 }
-            }else {
-                Filename.ExecutionLogs.append("Nil,");
+            } else {
+                Filename.summarizedData.append("Nil,");
                 SignalProcUtils.independentCount++;
-                if(SignalProcUtils.independentCount == 2){
+                if (SignalProcUtils.independentCount == 2) {
                     SignalProcUtils.concatCount = 0;
                 }
 //				SignalProcUtils.lastvalidRRMeanFetal = iRRMeanLast;
                 SignalProcUtils.independantdet_flag = true;
 
-                Filename.ExecutionLogs.append("Independent,");
-                Filename.ExecutionLogs.append(iQRSLast+",");
+                Filename.summarizedData.append("Independent,");
+                Filename.summarizedData.append(iQRSLast + ",");
 
                 Filename.FqrsSelectionType.append("Independent \n");
 
 //
 //				FileLoggerHelper.getInstance().sendLogData(String.format(ApplicationUtils.getCurrentTime() + " : Independent FQRS detection"), FileLoggerType.EXECUTION, FLApplication.mFileTimeStamp);
-                return new Object[] { convertListtoArray(aQrsFinal), aInterpolatedLength, 0 };
+                return new Object[]{convertListtoArray(aQrsFinal), aInterpolatedLength, 0};
             }
         }
     }
+
     /**
      * <p>Convert linked list to array.</p>
+     *
      * @param iQRS Input list.
      * @return Integer array.
      */
-    private int[] convertListtoArray(LinkedList<Integer> iQRS){
+    private int[] convertListtoArray(LinkedList<Integer> iQRS) {
         int aLen = iQRS.size();
         int[] aQRS = new int[aLen];
-        for (int i =0; i<aLen; i++){
+        for (int i = 0; i < aLen; i++) {
             aQRS[i] = iQRS.get(i);
         }
         return aQRS;

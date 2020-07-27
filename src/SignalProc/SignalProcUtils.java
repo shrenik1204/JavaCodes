@@ -68,7 +68,6 @@ public class SignalProcUtils {
     public static int independentCount = 0;
 
 
-
     /*********************************************************
      * OUTPUT values for each iteration.
      *********************************************************/
@@ -92,10 +91,6 @@ public class SignalProcUtils {
     public static String[] mhrPrint = new String[SignalProcConstants.NO_OF_PRINT_VALUES];
 
 
-
-
-
-
     /**********************************************
      * Variables to compute HR of Maternal and Fetal
      * throughout the duration of test
@@ -115,7 +110,7 @@ public class SignalProcUtils {
      */
     public static int qrsFetalMissLocation = 0;
     public static int qrsMaternalMissLocation = 0;
-    
+
     /**
      * Size of {@link SignalProcUtils#qrsFetalLocation fetal QRS location}. - remove
      */
@@ -153,7 +148,7 @@ public class SignalProcUtils {
      */
     public static double lastvalidRRMeanFetal = 0;
     /**
-     *  Flag for independent or confirm flag detection
+     * Flag for independent or confirm flag detection
      */
     public static boolean independantdet_flag = false;
     /**
@@ -242,7 +237,7 @@ public class SignalProcUtils {
 
 
     public static LinkedList<Double> uaEnergyTemp = new LinkedList<>();
-//    public static Double[] aUC_Energy_iter = new Double[120];
+    //    public static Double[] aUC_Energy_iter = new Double[120];
 //    public static Double[] aUC_Energy_iter_test = new Double[120];
     public static ArrayList<Double> aUA_Energy_plot = new ArrayList<>();
     public static List<Double> aUA_Energy_iter = new ArrayList<>();
@@ -253,12 +248,11 @@ public class SignalProcUtils {
     public static ArrayList<Integer> UALoc = new ArrayList<>();
 
 
-
     private static double[] mLeadOffSine;
     private static double[] mLeadOffCosine;
 
     /**
-     *  MA VARIABLES
+     * MA VARIABLES
      */
     public static LinkedList<Double> ma_amplitude1 = new LinkedList<>();
     public static LinkedList<Double> ma_amplitude2 = new LinkedList<>();
@@ -272,27 +266,29 @@ public class SignalProcUtils {
 
     /**
      * FIND SINE for lead off
+     *
      * @param z
      * @return
      */
-    public static double findSine(int z){
-        if (mLeadOffSine == null){
+    public static double findSine(int z) {
+        if (mLeadOffSine == null) {
             mLeadOffSine = new double[SignalProcConstants.LEADOFF_DETECTION_LENGTH];
             double aFreq = SignalProcConstants.LEADOFF_FREQ;
 
             for (int i = 0; i < SignalProcConstants.LEADOFF_DETECTION_LENGTH; i++) {
-                mLeadOffSine[i] = Math.sin(2 * Math.PI * aFreq * i/SignalProcConstants.FS);
+                mLeadOffSine[i] = Math.sin(2 * Math.PI * aFreq * i / SignalProcConstants.FS);
             }
         }
         return mLeadOffSine[z];
     }
-    public static double findCosine(int z){
-        if (mLeadOffCosine == null){
+
+    public static double findCosine(int z) {
+        if (mLeadOffCosine == null) {
             mLeadOffCosine = new double[SignalProcConstants.LEADOFF_DETECTION_LENGTH];
             double aFreq = SignalProcConstants.LEADOFF_FREQ;
 
             for (int i = 0; i < SignalProcConstants.LEADOFF_DETECTION_LENGTH; i++) {
-                mLeadOffCosine[i] = Math.cos(2 * Math.PI * aFreq * i/SignalProcConstants.FS);
+                mLeadOffCosine[i] = Math.cos(2 * Math.PI * aFreq * i / SignalProcConstants.FS);
             }
         }
         return mLeadOffCosine[z];
