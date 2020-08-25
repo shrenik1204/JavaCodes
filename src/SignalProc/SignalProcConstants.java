@@ -48,8 +48,8 @@ public class SignalProcConstants {
 	 * Length of the signal to analyse : 15sec.
 	 */
 	public static final int NO_OF_SAMPLES = 15000;
-	public static final int BUFFER_SIZE = 200 + NO_OF_SAMPLES;
-	public static final int MAX_DATA_LOSS = 200;
+	public static final int BUFFER_SIZE = 25 + NO_OF_SAMPLES;
+	public static final int MAX_DATA_LOSS = 25;
 	/**
 	 * Number of channels of data.
 	 */
@@ -78,14 +78,14 @@ public class SignalProcConstants {
 	/**
 	 * Maximum error detection
 	 */
-	
+
 	public static final int SAMPLE_LENGTH = 26;
 	public static final int ASCII_START = 34;
 	public static final int ASCII_END = 125;
 	public static final int ASCII_DIFF = ASCII_END - ASCII_START + 1;
 	public static final int MAX_MISS_DETECTION = ASCII_DIFF * ASCII_DIFF;
 	public static final int LEAD_OFF_ASCII_RANGE = 23;
-	
+
 	/*****************************************
 	 * SignalProcConstants for FQRS, MQRS length Threshold
 	 *****************************************/
@@ -236,7 +236,7 @@ public class SignalProcConstants {
 	 * 50Hz Notch filter co-efficients.
 	 */
 	public static final double[] FILTER_ZNOTCH_50 = {0.036346115834507468, 0.036346115834507468 + -1.7319479184152442E-14 };
-	
+
 	/**
 	 * 100Hz Notch filter co-efficients.
 	 */
@@ -252,7 +252,7 @@ public class SignalProcConstants {
 	 * 100Hz Notch filter co-efficients.
 	 */
 	public static final double[] FILTER_ZNOTCH_100 = {0.036346115834500828 , 0.036346115834500828 + -4.5172199314436057E-15};
-	
+
 	/**
 	 * 150Hz Notch filter co-efficients.
 	 */
@@ -267,7 +267,7 @@ public class SignalProcConstants {
 	 * 150Hz Notch filter co-efficients.
 	 */
 	public static final double[] FILTER_ZNOTCH_150 = {0.036346115834499253 , 0.036346115834499253 + -1.4849232954361469E-15};
-	
+
 	/**
 	 * 200Hz Notch filter co-efficients.
 	 */
@@ -283,7 +283,7 @@ public class SignalProcConstants {
 	 * 200Hz Notch filter co-efficients.
 	 */
 	public static final double[] FILTER_ZNOTCH_200 = {0.036346115834498711 , 0.036346115834498711 + -4.3715031594615539E-16};
-	
+
 	/**
 	 * 250Hz Notch filter co-efficients.
 	 */
@@ -298,7 +298,7 @@ public class SignalProcConstants {
 	 * 250Hz Notch filter co-efficients.
 	 */
 	public static final double[] FILTER_ZNOTCH_250 = {0.036346115834498482 , 0.036346115834498482};
-	
+
 	/**
 	 * 300Hz Notch filter co-efficients.
 	 */
@@ -324,7 +324,7 @@ public class SignalProcConstants {
 	/**
 	 * 31.25 Hz Notch co-efficients
 	 */
-	public static final double[] FILTER_ANOTCH_3125 = {1,                                        
+	public static final double[] FILTER_ANOTCH_3125 = {1,
 			-1.96000393774273651281703223503427579999 ,
 			 0.998402684975981502546460433222819119692};
 
@@ -463,8 +463,8 @@ public class SignalProcConstants {
      */
     public static final double[] FILTER_ZNOTCH_46875 = {0.798657512009228E-3,
             0.798657512009280E-3};
-    
-    
+
+
     /**********************************************
 	 * SignalProcConstants used in QRS DETECTION
 	 ***********************************************/
@@ -485,6 +485,34 @@ public class SignalProcConstants {
 	 */
 	public static final double MQRS_THRESHOLD_SCALE = 10;
 	/**
+	 * MQRS detection : high-pass filter co-efficients.
+	 */
+	public static final double[] MQRS_AHIGH = { 1.000000000000000,  -0.994986042646556 };
+	/**
+	 * MQRS detection : high-pass filter co-efficients.
+	 */
+	public static final double MQRS_BHIGH0 = 0.997493021323278;
+	/**
+	 * MQRS detection : high-pass filter co-efficients.
+	 */
+	public static final double MQRS_BHIGH_SUM = -1.994986042646556;
+	/**
+	 * MQRS detection : high-pass filter co-efficients.
+	 */
+	public static final double MQRS_ZHIGH[] = {-0.997493021323276};
+	/**
+	 * MQRS detection : low-pass filter co-efficients.
+	 */
+	public static final double[] MQRS_ALOW = { 1.000000000000000,  -0.981325890492688 };
+	/**
+	 * MQRS detection : low-pass filter co-efficients.
+	 */
+	public static final double[] MQRS_BLOW = { 0.009337054753656,   0.009337054753656 };
+	/**
+	 * MQRS detection : low-pass filter co-efficients.
+	 */
+	public static final double MQRS_ZLOW[] = {0.990662945246346};
+	/**
 	 * Threshold to remove outliers.
 	 */
 	public static final int MQRS_THRESHOLD_LENGTH = 13500;//(1 - 10/100)* 15000;
@@ -492,7 +520,7 @@ public class SignalProcConstants {
      * MQRS window for integrator.
      */
     public static final int MQRS_WINDOW = 50;
-    
+
     /**
 	 * Derivative filter.
 	 */
@@ -506,7 +534,7 @@ public class SignalProcConstants {
 	 * FQRS detection : Integrator window.
 	 */
 	public static final int FQRS_WINDOW = 25;
-	
+
 
 	// Fetal QRS detection values
 	/**
@@ -568,7 +596,7 @@ public class SignalProcConstants {
 	/**
 	 * RR upper threshold for maternal QRS.
 	 */
-	public static final int MQRS_RR_HIGH_TH = 2000;
+	public static final int MQRS_RR_HIGH_TH = 1200;
 
 	/**
 	 * Variance used in fetal QRS selection.
@@ -577,14 +605,14 @@ public class SignalProcConstants {
 	/**
 	 * RR upper threshold for fetal QRS.
 	 */
-	public static final int FQRS_RR_LOW_TH = 300;
+	public static final int FQRS_RR_LOW_TH = 285;
 	/**
 	 * RR upper threshold for fetal QRS.
 	 */
-	public static final int FQRS_RR_HIGH_TH = 600;
+	public static final int FQRS_RR_HIGH_TH = 700;
 
 
-	public static final double CHANNEL_PERCENTAGE = 5.0/100;
+	public static final double CHANNEL_PERCENTAGE = 3.0/100;
 
 	/**********************************************
 	 * SignalProcConstants used in QRS SELECTION
@@ -592,12 +620,18 @@ public class SignalProcConstants {
 	/** CHANGE BY ARAVIND 5th March 2018
 	 * Variance change for 10 bpm in milliseconds.
 	 */
-	public static final double QRS_RR_VAR_M = 10.0/60000; // 10 beats change
+	public static final double QRS_RR_VAR_M = 20.0/60000; // 10 beats change
 	/** CHANGE BY ARAVIND 5th March 2018
 	 * Variance change for 15 bpm in milliseconds.
 	 */
-	public static final double QRS_RR_VAR = 15.0/60000; // 15 beats change
-	/**
+	public static final double QRS_RR_VAR = 21.0/60000; // 17 beats change
+
+	public static final double QRS_RR_VAR_Concat = 8.0/60000; // 10 beats change
+
+//    public static final double QRS_RR_VAR_Continuous = 18.0/60000; // 18 beats change
+
+
+    /**
 	 * No of RR mean to find HR.
 	 */
 	public static final double QRS_NO_RR_MEAN = 4.0;
@@ -675,16 +709,16 @@ public class SignalProcConstants {
 	 * Find RR mean of last 5 qrs to determine number of samples to extend.
 	 */
 	public static final int CANCEL_NO_SAMPLES_END = 5;
-	
+
 
 	/**
 	 * Filter coefficients UC High - pass
 	 */
-	public static final int UC_HIGH_ORDER = 10;
+	public static final int UA_HIGH_ORDER = 10;
 	/**
 	 * Filter coefficients UC High - pass
 	 */
-	public static final double[][] UC_HIGH_SOS = 
+	public static final double[][] UA_HIGH_SOS =
 			{{1,  -2,  1,  1,  -1.999406878148268340567028644727542996407,  0.999410430157413154361734086705837398767},
 			{1,  -2,  1,  1,  -1.998286410501096455050173972267657518387,  0.998289960519695429574937861616490408778},
 			{1,  -2,  1,  1,  -1.997334271812534867152066908602137118578,  0.997337820139629349647236722375964745879},
@@ -693,26 +727,26 @@ public class SignalProcConstants {
 	/**
 	 * Filter coefficients UC High - pass
 	 */
-	public static final double[] UC_HIGH_GAIN = 
-			{0.999704327076420318221039451600518077612,                                                         
-			0.999144092755197998911853574099950492382,                                                         
-			0.998668022988041026444250292115611955523,                                                         
-			0.998322422502723405557389924069866538048,                                                         
+	public static final double[] UA_HIGH_GAIN =
+			{0.999704327076420318221039451600518077612,
+			0.999144092755197998911853574099950492382,
+			0.998668022988041026444250292115611955523,
+			0.998322422502723405557389924069866538048,
 			0.99814082549104277131135631861980073154};
 	/**
 	 * Filter coefficients UC High - pass
 	 */
-	public static final double[][] UC_HIGH_Z = 
+	public static final double[][] UA_HIGH_Z =
 			{{-0.999704327051177,	-0.999144092731476,	-0.998668023003056,	-0.998322422514772,	-0.998140825531731},
 			{0.999704327051192,	0.999144092731517,	0.998668023003016,	0.998322422514731,	0.998140825531580}};
 	/**
 	 * Filter coefficients UC Low - pass
 	 */
-	public static final int UC_LOW_ORDER = 10;
+	public static final int UA_LOW_ORDER = 10;
 	/**
 	 * Filter coefficients UC Low - pass
 	 */
-	public static final double[][] UC_LOW_SOS = 
+	public static final double[][] UA_LOW_SOS =
 			{{1,  2,  1,  1,  -1.993765994842548350263200518384110182524,  0.994120245556551984655868636764353141189},
 			{1,  2,  1,  1,  -1.982678896530242873552651872159913182259,  0.983031177297671421300151450850535184145},
 			{1,  2,  1,  1,  -1.973344249781298964663278638909105211496,  0.973694871976315212691588385496288537979},
@@ -721,25 +755,31 @@ public class SignalProcConstants {
 	/**
 	 * Filter coefficients UC Low - pass
 	 */
-	public static final double[] UC_LOW_GAIN = 
-			{0.000088562678500918572827016461701532535 ,                                                       
-			0.000088070191857109438797295009049292958 ,                                                       
-			0.00008765554875401466810008049845848177  ,                                                       
-			0.000087356733385618410571947511922274998 ,                                                       
+	public static final double[] UA_LOW_GAIN =
+			{0.000088562678500918572827016461701532535 ,
+			0.000088070191857109438797295009049292958 ,
+			0.00008765554875401466810008049845848177  ,
+			0.000087356733385618410571947511922274998 ,
 			0.000087200452474582668756404590926223364};
 	/**
 	 * Filter coefficients UC Low - pass
 	 */
-	public static final double[][] UC_LOW_Z =
+	public static final double[][] UA_LOW_Z =
 			{{0.999911437321527,	0.999911929807679,	0.999912344450694,	0.999912643266594,	0.999912799547704},
 			{-0.994031682878078,	-0.982943107105358,	-0.973607216427024,	-0.966879243403252,	-0.963360502853709}};
 
 	/**
 	 * UC Window for integrator
 	 */
-	public static final int UC_WINDOW = 60;
+	// Change Aravind from 60 to 80
+	public static final int UA_WINDOW = 80;
 
-
+	public static final int UA_BATCH_DATA_SIZE = 120;
+	/**
+	 * UC plot thresholds
+	 */
+	// Change Shrenik
+	public static final double UA_PLOT_DIFF_THRESHOLD=20;
 	/**
 	 * MA CONSTANTS
 	 */
